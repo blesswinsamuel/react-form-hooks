@@ -1,0 +1,13 @@
+{
+  "presets": [
+    ["env", {
+      "modules": false,
+      "loose": true,
+      "targets": {
+        "browsers": ["last 2 versions"] // TODO: Use config from browserslist file
+      },
+    }],
+    "react",
+    "stage-0"
+  ]
+}
