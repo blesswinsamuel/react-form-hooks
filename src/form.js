@@ -5,6 +5,19 @@ import { get, isEqual, set } from 'lodash';
 
 const DEFAULT_VALUE = null
 
+class Form {
+  registerField = (field, { validate = () => undefined }) => (fn) => {
+    if (this.subscriptions[field]) this.subscriptions[field].push(fn)
+    else this.subscriptions[field] = [fn]
+
+    this.fields[field] = { validate }
+    this.setError(field)(this.validate(field)(this.getValue(field), this.values))
+
+    this.updateField(field)({ dirty: false, touched: false })
+    return () => this.subscriptions[field].pop()
+  }
+}
+
 const form = ComposedForm =>
 class Form extends React.Component {
   static displayName = `form(${getDisplayName(ComposedForm)})`;
@@ -151,7 +164,7 @@ class Form extends React.Component {
   }
 
   render() {
-    return <ComposedForm {...this.props} {...this.state}
+    return <ComposedForm {...this.props}
       onSubmit={this.submitForm}
       setValue={this.changeField}
       getValues={this.getValues}
