@@ -15,13 +15,15 @@ class App extends Component {
 
 	changeValues = () => this.setState({ values: this.defaultValues })
 
+	onSubmit = values => console.log("> onSubmit -> ", values)
+
   	render() {
     	return (
 		  	<div className="container">
 		    	<MyForm
 		    		defaultValues={this.defaultValues}
 		    		values={this.state.values}
-		    		onSubmit={values => console.log("> onSubmit -> ", values)}
+		    		onSubmit={this.onSubmit}
 		    	/>
 		    	<Button onClick={this.changeValues}>Reset to default values</Button>
 		  	</div>
@@ -50,7 +52,7 @@ const FormField = formField(decorateControl(({ component: Component, ...props })
 
 const Code = (props) => <pre className="code" data-lang="JSON"><code>{props.children}</code></pre>
 
-const Button = (props) => <button className="btn btn-primary" {...props} />
+const Button = (props) => <button className="btn btn-primary" style={{ margin: 3 }} {...props} />
 
 const Input = ({ onChange, value, ...otherProps }) => (
 	<input
