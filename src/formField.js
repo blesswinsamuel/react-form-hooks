@@ -27,8 +27,7 @@ class FormField extends React.Component {
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    if(isEqual(nextState, this.state) && isEqual(nextProps, this.props)) return false
-
+    // if (this.state === nextState && this.props === nextProps) return false
     // const diff = (a, b) => Object.keys(a).reduce((result, key) => isEqual(a[key], b[key]) ? result : result.concat(key), [])
     // console.groupCollapsed('FIELD', nextProps.name)
     // console.log("stateDiff", diff(this.state, nextState))
@@ -38,7 +37,8 @@ class FormField extends React.Component {
     // console.log("props", this.props, nextProps)
     // console.groupEnd()
 
-    return true
+    if (this.state !== nextState || this.props !== nextProps) return true
+    return false
   }
 
   componentDidMount() {
