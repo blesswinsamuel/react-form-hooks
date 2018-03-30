@@ -1,16 +1,18 @@
-import React, { Component } from 'react';
+import React from 'react';
 import moment from 'moment'
 import classNames from 'classnames'
-// import Select from 'react-select';
-import { form, formField } from 'react-form';
+import Perf from 'react-addons-perf'
 
-class App extends Component {
+// import Select from 'react-select';
+import { connectForm, connectFormField } from 'react-form';
+
+class App extends React.Component {
 	state = {
 		values: {}
 	}
 
 	defaultValues = {
-		'myfield': '123', 'email': 'asdf@dsa.com', date: '2020-05-02T18:30:00.000Z'
+		'myfield': '123', 'email': 'asdf@dsa.com', date1: '2020-05-02T18:30:00.000Z'
 	}
 
 	changeValues = () => this.setState({ values: this.defaultValues })
@@ -20,12 +22,15 @@ class App extends Component {
   	render() {
     	return (
 		  	<div className="container">
-		    	<MyForm
+		    	<ConnectedMyForm
 		    		defaultValues={this.defaultValues}
 		    		values={this.state.values}
 		    		onSubmit={this.onSubmit}
 		    	/>
 		    	<Button onClick={this.changeValues}>Reset to default values</Button>
+
+		    	<Button onClick={() => { Perf.start(); } }>Start</Button>
+				<Button onClick={() => { Perf.stop(); Perf.printWasted(); } }>Stop</Button>
 		  	</div>
     	);
   	}
@@ -46,9 +51,13 @@ const decorateControl = Control => ({ meta: { error, touched, dirty }, label, na
 	</div>
 )
 
-const FormField = formField(decorateControl(({ component: Component, ...props }) => (
-	<Component {...props} />
-)))
+const Control = ({ component: Component, ...props }) => (
+	<Component {...props}>
+		{console.log(`RERENDER ${props.id}`)}
+	</Component>
+)
+const DecoratedControl = decorateControl(Control)
+const FormField = connectFormField(DecoratedControl)
 
 const Code = (props) => <pre className="code" data-lang="JSON"><code>{props.children}</code></pre>
 
@@ -98,7 +107,7 @@ const DateTimePicker = (props) => <Input type="datetime-local" {...props} />
 // )
 /*-- END HELPERS --*/
 
-const MyForm = form(({ onSubmit, errors, anyDirty, anyTouched, setValue, getValues, resetForm }) => (
+const MyForm = ({ onSubmit, errors, anyDirty, anyTouched, setValue, values, resetForm }) => (
 	<form onSubmit={onSubmit}>
 		<FormField
 			name="myfield" label="My field"
@@ -113,7 +122,7 @@ const MyForm = form(({ onSubmit, errors, anyDirty, anyTouched, setValue, getValu
 			component={Input}
 		/>
 		<FormField
-			name="email"
+			name="email" label="Email"
 			validate={(value, allValues) => {
 				console.log(" validation -> ", value, allValues)
 				return (/\d/.test(value)) ? 'should not contain a number' : undefined
@@ -129,14 +138,17 @@ const MyForm = form(({ onSubmit, errors, anyDirty, anyTouched, setValue, getValu
 		<FormField name="same" label="Same2" component={Input} />
 
 		<FormField name="datetime" component={DateTimePicker} />
-
-		<Code>{JSON.stringify(getValues(), null, 2)}</Code>
+		
+		{console.log(`FORM RERENDER`)}
+		<Code>{JSON.stringify(values, null, 2)}</Code>
 
 		{anyDirty && <div>Form Dirty</div>}
 		{anyTouched && <div>Form Touched</div>}
 		<Button type="submit">Submit</Button>
 		<Button onClick={resetForm}>Reset</Button>
 	</form>
-))
+)
+
+const ConnectedMyForm = connectForm(MyForm)
 
 export default App;

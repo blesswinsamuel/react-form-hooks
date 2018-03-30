@@ -1,4 +1,4 @@
-import form from './form'
-import formField from './formField'
+import connectForm from './connectForm'
+import connectFormField from './connectFormField'
 
-export { form, formField }
+export { connectForm, connectFormField }
