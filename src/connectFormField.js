@@ -1,87 +1,72 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-
-import { isEqual } from 'lodash';
+import React from 'react'
+import PropTypes from 'prop-types'
+import { wrapDisplayName } from 'recompose'
 
 export const connectFormField = ComposedField =>
-class FormField extends React.PureComponent {
-  static displayName = `connectFormField(${getDisplayName(ComposedField)})`;
+  class FormField extends React.PureComponent {
+    static displayName = wrapDisplayName(ComposedField, 'connectFormField');
 
-  constructor(props, context) {
-    super(props, context);
-    this.form = this.context.form
-    this.state = {
-      value: null,
-      touched: false,
-      dirty: false,
-      error: undefined
+    constructor (props, context) {
+      super(props, context)
+      const { name } = this.props
+      this.form = this.context.form
+      this.fieldApi = this.form.getFieldApi(name)
+      this.state = {
+        value: this.fieldApi.getValue(),
+        touched: false,
+        dirty: false,
+        error: this.fieldApi.getError()
+      }
+    }
+
+    static contextTypes = {
+      form: PropTypes.object
+    }
+
+    static propTypes = {
+      name: PropTypes.string.isRequired,
+      onChange: PropTypes.func.isRequired,
+    }
+
+    static defaultProps = {
+      onChange: v => v,
+    }
+
+    componentDidMount () {
+      const { name, validate = () => undefined } = this.props
+      this.unregisterField = this.form.registerField(name)({
+        setFieldState: this.setState.bind(this),
+        getFieldState: () => this.state,
+        validate
+      })
+    }
+
+    componentWillUnmount () {
+      this.unregisterField()
+    }
+
+    handleChange = (event) => {
+      this.fieldApi.setValue(this.props.onChange(event, this.form.getValues()))
+    }
+
+    handleBlur = (event) => {
+      this.fieldApi.setTouched()
+    }
+
+    render () {
+      const { value, touched, dirty, error } = this.state
+
+      return (
+        <ComposedField
+          fieldState={{ error, dirty, touched }}
+          fieldApi={this.fieldApi}
+          {...this.props}
+          onChange={this.handleChange}
+          onBlur={this.handleBlur}
+          value={value}
+        />
+      )
     }
   }
 
-  static contextTypes = {
-    form: PropTypes.object
-  }
-
-  static propTypes = {
-    name: PropTypes.string.isRequired,
-  }
-
-  shouldComponentUpdate(nextProps, nextState) {
-    if (this.state === nextState && this.props === nextProps) return false
-
-    // if (this.state !== nextState || this.props !== nextProps) return true; else return false;
-    const diff = (a, b) => Object.keys(a).reduce((result, key) => isEqual(a[key], b[key]) ? result : result.concat(key), [])
-    console.groupCollapsed('FIELD', nextProps.name)
-    console.log("stateDiff", diff(this.state, nextState))
-    console.log("propsDiff", diff(this.props, nextProps))
-    console.log(this.form.getValues())
-    console.log("state", this.state, nextState)
-    console.log("props", this.props, nextProps)
-    console.log("==", this.state == nextState, this.props == nextProps)
-    console.log("===", this.state === nextState, this.props === nextProps)
-    console.groupEnd()
-    console.log(this.props.component === nextProps.component)
-
-    return true
-  }
-
-  componentDidMount() {
-    const { name, validate = () => undefined } = this.props
-    this.unregisterField = this.form.registerField(name)({
-      setFieldState: this.setState.bind(this),
-      getFieldState: () => this.state,
-      validate,
-    })
-  }
-
-  componentWillUnmount() {
-    this.unregisterField()
-  }
-
-  handleChange = (onChange) => this.form.handleChange(this.props.name)(onChange)
-
-  handleBlur = (onBlur) => this.form.handleBlur(this.props.name)(onBlur)
-
-  render() {
-    // eslint-disable-next-line
-    const { name: field, validate, onChange, onBlur, ...rest } = this.props
-    const { value, touched, dirty, error } = this.state
-
-    return (
-      <ComposedField
-        onChange={this.handleChange(onChange)}
-        onBlur={this.handleBlur(onBlur)}
-        value={value}
-        name={field}
-        meta={{ error, dirty, touched }}
-        {...rest}
-      />
-    )
-  }
-}
-
-function getDisplayName(WrappedComponent) {
-  return WrappedComponent.displayName || WrappedComponent.name || 'Component';
-}
-
-export default connectFormField;
+export default connectFormField

@@ -2,7 +2,11 @@ const fs = require('fs')
 const path = require('path')
 const webpack = require('webpack')
 
+const ENV = process.env.NODE_ENV || 'development'
+const { PORT = 3000 } = process.env;
+
 module.exports = {
+  mode: ENV,
 
   devtool: 'cheap-module-source-map',
 
@@ -15,8 +19,9 @@ module.exports = {
   },
 
   module: {
-    loaders: [
-      { test: /\.js$/, exclude: /node_modules/, use: ['react-hot-loader/webpack', 'babel-loader'] },
+    rules: [
+      { test: /\.js$/, exclude: /node_modules/, use: ['babel-loader'] },
+      { test: /\.css$/, use: ['style-loader', 'css-loader'] },
       { test: /\.less$/, use: ['style-loader', 'css-loader', 'less-loader'] },
     ]
   },
@@ -27,12 +32,26 @@ module.exports = {
     }
   },
 
+  devServer: {
+    disableHostCheck: true,
+    overlay: {
+      warnings: true,
+      errors: true,
+    },
+    port: PORT,
+
+    stats: 'minimal',
+    clientLogLevel: 'warning'
+  },
+
+  optimization: {
+    namedModules: true, // NamedModulesPlugin()
+    noEmitOnErrors: true, // NoEmitOnErrorsPlugin
+  },
+
   plugins: [
     new webpack.DefinePlugin({
-      'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development')
+      'process.env.NODE_ENV': JSON.stringify(ENV)
     }),
-    new webpack.HotModuleReplacementPlugin(), // Enables Hot Modules Replacement
-    new webpack.NamedModulesPlugin(), // Prints more readable module names in the browser console on HMR updates
-    new webpack.NoEmitOnErrorsPlugin(), // Allows error warnings but does not stop compiling.
   ]
 };

@@ -1,28 +1,13 @@
 const webpack = require('webpack');
 const path = require('path');
 
-const env = process.env.NODE_ENV
-
-const __DEV__ = env === 'development'
-const __PROD__ = env === 'production'
-const __TEST__ = env === 'test'
+const ENV = process.env.NODE_ENV || 'development'
 
 const plugins = [
   new webpack.DefinePlugin({
-    'process.env.NODE_ENV': JSON.stringify(env)
+    'process.env.NODE_ENV': JSON.stringify(ENV)
   })
 ];
-
-if (__PROD__) {
-  plugins.push(
-    new webpack.optimize.UglifyJsPlugin({
-      compressor: {
-        screw_ie8: true,
-        warnings: false
-      }
-    })
-  )
-}
 
 const config = {
   externals: {
@@ -34,7 +19,7 @@ const config = {
     }
   },
   entry: './src/index.js',
-  devtool: __DEV__ ? 'cheap-module-source-map' : 'source-map',
+  devtool: ENV === 'development' ? 'cheap-module-source-map' : 'source-map',
   output: {
     path: path.join(__dirname, 'dist'),
     filename: 'index.js',
@@ -49,7 +34,7 @@ const config = {
         use: [{
           loader: 'babel-loader',
           options: {
-            cacheDirectory: __DEV__
+            cacheDirectory: ENV === 'development'
           }
         }],
       }
