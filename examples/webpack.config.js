@@ -28,7 +28,7 @@ module.exports = {
 
   resolve: {
     alias: {
-      'react-form': path.join(__dirname, '..', 'src')
+      // 'react-form': path.join(__dirname, '..', 'src')
     }
   },
 
