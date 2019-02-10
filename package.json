@@ -1,7 +1,7 @@
 {
-  "name": "@blesswinsamuel/react-form",
+  "name": "react-form-hooks",
   "version": "1.0.0",
-  "description": "React form helpers",
+  "description": "Create forms in react using hooks",
   "author": "Blesswin Samuel <blesswinsamuel@gmail.com>",
   "license": "ISC",
   "main": "dist/index.js",
