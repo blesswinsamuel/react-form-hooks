@@ -3,8 +3,8 @@ import moment from 'moment'
 import classNames from 'classnames'
 
 // import Select from 'react-select';
-import { Form, Field } from 'react-form';
-
+import * as form from '@blesswinsamuel/react-form';
+console.log(form)
 export function withForm (Component) {
   return function FormComponent (props) {
     return (
@@ -83,9 +83,9 @@ class App extends React.Component {
   render() {
     return (
       <div className="container">
-        <ConnectedMyForm defaultValues={this.defaultValues}
+        {/* <ConnectedMyForm defaultValues={this.defaultValues}
           values={this.state.values}
-          onSubmit={this.onSubmit}/>
+          onSubmit={this.onSubmit}/> */}
         <Button onClick={this.changeValues}>Reset to default values</Button>
       </div>
     );
@@ -188,6 +188,6 @@ const MyForm = ({ values, submitForm, setValue, resetForm, anyDirty, anyTouched 
   </form>
 )
 
-const ConnectedMyForm = withForm(MyForm)
+// const ConnectedMyForm = withForm(MyForm)
 
 export default App;
