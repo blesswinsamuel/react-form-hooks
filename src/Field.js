@@ -1,5 +1,6 @@
 import React from 'react'
 import classNames from 'classnames'
+import { useFormField } from './lib'
 
 function getErrorString(error) {
   if (!error) {
@@ -43,7 +44,7 @@ const Field = ({
   render = v => v,
 }) => {
   const { input, meta } = form
-    ? form.useFormField(id, mapValue, validate)
+    ? useFormField(form, id, mapValue, validate)
     : { input: { id }, meta: {} }
   const { touched, dirty, error } = meta
 

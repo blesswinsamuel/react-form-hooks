@@ -1,12 +1,6 @@
 import React, { useRef, useState } from 'react'
-import {
-  Button,
-  DatePicker,
-  DateTimePicker,
-  Input,
-  TimePicker,
-} from './components'
-import { makeForm } from './lib'
+import { Button, DateTimePicker, Input, TimePicker } from './components'
+import { createForm, useForm } from './lib'
 import Field from './Field'
 
 const App = () => {
@@ -31,18 +25,19 @@ const App = () => {
 }
 
 const MyForm = ({ defaultValues, ...props }) => {
-  const form = useRef(makeForm())
+  const form = useRef(createForm())
   const { Provider } = form.current
   return (
     <Provider values={defaultValues}>
       <Form form={form.current} {...props}>
-        <FormFields form={form.current} />
+        <FormFields form={form.current}/>
       </Form>
     </Provider>
   )
 }
 
 const Form = ({ form, onSubmit, children }) => {
+  const { m } = useForm(form)
   return (
     <form className="form-horizontal" onSubmit={onSubmit}>
       {children}
@@ -95,7 +90,7 @@ const FormFields = ({ form }) => {
       />
       {/*<Field form={form} id="date1" label="Date1" component={DatePicker} />*/}
       {/*<Field form={form} id="date2" label="Date2" component={DatePicker} />*/}
-      <Field form={form} id="time" label="Time" component={TimePicker} />
+      <Field form={form} id="time" label="Time" component={TimePicker}/>
       <Field
         form={form}
         id="conn1"
@@ -126,9 +121,9 @@ const FormFields = ({ form }) => {
           return /\d/.test(value) && 'should not contain a number'
         }}
       />
-      <Field form={form} id="same" label="Same2" component={Input} />
+      <Field form={form} id="same" label="Same2" component={Input}/>
 
-      <Field form={form} id="datetime" component={DateTimePicker} />
+      <Field form={form} id="datetime" component={DateTimePicker}/>
     </>
   )
 }
