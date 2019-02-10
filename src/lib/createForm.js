@@ -2,8 +2,45 @@ import React, { useEffect, useRef, useState } from 'react'
 import set from 'lodash/fp/set'
 import getOr from 'lodash/fp/getOr'
 import { usePrevious } from './effects'
+import { combineReducers, createStore } from 'redux'
+
+const SET_FIELD_VALUE = Symbol()
+const SET_FIELD_TOUCHED = Symbol()
+const RESET_FORM = Symbol()
+
+function formState(state = {}, action) {
+  switch (action.type) {
+    case RESET_FORM:
+      return state
+    case SET_FIELD_VALUE:
+      return {
+        ...state,
+        [action.field]: {
+          ...state[action.field],
+          value: action.value,
+          error: action.error,
+          dirty: true,
+        },
+      }
+    case SET_FIELD_TOUCHED:
+      return {
+        ...state,
+        [action.field]: {
+          ...state[action.field],
+          touched: true,
+        },
+      }
+    default:
+      return state
+  }
+}
+
+const formReducer = combineReducers({
+  state: formState,
+})
 
 export default function createForm() {
+  const store = createStore(formReducer)
   const Context = React.createContext({})
 
   return {
