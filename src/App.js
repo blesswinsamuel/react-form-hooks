@@ -1,205 +1,136 @@
-import React from "react";
-import classNames from "classnames";
+import React, { useRef, useState } from 'react'
 import {
-  Code,
   Button,
-  Input,
   DatePicker,
+  DateTimePicker,
+  Input,
   TimePicker,
-  DateTimePicker
-} from "./components";
-// import Select from 'react-select';
-import * as form from "./lib";
-const Form = null;
-const Field = null;
+} from './components'
+import { makeForm } from './lib'
+import Field from './Field'
 
-export function withForm(Component) {
-  return function FormComponent(props) {
-    return (
-      <Form render={renderProps => <Component {...renderProps} {...props} />} />
-    );
-  };
-}
-
-class FormField extends React.Component {
-  render() {
-    return (
-      <Field validate={this.props.validate} field={this.props.name}>
-        {this.renderControl}
-      </Field>
-    );
+const App = () => {
+  const [values, setValues] = useState({})
+  const defaultValues = {
+    myfield: '123',
+    email: 'asdf@dsa.com',
+    date1: '2020-05-02T18:30:00.000Z',
   }
-
-  handleChange = context => e => {
-    const { onChange = v => v } = this.props;
-    context.setValue(onChange(e));
-  };
-
-  handleBlur = context => e => {
-    context.setTouched();
-    if (this.props.onBlur) {
-      this.props.onBlur(e);
-    }
-  };
-
-  renderControl = context => {
-    const { name, label, component, validate, ...props } = this.props;
-    const { value, error, warning, success, touched, dirty } = context;
-    console.log(error);
-    return (
-      <DecoratedControl
-        name={name}
-        label={label}
-        component={component}
-        {...props}
-        value={value}
-        state={{ error, warning, success, touched, dirty }}
-        onChange={this.handleChange(context)}
-        onBlur={this.handleBlur(context)}
+  const changeValues = () => setValues(defaultValues)
+  const onSubmit = values => console.log('> onSubmit -> ', values)
+  return (
+    <div className="container">
+      <MyForm
+        defaultValues={defaultValues}
+        values={values}
+        onSubmit={onSubmit}
       />
-    );
-  };
-}
-
-const DecoratedControl = ({
-  state: { error, touched, dirty } = {},
-  label,
-  name,
-  component: Control,
-  ...rest
-}) => (
-  <div className={classNames("form-group", error && "has-error")}>
-    {label && (
-      <label className="form-label" htmlFor={name}>
-        {label}
-      </label>
-    )}
-    <div style={{ position: "relative" }}>
-      <Control id={name} {...rest} />
-      <div
-        style={{
-          position: "absolute",
-          top: 0,
-          right: 0,
-          padding: 6,
-          opacity: 0.3,
-          pointerEvents: "none"
-        }}
-      >
-        {touched && <span className="label label-primary">Touched</span>}
-        {dirty && (
-          <span className="label label-warning" style={{ marginLeft: 3 }}>
-            Dirty
-          </span>
-        )}
-      </div>
+      <Button onClick={changeValues}>Reset to default values</Button>
     </div>
-    {error && <div className="form-input-hint">{error}</div>}
-  </div>
-);
-
-class App extends React.Component {
-  state = {
-    values: {}
-  };
-
-  defaultValues = {
-    myfield: "123",
-    email: "asdf@dsa.com",
-    date1: "2020-05-02T18:30:00.000Z"
-  };
-
-  changeValues = () => this.setState({ values: this.defaultValues });
-
-  onSubmit = values => console.log("> onSubmit -> ", values);
-
-  render() {
-    return (
-      <div className="container">
-        {/* <ConnectedMyForm defaultValues={this.defaultValues}
-          values={this.state.values}
-          onSubmit={this.onSubmit}/> */}
-        <Button onClick={this.changeValues}>Reset to default values</Button>
-      </div>
-    );
-  }
+  )
 }
 
-const MyForm = ({
-  values,
-  submitForm,
-  setValue,
-  resetForm,
-  anyDirty,
-  anyTouched
-}) => (
-  <form onSubmit={submitForm}>
-    <FormField
-      name="myfield"
-      label="My field"
-      validate={value => {
-        console.log(" validation -> ", value);
-        return { error: /\d/.test(value) && "should not contain a number" };
-      }}
-      onChange={value => {
-        console.log(" onChange -> ", value);
-        return value.toUpperCase();
-      }}
-      component={Input}
-    />
-    <FormField
-      name="email"
-      label="Email"
-      validate={value => {
-        console.log(" validation -> ", value);
-        return { error: /\d/.test(value) && "should not contain a number" };
-      }}
-      component={Input}
-    />
-    <FormField name="date1" label="Date1" component={DatePicker} />
-    <FormField name="date2" label="Date2" component={DatePicker} />
-    <FormField name="time" label="Time" component={TimePicker} />
-    <FormField
-      name="conn1"
-      label="Conn1"
-      component={Input}
-      onChange={v => {
-        setValue("conn2", v);
-        return v;
-      }}
-    />
-    <FormField
-      name="conn2"
-      label="Conn2"
-      component={Input}
-      validate={value => {
-        console.log(" validation -> ", value);
-        return { error: /\d/.test(value) && "should not contain a number" };
-      }}
-    />
-    <FormField
-      name="same"
-      label="Same1"
-      component={Input}
-      validate={value => {
-        console.log(" validation -> ", value);
-        return { error: /\d/.test(value) && "should not contain a number" };
-      }}
-    />
-    <FormField name="same" label="Same2" component={Input} />
+const MyForm = ({ defaultValues, ...props }) => {
+  const form = useRef(makeForm())
+  const { Provider } = form.current
+  return (
+    <Provider values={defaultValues}>
+      <Form form={form.current} {...props}>
+        <FormFields form={form.current} />
+      </Form>
+    </Provider>
+  )
+}
 
-    <FormField name="datetime" component={DateTimePicker} />
+const Form = ({ form, onSubmit, children }) => {
+  return (
+    <form className="form-horizontal" onSubmit={onSubmit}>
+      {children}
 
-    {console.log(`FORM RERENDER`)}
-    <Code>{JSON.stringify(values, null, 2)}</Code>
+      {/*{console.log(`FORM RERENDER`)}*/}
+      {/*<Code>{JSON.stringify(values, null, 2)}</Code>*/}
 
-    {anyDirty && <div>Form Dirty</div>}
-    {anyTouched && <div>Form Touched</div>}
-    <Button type="submit">Submit</Button>
-    <Button onClick={resetForm}>Reset</Button>
-  </form>
-);
+      {/*{anyDirty && <div>Form Dirty</div>}*/}
+      {/*{anyTouched && <div>Form Touched</div>}*/}
+      {/*<Button type="submit">Submit</Button>*/}
+      {/*<Button onClick={resetForm}>Reset</Button>*/}
+    </form>
+  )
+}
 
-// const ConnectedMyForm = withForm(MyForm)
+const FormFields = ({ form }) => {
+  // const {
+  //     values,
+  //     submitForm,
+  //     setValue,
+  //     resetForm,
+  //     anyDirty,
+  //     anyTouched
+  // } = form
+  return (
+    <>
+      <Field
+        form={form}
+        id="myfield"
+        label="My field"
+        component={Input}
+        validate={value => {
+          console.log(' validation -> ', value)
+          return /\d/.test(value) && 'should not contain a number'
+        }}
+        onChange={value => {
+          console.log(' onChange -> ', value)
+          return value.toUpperCase()
+        }}
+      />
+      <Field
+        form={form}
+        id="email"
+        label="Email"
+        component={Input}
+        validate={value => {
+          console.log(' validation -> ', value)
+          return /\d/.test(value) && 'should not contain a number'
+        }}
+      />
+      {/*<Field form={form} id="date1" label="Date1" component={DatePicker} />*/}
+      {/*<Field form={form} id="date2" label="Date2" component={DatePicker} />*/}
+      <Field form={form} id="time" label="Time" component={TimePicker} />
+      <Field
+        form={form}
+        id="conn1"
+        label="Conn1"
+        component={Input}
+        onChange={v => {
+          // setValue("conn2", v);
+          return v
+        }}
+      />
+      <Field
+        form={form}
+        id="conn2"
+        label="Conn2"
+        component={Input}
+        validate={value => {
+          console.log(' validation -> ', value)
+          return /\d/.test(value) && 'should not contain a number'
+        }}
+      />
+      <Field
+        form={form}
+        id="same"
+        label="Same1"
+        component={Input}
+        validate={value => {
+          console.log(' validation -> ', value)
+          return /\d/.test(value) && 'should not contain a number'
+        }}
+      />
+      <Field form={form} id="same" label="Same2" component={Input} />
 
-export default App;
+      <Field form={form} id="datetime" component={DateTimePicker} />
+    </>
+  )
+}
+
+export default App
