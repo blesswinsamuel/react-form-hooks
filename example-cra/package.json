@@ -6,6 +6,8 @@
     "pnp": true
   },
   "dependencies": {
+    "@blesswinsamuel/react-form": "../",
+    "classnames": "^2.2.6",
     "react": "^16.8.1",
     "react-dom": "^16.8.1",
     "react-scripts": "2.1.3",
