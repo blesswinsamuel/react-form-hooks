@@ -6,7 +6,7 @@ const ENV = process.env.NODE_ENV || 'development'
 
 const config = {
   mode: ENV,
-  entry: './src/index.js',
+  entry: './src/lib/index.js',
   output: {
     path: path.join(__dirname, 'dist'),
     filename: 'index.js',

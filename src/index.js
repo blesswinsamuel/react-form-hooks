@@ -1,4 +1,13 @@
-import connectForm from './connectForm'
-import connectFormField from './connectFormField'
+import React from "react";
+import ReactDOM from "react-dom";
+import "./index.css";
+import "spectre.css";
+import App from "./App";
 
-export { connectForm, connectFormField }
+const render = () => {
+  ReactDOM.render(<App />, document.getElementById("root"));
+};
+
+if (module.hot) {
+  module.hot.accept("./App", render);
+}

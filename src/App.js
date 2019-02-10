@@ -1,10 +1,12 @@
 import React from 'react';
-import moment from 'moment'
 import classNames from 'classnames'
 
 // import Select from 'react-select';
-import * as form from '@blesswinsamuel/react-form';
-console.log(form)
+import * as form from './lib';
+const Form = null
+const Field = null
+const moment = null
+
 export function withForm (Component) {
   return function FormComponent (props) {
     return (
