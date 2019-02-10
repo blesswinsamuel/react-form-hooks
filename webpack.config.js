@@ -10,7 +10,12 @@ const config = {
   output: {
     path: path.join(__dirname, 'dist'),
     filename: 'index.js',
-    libraryTarget: 'commonjs2'
+    libraryTarget: 'umd'
+  },
+  externals: {
+    // Use external version of React
+    'react': 'React',
+    'react-dom': 'ReactDOM',
   },
   module: {
     rules: [
