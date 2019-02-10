@@ -1,5 +1,6 @@
 const webpack = require('webpack');
 const path = require('path');
+const PnpWebpackPlugin = require(`pnp-webpack-plugin`);
 
 const ENV = process.env.NODE_ENV || 'development'
 
@@ -19,8 +20,18 @@ const config = {
   plugins: [
     new webpack.DefinePlugin({
       'process.env.NODE_ENV': JSON.stringify(ENV)
-    })
+    }),
   ],
+  resolve: {
+    plugins: [
+      PnpWebpackPlugin,
+    ],
+  },
+  resolveLoader: {
+    plugins: [
+      PnpWebpackPlugin.moduleLoader(module),
+    ],
+  },
 };
 
 module.exports = config;
