@@ -1,6 +1,6 @@
-import React, { useRef, useState } from 'react'
-import { Button, DateTimePicker, Input, TimePicker } from './components'
-import { createForm, useForm } from './lib'
+import React, { useState } from 'react'
+import { Button, Code, DatePicker, DateTimePicker, Input, TimePicker } from './components'
+import { useForm, useFormState } from './lib'
 import Field from './Field'
 
 const App = () => {
@@ -24,31 +24,20 @@ const App = () => {
   )
 }
 
-const MyForm = ({ defaultValues, ...props }) => {
-  const form = useRef(createForm())
-  const { Provider } = form.current
+const MyForm = ({ defaultValues, onSubmit }) => {
+  const form = useForm({ initialValues: defaultValues })
+  const { dirty, touched, values } = useFormState(form)
+  console.log('FORM RERENDER')
   return (
-    <Provider values={defaultValues}>
-      <Form form={form.current} {...props}>
-        <FormFields form={form.current}/>
-      </Form>
-    </Provider>
-  )
-}
+    <form className="form-horizontal" onSubmit={form.formActions.submitHandler(onSubmit)}>
+      <FormFields form={form}/>
 
-const Form = ({ form, onSubmit, children }) => {
-  const { m } = useForm(form)
-  return (
-    <form className="form-horizontal" onSubmit={onSubmit}>
-      {children}
+      <Code>{JSON.stringify(values, null, 2)}</Code>
 
-      {/*{console.log(`FORM RERENDER`)}*/}
-      {/*<Code>{JSON.stringify(values, null, 2)}</Code>*/}
-
-      {/*{anyDirty && <div>Form Dirty</div>}*/}
-      {/*{anyTouched && <div>Form Touched</div>}*/}
-      {/*<Button type="submit">Submit</Button>*/}
-      {/*<Button onClick={resetForm}>Reset</Button>*/}
+      {dirty && <div>Form Dirty</div>}
+      {touched && <div>Form Touched</div>}
+      <Button type="submit">Submit</Button>
+      <Button onClick={form.formActions.resetForm}>Reset</Button>
     </form>
   )
 }
@@ -88,8 +77,8 @@ const FormFields = ({ form }) => {
           return /\d/.test(value) && 'should not contain a number'
         }}
       />
-      {/*<Field form={form} id="date1" label="Date1" component={DatePicker} />*/}
-      {/*<Field form={form} id="date2" label="Date2" component={DatePicker} />*/}
+      <Field form={form} id="date1" label="Date1" component={DatePicker} />
+      <Field form={form} id="date2" label="Date2" component={DatePicker} />
       <Field form={form} id="time" label="Time" component={TimePicker}/>
       <Field
         form={form}

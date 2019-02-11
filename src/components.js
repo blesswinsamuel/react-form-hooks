@@ -1,7 +1,5 @@
 import React from 'react'
 
-const moment = null
-
 export const Code = props => (
   <pre className="code" data-lang="JSON">
     <code>{props.children}</code>
@@ -21,23 +19,52 @@ export const Input = ({ onChange, value, ...otherProps }) => (
   />
 )
 
-export const DatePicker = ({ onChange, value, ...otherProps }) => (
+function formatDate(date) {
+  let d = new Date(date),
+    month = '' + (d.getMonth() + 1),
+    day = '' + d.getDate(),
+    year = d.getFullYear()
+
+  if (month.length < 2) month = '0' + month
+  if (day.length < 2) day = '0' + day
+
+  return [year, month, day].join('-')
+}
+
+export const DatePicker = ({ value, onChange, ...otherProps }) => (
   <Input
     type="date"
-    value={value && moment(value).format('YYYY-MM-DD')}
+    value={value ? formatDate(value, 'YYYY-MM-DD') : null}
     onChange={value => {
-      if (!value) return onChange(null)
-      return onChange(moment(value).toISOString())
+      if (!value) return onChange(null) // for clear button
+      return onChange(new Date(value).toISOString()) // set in utc as timezone is stripped in the server
     }}
     {...otherProps}
   />
 )
 
+function formatTime(time) {
+  return time + ':00'
+}
+
 export const TimePicker = props => <Input type="time" {...props} />
 
-export const DateTimePicker = props => (
-  <Input type="datetime-local" {...props} />
+function formatDateTime(date) {
+  return date.replace('Z', '')
+}
+
+export const DateTimePicker = ({ value, onChange, ...otherProps }) => (
+  <Input
+    type="datetime-local"
+    value={value ? formatDateTime(value) : null}
+    onChange={value => {
+      if (!value) return onChange(null) // for clear button
+      return onChange(new Date(value).toISOString()) // set in utc as timezone is stripped in the server
+    }}
+    {...otherProps}
+  />
 )
+
 
 // var options = [
 //  { value: 'one', label: 'One' },

@@ -35,6 +35,9 @@
     "test": "react-scripts test",
     "build": "NODE_ENV=production webpack -p --progress --colors"
   },
+  "files": [
+    "dist"
+  ],
   "eslintConfig": {
     "extends": "react-app"
   },

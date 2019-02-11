@@ -44,7 +44,7 @@ const Field = ({
   render = v => v,
 }) => {
   const { input, meta } = form
-    ? useFormField(form, id, mapValue, validate)
+    ? useFormField(form, id, { mapValue, validate })
     : { input: { id }, meta: {} }
   const { touched, dirty, error } = meta
 

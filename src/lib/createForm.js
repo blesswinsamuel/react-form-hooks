@@ -1,18 +1,57 @@
-import React, { useEffect, useRef, useState } from 'react'
-import set from 'lodash/fp/set'
-import getOr from 'lodash/fp/getOr'
-import { usePrevious } from './effects'
+import React from 'react'
 import { combineReducers, createStore } from 'redux'
+import { handleFormSubmit } from './formHandlers'
 
-const SET_FIELD_VALUE = Symbol()
-const SET_FIELD_TOUCHED = Symbol()
-const RESET_FORM = Symbol()
+const CHANGE_FIELD_VALUE = 'CHANGE_FIELD_VALUE'
+const INIT_FIELD = 'INIT_FIELD'
+const TOUCH_FIELD = 'TOUCH_FIELD'
+const RESET_FORM = 'RESET_FORM'
 
-function formState(state = {}, action) {
+function getProperty(obj, key) {
+  const parts = key.replace(/\[(\w+)]/g, '.$1') // convert indexes to properties
+    .replace(/^\./, '')  // strip a leading dot
+    .split('.')
+  let curObj = obj
+  for (let i = 0, n = parts.length; i < n; ++i) {
+    const k = parts[i]
+    if (curObj === undefined) {
+      return undefined
+    }
+    if (k in curObj) {
+      curObj = curObj[k]
+    } else {
+      return
+    }
+  }
+  return curObj
+}
+
+function convert(state) {
+  const r = {}
+  for (const key in state) {
+    if (state.hasOwnProperty(key)) {
+      const k = key.split('.')[0]
+      r[k] = state[key].value
+    }
+  }
+  return r
+}
+
+function formStore(state = {}, action) {
   switch (action.type) {
     case RESET_FORM:
       return state
-    case SET_FIELD_VALUE:
+    case INIT_FIELD:
+      return {
+        ...state,
+        [action.field]: {
+          value: action.value,
+          error: action.error,
+          touched: false,
+          dirty: false,
+        },
+      }
+    case CHANGE_FIELD_VALUE:
       return {
         ...state,
         [action.field]: {
@@ -22,7 +61,7 @@ function formState(state = {}, action) {
           dirty: true,
         },
       }
-    case SET_FIELD_TOUCHED:
+    case TOUCH_FIELD:
       return {
         ...state,
         [action.field]: {
@@ -36,168 +75,149 @@ function formState(state = {}, action) {
 }
 
 const formReducer = combineReducers({
-  state: formState,
+  state: formStore,
 })
 
-export default function createForm() {
-  const store = createStore(formReducer)
-  const Context = React.createContext({})
+const isEqual = (a, b) => {
+  for (let i = 0; i < Math.max(a.length, b.length); i++) {
+    if (a[i] !== b[i]) {
+      return false
+    }
+  }
+  return true
+}
+
+export default function createForm({ initialValues }) {
+  const store = createStore(formReducer, window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__())
+  const fieldRefs = {}
+
+  const validateField = (fieldId, value) => {
+    const validate = Object.values(fieldRefs[fieldId]).map(x => x.validate).find(x => !!x)
+      || (() => null)
+    return validate(value)
+  }
+
+  const initField = (fieldId) => {
+    const value = getProperty(initialValues, fieldId)
+    return {
+      type: INIT_FIELD,
+      field: fieldId,
+      value: value,
+      error: validateField(fieldId, value),
+    }
+  }
+
+  const unregisterField = (fieldId, ref, unsubscribe) => {
+    delete fieldRefs[fieldId][ref]
+    unsubscribe()
+  }
+
+  const registerField = (fieldId, ref, validate, mapValueFn, setFieldState, subscribeTo) => {
+    if (!fieldRefs[fieldId]) {
+      fieldRefs[fieldId] = {}
+    }
+    fieldRefs[fieldId][ref] = {
+      validate, mapValueFn, setFieldState,
+    }
+    const unsubscribe = store.subscribe(() => {
+      setFieldState(prevState => {
+        const newState = store.getState().state[fieldId] || {}
+        if (!isEqual(subscribeTo(prevState), subscribeTo(newState))) {
+          return newState
+        }
+        return prevState
+      })
+    })
+    const initialValue = getProperty(initialValues, fieldId)
+    store.dispatch(initField(fieldId))
+    return () => unregisterField(fieldId, ref, unsubscribe)
+  }
+
+  const resetForm = () => {
+    Object.keys(fieldRefs).forEach((fieldId) => {
+      store.dispatch(initField(fieldId))
+    })
+  }
+
+  const touchAll = () => {
+    Object.keys(fieldRefs).forEach((fieldId) => {
+      store.dispatch({ type: TOUCH_FIELD, field: fieldId })
+    })
+  }
+
+  const changeFieldValue = (fieldId) => (value) => {
+    store.dispatch({ type: CHANGE_FIELD_VALUE, field: fieldId, value: value, error: validateField(fieldId, value) })
+  }
+
+  const touchField = (fieldId) => () => {
+    store.dispatch({ type: TOUCH_FIELD, field: fieldId })
+  }
+
+  const getFieldValue = (fieldId) => {
+    return store.state && store.state[fieldId] && store.state[fieldId].value
+  }
+
+  const getValues = () => {
+
+  }
+
+  const submitHandler = fn =>
+    handleFormSubmit(() => {
+      const state = store.getState().state
+      if (Object.values(state).some(field => field.error)) {
+        touchAll()
+        return
+      }
+      return fn(convert(state))
+    })
 
   return {
-    Context,
-    Provider: formProvider(Context.Provider),
+    formActions: {
+      resetForm,
+      touchAll,
+      submitHandler,
+    },
+    fieldActions: {
+      registerField,
+      changeFieldValue,
+      touchField,
+      getFieldValue,
+    },
   }
 }
 
-const emptyObj = {}
-const formProvider = Provider => {
-  return function FormProvider(props) {
-    const { children, values: initialValues = emptyObj } = props
-    const previousInitialValues = usePrevious(initialValues) || initialValues
-    const [state, setState] = useState({
-      values: initialValues,
-      meta: emptyObj,
-    })
-    const resetForm = () =>
-      setState({
-        values: initialValues,
-        meta: computeErrors(initialValues, emptyObj),
-      })
-    // Reset form when initialValues changes
-    useEffect(() => {
-      if (initialValues !== previousInitialValues) {
-        resetForm()
-      }
-    }, [initialValues])
-
-    const registeredFields = useRef({})
-    const getRegisteredFieldForId = fieldId => {
-      const { validate = () => undefined, mapValue = v => v } =
-      registeredFields.current[fieldId] || {}
-      return { validate, mapValue }
-    }
-
-    const computeErrors = (values, meta) => {
-      return Object.keys(registeredFields.current).reduce((acc, fieldId) => {
-        const fieldMeta = getOr({}, fieldId, meta)
-        const value = getOr('', fieldId, values)
-        return set(
-          fieldId,
-          {
-            ...fieldMeta,
-            error: getRegisteredFieldForId(fieldId).validate(value, values),
-          },
-          acc,
-        )
-      }, meta)
-    }
-    const touchAll = () => {
-      setState(({ values = {}, meta = {} }) => ({
-        values: values,
-        meta: Object.keys(registeredFields.current).reduce(
-          (acc, fieldId) =>
-            set(
-              fieldId,
-              {
-                ...fieldActions(fieldId).getMeta(acc),
-                touched: true,
-              },
-              acc,
-            ),
-          meta,
-        ),
-      }))
-    }
-
-    const fieldActions = fieldId => {
-      const getMeta = meta => getOr({}, fieldId, meta)
-      const getValue = values => getOr('', fieldId, values)
-      const getRegisteredField = () => getRegisteredFieldForId(fieldId)
-      return {
-        getMeta,
-        getValue,
-        registerField: (validate, mapValue) => {
-          if (!registeredFields.current[fieldId]) {
-            registeredFields.current[fieldId] = {}
-          }
-          const registeredField = registeredFields.current[fieldId]
-          if (!registeredField.validate) {
-            registeredField.validate = validate
-          }
-          if (!registeredField.mapValue) {
-            registeredField.mapValue = mapValue
-          }
-        },
-
-        initField: () => {
-          // update validation error value to state
-          setState(({ values = {}, meta = {} }) => ({
-            values: values,
-            meta: set(
-              fieldId,
-              {
-                ...getMeta(meta),
-                error: getRegisteredField().validate(getValue(values), values),
-              },
-              meta,
-            ),
-          }))
-        },
-
-        changeFieldValue: val => {
-          const registeredField = getRegisteredField()
-          setState(({ values = {}, meta = {} }) => {
-            const newValues = set(
-              fieldId,
-              registeredField.mapValue(val, values),
-              values,
-            )
-            return {
-              values: newValues,
-              meta: computeErrors(
-                newValues,
-                set(
-                  fieldId,
-                  {
-                    ...getMeta(meta),
-                    dirty: true,
-                  },
-                  meta,
-                ),
-              ),
-            }
-          })
-        },
-
-        touchField: () => {
-          setState(({ values = {}, meta = {} }) => ({
-            values: values,
-            meta: set(
-              fieldId,
-              {
-                ...getMeta(meta),
-                touched: true,
-              },
-              meta,
-            ),
-          }))
-        },
-      }
-    }
-
-    return (
-      <Provider
-        value={{
-          values: state.values,
-          meta: state.meta,
-          registeredFields: registeredFields.current,
-          setState,
-          fieldActions,
-          formActions: { resetForm, touchAll },
-        }}
-      >
-        {children}
-      </Provider>
-    )
-  }
-}
+// const emptyObj = {}
+// const formProvider = Provider => {
+//   return function FormProvider(props) {
+//     const { children, values: initialValues = emptyObj } = props
+//     const previousInitialValues = usePrevious(initialValues) || initialValues
+//     const [state, setState] = useState({
+//       values: initialValues,
+//       meta: emptyObj,
+//     })
+//     const resetForm = () =>
+//       setState({
+//         values: initialValues,
+//         meta: computeErrors(initialValues, emptyObj),
+//       })
+//     // Reset form when initialValues changes
+//     useEffect(() => {
+//       if (initialValues !== previousInitialValues) {
+//         resetForm()
+//       }
+//     }, [initialValues])
+//
+//     return (
+//       <Provider
+//         value={{
+//           values: state.values,
+//           meta: state.meta,
+//           registeredFields: registeredFields.current,
+//           setState,
+//         }}
+//       >
+//         {children}
+//       </Provider>
+//     )
+//   }
+// }
