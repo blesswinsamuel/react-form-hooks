@@ -7,14 +7,14 @@ export const Code = props => (
 )
 
 export const Button = props => (
-  <button className="btn btn-primary" style={{ margin: 3 }} {...props} />
+  <button type="button" className="btn btn-primary" style={{ margin: 3 }} {...props} />
 )
 
 export const Input = ({ onChange, value, ...otherProps }) => (
   <input
     className="form-input"
     onChange={e => onChange(e.target.value)}
-    value={value || ''}
+    value={value}
     {...otherProps}
   />
 )
@@ -34,7 +34,7 @@ function formatDate(date) {
 export const DatePicker = ({ value, onChange, ...otherProps }) => (
   <Input
     type="date"
-    value={value ? formatDate(value, 'YYYY-MM-DD') : null}
+    value={value ? formatDate(value, 'YYYY-MM-DD') : ''}
     onChange={value => {
       if (!value) return onChange(null) // for clear button
       return onChange(new Date(value).toISOString()) // set in utc as timezone is stripped in the server
@@ -56,7 +56,7 @@ function formatDateTime(date) {
 export const DateTimePicker = ({ value, onChange, ...otherProps }) => (
   <Input
     type="datetime-local"
-    value={value ? formatDateTime(value) : null}
+    value={value ? formatDateTime(value) : ''}
     onChange={value => {
       if (!value) return onChange(null) // for clear button
       return onChange(new Date(value).toISOString()) // set in utc as timezone is stripped in the server

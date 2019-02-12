@@ -92,13 +92,16 @@ export default function createForm({ initialValues }) {
   const fieldRefs = {}
 
   const validateField = (fieldId, value) => {
-    const validate = Object.values(fieldRefs[fieldId]).map(x => x.validate).find(x => !!x)
+    if (!fieldRefs[fieldId]) {
+      console.warn(`Field ${fieldId} not registered`)
+    }
+    const validate = Object.values(fieldRefs[fieldId] || {}).map(x => x.validate).find(x => !!x)
       || (() => null)
     return validate(value)
   }
 
   const initField = (fieldId) => {
-    const value = getProperty(initialValues, fieldId)
+    const value = getProperty(initialValues, fieldId) || ''
     return {
       type: INIT_FIELD,
       field: fieldId,
@@ -128,9 +131,23 @@ export default function createForm({ initialValues }) {
         return prevState
       })
     })
-    const initialValue = getProperty(initialValues, fieldId)
     store.dispatch(initField(fieldId))
     return () => unregisterField(fieldId, ref, unsubscribe)
+  }
+
+  const initialize = (newInitialValues) => {
+    initialValues = newInitialValues
+    resetForm()
+  }
+
+  const getFieldState = (fieldId, { mapValueFn, validate } = {}) => {
+    const value = getProperty(initialValues, fieldId) || ''
+    return store.getState().state[fieldId] || {
+      value: value,
+      error: (validate || (value => validateField(fieldId, value)))(value),
+      touched: false,
+      dirty: false,
+    }
   }
 
   const resetForm = () => {
@@ -173,6 +190,7 @@ export default function createForm({ initialValues }) {
 
   return {
     formActions: {
+      initialize,
       resetForm,
       touchAll,
       submitHandler,
@@ -181,6 +199,7 @@ export default function createForm({ initialValues }) {
       registerField,
       changeFieldValue,
       touchField,
+      getFieldState,
       getFieldValue,
     },
   }
