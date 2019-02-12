@@ -36,7 +36,6 @@ const Field = ({
   form,
   id,
   component: InputComponent,
-  mapValue,
   validate,
   InputProps,
   label,
@@ -44,7 +43,7 @@ const Field = ({
   render = v => v,
 }) => {
   const { input, meta } = form
-    ? useFormField(form, id, { mapValue, validate })
+    ? useFormField(form, id, { validate })
     : { input: { id }, meta: {} }
   const { touched, dirty, error } = meta
 
@@ -61,6 +60,7 @@ const Field = ({
       )}
       <div className="col-9 col-sm-12" style={{ position: 'relative' }}>
         {render(<InputComponent {...input} {...InputProps} />)}
+        {showError && <div className="form-input-hint">{getErrorString(error)}</div>}
         <div
           style={{
             position: 'absolute',
@@ -79,7 +79,6 @@ const Field = ({
           )}
         </div>
       </div>
-      {showError && <div className="form-input-hint">{getErrorString(error)}</div>}
     </div>
   )
 }

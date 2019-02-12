@@ -1,16 +1,22 @@
 import { useEffect, useRef, useState } from 'react'
 
 export default function useFormField(form, fieldId, opts = {}) {
-  const { mapValueFn, validate } = opts
-  const { registerField, changeFieldValue, touchField, getFieldState } = form.fieldActions
+  const { registerField, changeFieldValue, touchField, initFieldAndGetState } = form.fieldActions
 
   // value: null, touched: false, dirty: false, error: null
-  const [fieldState, setFieldState] = useState(() => getFieldState(fieldId, opts))
-  const ref = useRef(Symbol())
-  const subscribeTo = state => [state.value, state.touched, state.error, state.dirty]
-  useEffect(() => registerField(fieldId, ref, validate, mapValueFn, setFieldState, subscribeTo), [])
+  const ref = useRef()
+  const getRef = () => {
+    if (!ref.current) {
+      ref.current = Symbol()
+    }
 
-  console.log(fieldId, fieldState)
+    return ref.current
+  }
+  const [fieldState, setFieldState] = useState(() => initFieldAndGetState(fieldId, getRef(), opts))
+  const subscribedValues = state => [state.value, state.touched, state.error, state.dirty]
+  useEffect(() => registerField(fieldId, getRef(), setFieldState, opts, subscribedValues), [])
+
+  console.warn(fieldId, fieldState)
 
   const input = {
     id: fieldId,

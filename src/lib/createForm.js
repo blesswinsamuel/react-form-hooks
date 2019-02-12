@@ -88,14 +88,14 @@ export default function createForm({ initialValues }) {
 
   const validateField = (fieldId, value) => {
     if (!fieldRefs[fieldId]) {
-      console.error(`Field "${fieldId}" is not registered`)
+      throw new Error(`Field "${fieldId}" is not registered`)
     }
-    const validate = Object.values(fieldRefs[fieldId] || {}).map(x => x.validate).find(x => !!x)
+    const validate = Object.values(fieldRefs[fieldId]).map(x => x.validate).find(x => !!x)
       || (() => null)
     return validate(value)
   }
 
-  const initField = (fieldId, { mapValueFn, validate } = {}) => {
+  const initField = (fieldId) => {
     const value = getProperty(initialValues, fieldId) || ''
     return {
       type: INIT_FIELD,
@@ -105,23 +105,34 @@ export default function createForm({ initialValues }) {
     }
   }
 
-  const registerField = (fieldId, ref, validate, mapValueFn, setFieldState, subscribeTo) => {
+  const initFieldAndGetState = (fieldId, ref, { validate } = {}) => {
     if (!fieldRefs[fieldId]) {
       fieldRefs[fieldId] = {}
     }
     fieldRefs[fieldId][ref] = {
-      validate, mapValueFn, setFieldState,
+      validate,
     }
+    store.dispatch(initField(fieldId))
+    return store.getState()[fieldId]
+  }
+
+  const registerField = (fieldId, ref, setFieldState, { validate }, subscribedValues) => {
+    // if (!fieldRefs[fieldId]) {
+    //   fieldRefs[fieldId] = {}
+    // }
+    // fieldRefs[fieldId][ref] = {
+    //   validate, setFieldState,
+    // }
     const unsubscribe = store.subscribe(() => {
       setFieldState(prevState => {
-        const newState = store.getState()[fieldId] || {}
-        if (!isEqual(subscribeTo(prevState), subscribeTo(newState))) {
+        const newState = store.getState()[fieldId]
+        if (!isEqual(subscribedValues(prevState), subscribedValues(newState))) {
           return newState
         }
         return prevState
       })
     })
-    store.dispatch(initField(fieldId))
+    // store.dispatch(initField(fieldId))
     return () => {
       delete fieldRefs[fieldId][ref]
       unsubscribe()
@@ -133,10 +144,7 @@ export default function createForm({ initialValues }) {
     resetForm()
   }
 
-  const getFieldState = (fieldId, { mapValueFn, validate } = {}) => {
-    if (!store.getState()[fieldId]) {
-      store.dispatch(initField(fieldId, { mapValueFn, validate }))
-    }
+  const getFieldState = (fieldId) => {
     return store.getState()[fieldId]
   }
 
@@ -190,44 +198,8 @@ export default function createForm({ initialValues }) {
       registerField,
       changeFieldValue,
       touchField,
-      getFieldState,
+      initFieldAndGetState,
       getFieldValue,
     },
   }
 }
-
-// const emptyObj = {}
-// const formProvider = Provider => {
-//   return function FormProvider(props) {
-//     const { children, values: initialValues = emptyObj } = props
-//     const previousInitialValues = usePrevious(initialValues) || initialValues
-//     const [state, setState] = useState({
-//       values: initialValues,
-//       meta: emptyObj,
-//     })
-//     const resetForm = () =>
-//       setState({
-//         values: initialValues,
-//         meta: computeErrors(initialValues, emptyObj),
-//       })
-//     // Reset form when initialValues changes
-//     useEffect(() => {
-//       if (initialValues !== previousInitialValues) {
-//         resetForm()
-//       }
-//     }, [initialValues])
-//
-//     return (
-//       <Provider
-//         value={{
-//           values: state.values,
-//           meta: state.meta,
-//           registeredFields: registeredFields.current,
-//           setState,
-//         }}
-//       >
-//         {children}
-//       </Provider>
-//     )
-//   }
-// }

@@ -1,20 +1,20 @@
 import { useEffect, useRef } from 'react'
 import createForm from './createForm'
-import usePrevious from './utils/usePrevious'
 
 export default function useForm(opts) {
   const form = useRef()
 
-  const prevInitialValues = usePrevious(opts.initialValues)
+  const prevInitialValues = useRef(opts.initialValues)
 
   useEffect(() => {
-    if (opts.initialValues === prevInitialValues) {
+    if (opts.initialValues === prevInitialValues.current) {
       return
     }
 
-    if (opts.initialValues && opts.initialValues !== prevInitialValues) {
+    if (opts.initialValues && opts.initialValues !== prevInitialValues.current) {
       form.current.formActions.initialize(opts.initialValues)
     }
+    prevInitialValues.current = opts.initialValues
   })
 
   const getForm = () => {
