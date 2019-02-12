@@ -43,9 +43,9 @@ export const DatePicker = ({ value, onChange, ...otherProps }) => (
   />
 )
 
-function formatTime(time) {
-  return time + ':00'
-}
+// function formatTime(time) {
+//   return time + ':00'
+// }
 
 export const TimePicker = props => <Input type="time" {...props} />
 

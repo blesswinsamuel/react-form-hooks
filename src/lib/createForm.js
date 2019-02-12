@@ -1,5 +1,4 @@
-import React from 'react'
-import { combineReducers, createStore } from 'redux'
+import { createStore } from 'redux'
 import { handleFormSubmit } from './formHandlers'
 
 const CHANGE_FIELD_VALUE = 'CHANGE_FIELD_VALUE'
@@ -37,7 +36,7 @@ function convert(state) {
   return r
 }
 
-function formStore(state = {}, action) {
+function formReducer(state = {}, action) {
   switch (action.type) {
     case RESET_FORM:
       return state
@@ -74,10 +73,6 @@ function formStore(state = {}, action) {
   }
 }
 
-const formReducer = combineReducers({
-  state: formStore,
-})
-
 const isEqual = (a, b) => {
   for (let i = 0; i < Math.max(a.length, b.length); i++) {
     if (a[i] !== b[i]) {
@@ -93,14 +88,14 @@ export default function createForm({ initialValues }) {
 
   const validateField = (fieldId, value) => {
     if (!fieldRefs[fieldId]) {
-      console.warn(`Field ${fieldId} not registered`)
+      console.error(`Field "${fieldId}" is not registered`)
     }
     const validate = Object.values(fieldRefs[fieldId] || {}).map(x => x.validate).find(x => !!x)
       || (() => null)
     return validate(value)
   }
 
-  const initField = (fieldId) => {
+  const initField = (fieldId, { mapValueFn, validate } = {}) => {
     const value = getProperty(initialValues, fieldId) || ''
     return {
       type: INIT_FIELD,
@@ -108,11 +103,6 @@ export default function createForm({ initialValues }) {
       value: value,
       error: validateField(fieldId, value),
     }
-  }
-
-  const unregisterField = (fieldId, ref, unsubscribe) => {
-    delete fieldRefs[fieldId][ref]
-    unsubscribe()
   }
 
   const registerField = (fieldId, ref, validate, mapValueFn, setFieldState, subscribeTo) => {
@@ -124,7 +114,7 @@ export default function createForm({ initialValues }) {
     }
     const unsubscribe = store.subscribe(() => {
       setFieldState(prevState => {
-        const newState = store.getState().state[fieldId] || {}
+        const newState = store.getState()[fieldId] || {}
         if (!isEqual(subscribeTo(prevState), subscribeTo(newState))) {
           return newState
         }
@@ -132,7 +122,10 @@ export default function createForm({ initialValues }) {
       })
     })
     store.dispatch(initField(fieldId))
-    return () => unregisterField(fieldId, ref, unsubscribe)
+    return () => {
+      delete fieldRefs[fieldId][ref]
+      unsubscribe()
+    }
   }
 
   const initialize = (newInitialValues) => {
@@ -141,13 +134,10 @@ export default function createForm({ initialValues }) {
   }
 
   const getFieldState = (fieldId, { mapValueFn, validate } = {}) => {
-    const value = getProperty(initialValues, fieldId) || ''
-    return store.getState().state[fieldId] || {
-      value: value,
-      error: (validate || (value => validateField(fieldId, value)))(value),
-      touched: false,
-      dirty: false,
+    if (!store.getState()[fieldId]) {
+      store.dispatch(initField(fieldId, { mapValueFn, validate }))
     }
+    return store.getState()[fieldId]
   }
 
   const resetForm = () => {
@@ -171,7 +161,8 @@ export default function createForm({ initialValues }) {
   }
 
   const getFieldValue = (fieldId) => {
-    return store.state && store.state[fieldId] && store.state[fieldId].value
+    const state = store.getState()
+    return state[fieldId] && state[fieldId].value
   }
 
   const getValues = () => {
@@ -180,7 +171,7 @@ export default function createForm({ initialValues }) {
 
   const submitHandler = fn =>
     handleFormSubmit(() => {
-      const state = store.getState().state
+      const state = store.getState()
       if (Object.values(state).some(field => field.error)) {
         touchAll()
         return
