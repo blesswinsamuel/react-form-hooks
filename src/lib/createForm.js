@@ -90,12 +90,16 @@ function flattenObject(object) {
         }
       }
     }
+    return res
   }
 
   return recurse(object)
 }
 
 export default function createForm({ initialValues }) {
+  console.log(initialValues)
+  const flattenedInitialValues = flattenObject(initialValues)
+  console.log(flattenedInitialValues)
   const store = createStore(formReducer, window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__())
   const fieldRefs = {}
   // const formRefs = {}
