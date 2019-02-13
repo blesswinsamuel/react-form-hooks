@@ -26,19 +26,30 @@ const App = () => {
 
 const MyForm = ({ defaultValues, onSubmit }) => {
   const form = useForm({ initialValues: defaultValues })
-  const { dirty, touched, values } = useFormState(form)
-  console.log('FORM RERENDER')
+  console.log('FORM_RERENDER')
   return (
     <form className="form-horizontal" onSubmit={form.formActions.submitHandler(onSubmit)}>
       <FormFields form={form}/>
 
+      <FormStateAndButton form={form}/>
+    </form>
+  )
+}
+
+const FormStateAndButton = ({ form }) => {
+  const { anyError, anyDirty, anyTouched, values } = useFormState(form, state => [state.anyError, state.anyDirty, state.anyTouched, state.values])
+
+  console.log('FORM_STATE_UPDATE', { anyError, anyDirty, anyTouched, values })
+  return (
+    <>
       <Code>{JSON.stringify(values, null, 2)}</Code>
 
-      {dirty && <div>Form Dirty</div>}
-      {touched && <div>Form Touched</div>}
+      {anyError && <div>Form Error</div>}
+      {anyDirty && <div>Form Dirty</div>}
+      {anyTouched && <div>Form Touched</div>}
       <Button type="submit">Submit</Button>
-      <Button onClick={form.formActions.resetForm}>Reset</Button>
-    </form>
+      <Button onClick={form.formActions.initializeForm}>Reset</Button>
+    </>
   )
 }
 
@@ -77,8 +88,8 @@ const FormFields = ({ form }) => {
           return /\d/.test(value) && 'should not contain a number'
         }}
       />
-      <Field form={form} id="date1" label="Date1" component={DatePicker} />
-      <Field form={form} id="date2" label="Date2" component={DatePicker} />
+      <Field form={form} id="date1" label="Date1" component={DatePicker}/>
+      <Field form={form} id="date2" label="Date2" component={DatePicker}/>
       <Field form={form} id="time" label="Time" component={TimePicker}/>
       <Field
         form={form}

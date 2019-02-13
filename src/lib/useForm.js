@@ -12,7 +12,7 @@ export default function useForm(opts) {
     }
 
     if (opts.initialValues && opts.initialValues !== prevInitialValues.current) {
-      form.current.formActions.initialize(opts.initialValues)
+      form.current.formActions.initializeForm(opts.initialValues)
     }
     prevInitialValues.current = opts.initialValues
   })

@@ -47,6 +47,8 @@ const Field = ({
     : { input: { id }, meta: {} }
   const { touched, dirty, error } = meta
 
+  console.log("FIELD_STATE_UPDATE", id, { value: input.value, ...meta })
+
   const showError = touched && error
 
   return (
