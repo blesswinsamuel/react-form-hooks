@@ -35,35 +35,40 @@ function convert(state) {
   return r
 }
 
-function formReducer(state = {}, action) {
+function fieldReducer(state = {}, action) {
   switch (action.type) {
     case INIT_FIELD:
       return {
-        ...state,
-        [action.field]: {
-          value: action.value,
-          error: action.error,
-          touched: false,
-          dirty: false,
-        },
+        value: action.value,
+        error: action.error,
+        touched: false,
+        dirty: false,
       }
     case CHANGE_FIELD_VALUE:
       return {
         ...state,
-        [action.field]: {
-          ...state[action.field],
-          value: action.value,
-          error: action.error,
-          dirty: true,
-        },
+        value: action.value,
+        error: action.error,
+        dirty: true,
       }
     case TOUCH_FIELD:
       return {
         ...state,
-        [action.field]: {
-          ...state[action.field],
-          touched: true,
-        },
+        touched: true,
+      }
+    default:
+      return state
+  }
+}
+
+function formReducer(state = {}, action) {
+  switch (action.type) {
+    case INIT_FIELD:
+    case CHANGE_FIELD_VALUE:
+    case TOUCH_FIELD:
+      return {
+        ...state,
+        [action.field]: fieldReducer(state[action.field], action),
       }
     default:
       return state
@@ -72,6 +77,7 @@ function formReducer(state = {}, action) {
 
 function flattenObject(object) {
   let res = {}
+
   function recurse(obj, current) {
     for (let key in obj) {
       if (obj.hasOwnProperty(key)) {
