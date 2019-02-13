@@ -4,7 +4,6 @@ import { handleFormSubmit } from './formHandlers'
 const CHANGE_FIELD_VALUE = 'CHANGE_FIELD_VALUE'
 const INIT_FIELD = 'INIT_FIELD'
 const TOUCH_FIELD = 'TOUCH_FIELD'
-const RESET_FORM = 'RESET_FORM'
 
 function getProperty(obj, key) {
   const parts = key.replace(/\[(\w+)]/g, '.$1') // convert indexes to properties
@@ -38,8 +37,6 @@ function convert(state) {
 
 function formReducer(state = {}, action) {
   switch (action.type) {
-    case RESET_FORM:
-      return state
     case INIT_FIELD:
       return {
         ...state,
@@ -71,6 +68,25 @@ function formReducer(state = {}, action) {
     default:
       return state
   }
+}
+
+function flattenObject(object) {
+  let res = {}
+  function recurse(obj, current) {
+    for (let key in obj) {
+      if (obj.hasOwnProperty(key)) {
+        const value = obj[key]
+        const newKey = (current ? current + '.' + key : key)  // joined key with dot
+        if (value && typeof value === 'object') {
+          recurse(value, newKey)  // it's a nested object, so do it again
+        } else {
+          res[newKey] = value  // it's not an object, so set the property
+        }
+      }
+    }
+  }
+
+  return recurse(object)
 }
 
 export default function createForm({ initialValues }) {
