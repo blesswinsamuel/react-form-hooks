@@ -116,7 +116,7 @@ export default function createForm({ initialValues }) {
     return store.getState()[fieldId]
   }
 
-  const registerField = (fieldId, ref, setFieldState, { validate }, subscribedValues) => {
+  const registerField = (fieldId, ref, setFieldState) => {
     // if (!fieldRefs[fieldId]) {
     //   fieldRefs[fieldId] = {}
     // }
@@ -124,13 +124,7 @@ export default function createForm({ initialValues }) {
     //   validate, setFieldState,
     // }
     const unsubscribe = store.subscribe(() => {
-      setFieldState(prevState => {
-        const newState = store.getState()[fieldId]
-        if (!isEqual(subscribedValues(prevState), subscribedValues(newState))) {
-          return newState
-        }
-        return prevState
-      })
+      setFieldState(store.getState()[fieldId])
     })
     // store.dispatch(initField(fieldId))
     return () => {
