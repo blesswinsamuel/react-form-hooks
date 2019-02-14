@@ -133,7 +133,7 @@ export default function createForm({ initialValues }) {
   const getFormState = () => {
     const state = store.getState()
     return {
-      values: {},
+      values: convert(state),
       anyTouched: Object.values(state).some(field => field.touched),
       anyError: Object.values(state).some(field => !!field.error),
       anyDirty: Object.values(state).some(field => field.dirty),
@@ -161,7 +161,7 @@ export default function createForm({ initialValues }) {
     }
   }
 
-  const registerForm = (ref, setFormState) => {
+  const registerForm = (setFormState) => {
     const unsubscribe = store.subscribe(() => {
       setFormState(getFormState())
     })
@@ -195,12 +195,12 @@ export default function createForm({ initialValues }) {
 
   const submitHandler = fn =>
     handleFormSubmit(() => {
-      const state = store.getState()
-      if (Object.values(state).some(field => field.error)) {
+      const state = getFormState()
+      if (state.anyError) {
         touchAll()
         return
       }
-      return fn(convert(state))
+      return fn(state.values)
     })
 
   return {

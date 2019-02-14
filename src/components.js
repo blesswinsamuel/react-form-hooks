@@ -1,4 +1,5 @@
 import React from 'react'
+import { handleStringChange } from './lib/formHandlers'
 
 export const Code = props => (
   <pre className="code" data-lang="JSON">
@@ -13,7 +14,7 @@ export const Button = props => (
 export const Input = ({ onChange, value, ...otherProps }) => (
   <input
     className="form-input"
-    onChange={e => onChange(e.target.value)}
+    onChange={handleStringChange(onChange)}
     value={value}
     {...otherProps}
   />

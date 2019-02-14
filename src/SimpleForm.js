@@ -97,7 +97,8 @@ const FormFields = ({ form }) => {
         label="Conn1"
         component={Input}
         onChange={v => {
-          // setValue("conn2", v);
+          console.log(v)
+          // form.fieldActions.changeFieldValue('conn2', v)
           return v
         }}
       />
@@ -113,8 +114,8 @@ const FormFields = ({ form }) => {
       />
       <Field
         form={form}
-        id="same"
-        label="Same1"
+        id='same'
+        label='Same1'
         component={Input}
         validate={value => {
           console.log(' validation -> ', value)
@@ -123,7 +124,7 @@ const FormFields = ({ form }) => {
       />
       <Field form={form} id="same" label="Same2" component={Input}/>
 
-      <Field form={form} id="datetime" component={DateTimePicker}/>
+      <Field form={form} id='datetime' component={DateTimePicker}/>
     </>
   )
 }

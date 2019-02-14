@@ -38,6 +38,7 @@ const Field = ({
   component: InputComponent,
   validate,
   InputProps,
+  onChange,
   label,
   InputLabelProps,
   render = v => v,
