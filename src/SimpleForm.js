@@ -98,7 +98,7 @@ const FormFields = ({ form }) => {
         component={Input}
         onChange={v => {
           console.log(v)
-          // form.fieldActions.changeFieldValue('conn2', v)
+          form.fieldActions.changeFieldValue('conn2')(v)
           return v
         }}
       />

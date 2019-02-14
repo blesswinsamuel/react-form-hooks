@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
 import isEqual from './utils/isEqual'
 
-export default function useFormField(form, fieldId, opts = {}, subscribeTo) { // rename to useFieldState
-  const { registerField, changeFieldValue, touchField, initFieldAndGetState } = form.fieldActions
+export default function useFieldState(form, fieldId, opts = {}, subscribeTo) { // rename to useFieldState
+  const { registerField, initFieldAndGetState } = form.fieldActions
 
   const ref = useRef()
   const getRef = () => {
@@ -24,16 +24,5 @@ export default function useFormField(form, fieldId, opts = {}, subscribeTo) { //
   }
   useEffect(() => registerField(fieldId, getRef(), updateState), [])
 
-  const input = {
-    id: fieldId,
-    value: fieldState.value,
-    onChange: changeFieldValue(fieldId),
-    onBlur: touchField(fieldId),
-  }
-  const meta = {
-    error: fieldState.error,
-    touched: fieldState.touched,
-    dirty: fieldState.dirty,
-  }
-  return { input, meta }
+  return fieldState
 }

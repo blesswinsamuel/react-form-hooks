@@ -1,6 +1,6 @@
 import React from 'react'
 import classNames from 'classnames'
-import { useFormField } from './lib'
+import { useFieldState } from './lib'
 
 function getErrorString(error) {
   if (!error) {
@@ -33,22 +33,21 @@ function getErrorString(error) {
 }
 
 const Field = ({
-  form,
-  id,
-  component: InputComponent,
-  validate,
-  InputProps,
-  onChange,
-  label,
-  InputLabelProps,
-  render = v => v,
-}) => {
-  const { input, meta } = form
-    ? useFormField(form, id, { validate })
-    : { input: { id }, meta: {} }
-  const { touched, dirty, error } = meta
+                 form,
+                 id,
+                 component: InputComponent,
+                 validate,
+                 InputProps,
+                 onChange = v => v,
+                 label,
+                 InputLabelProps,
+                 render = v => v,
+               }) => {
+  const fieldState = form ? useFieldState(form, id, { validate }) : {}
+  const { changeFieldValue, touchField } = form.fieldActions
+  const { value, touched, dirty, error } = fieldState
 
-  console.log("FIELD_STATE_UPDATE", id, { value: input.value, ...meta })
+  console.log('FIELD_STATE_UPDATE', id, fieldState)
 
   const showError = touched && error
 
@@ -62,7 +61,15 @@ const Field = ({
         </div>
       )}
       <div className="col-9 col-sm-12" style={{ position: 'relative' }}>
-        {render(<InputComponent {...input} {...InputProps} />)}
+        {render(
+          <InputComponent
+            id={id}
+            value={value}
+            onChange={value => changeFieldValue(id)(onChange(value))}
+            onBlur={touchField(id)}
+            {...InputProps}
+          />,
+        )}
         {showError && <div className="form-input-hint">{getErrorString(error)}</div>}
         <div
           style={{
