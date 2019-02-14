@@ -84,3 +84,27 @@ export const DateTimePicker = ({ value, onChange, ...otherProps }) => (
 //    {...otherProps}
 //  />
 // )
+
+export const ArrayInput = ({ onChange, id, value, renderField }) => {
+  const addItem = () => onChange([...value, null])
+  const deleteItem = index => () =>
+    onChange(value.filter((val, i) => index !== i))
+  return (
+    <>
+      {((value && Array.isArray(value) && value) || []).map((v, i) => {
+        return (
+          <div key={i} style={{ position: 'relative', paddingBottom: '12px' }}>
+            <div>{renderField([id, i].join('.'), i)}</div>
+            <Button
+              style={{ position: 'absolute', top: -8, right: -8 }}
+              onClick={deleteItem(i)}
+            >Delete</Button>
+          </div>
+        )
+      })}
+      <Button type="dashed" onClick={addItem} style={{ width: '100%' }}>
+        Add
+      </Button>
+    </>
+  )
+}

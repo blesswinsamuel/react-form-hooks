@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useMemo, useCallback } from 'react'
 import { Button, Code, DatePicker, DateTimePicker, Input, TimePicker } from './components'
 import { useForm, useFormState } from './lib'
 import Field from './Field'
@@ -11,7 +11,7 @@ const SimpleForm = () => {
     date1: '2020-05-02T18:30:00.000Z',
   }
   const changeValues = () => setValues(defaultValues)
-  const onSubmit = values => console.log('> onSubmit -> ', values)
+  const onSubmit = useCallback(values => console.log('> onSubmit -> ', values), [])
   return (
     <div className="container">
       <MyForm
@@ -27,13 +27,13 @@ const SimpleForm = () => {
 const MyForm = ({ defaultValues, onSubmit }) => {
   const form = useForm({ initialValues: defaultValues })
   console.log('FORM_RERENDER')
-  return (
+  return useMemo(() => (
     <form className="form-horizontal" onSubmit={form.formActions.submitHandler(onSubmit)}>
       <FormFields form={form}/>
 
       <FormStateAndButton form={form}/>
     </form>
-  )
+  ), [onSubmit])
 }
 
 const FormStateAndButton = ({ form }) => {
@@ -54,14 +54,6 @@ const FormStateAndButton = ({ form }) => {
 }
 
 const FormFields = ({ form }) => {
-  // const {
-  //     values,
-  //     submitForm,
-  //     setValue,
-  //     resetForm,
-  //     anyDirty,
-  //     anyTouched
-  // } = form
   return (
     <>
       <Field

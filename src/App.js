@@ -1,8 +1,8 @@
 import React from 'react'
-import SimpleForm from './SimpleForm'
+import NestedForm from './NestedForm'
 
 const App = () => {
-  return <SimpleForm/>
+  return <NestedForm/>
 }
 
 export default App

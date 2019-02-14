@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import { Button, Code, DatePicker, DateTimePicker, Input, TimePicker } from './components'
+import React, { useState, useMemo, useCallback } from 'react'
+import { Button, Code, Input } from './components'
 import { useForm, useFormState } from './lib'
 import Field from './Field'
 
@@ -20,7 +20,7 @@ const NestedForm = () => {
     email: 'asdf@dsa.com',
   }
   const changeValues = () => setValues(defaultValues)
-  const onSubmit = values => console.log('> onSubmit -> ', values)
+  const onSubmit = useCallback(values => console.log('> onSubmit -> ', values), [])
   return (
     <div className="container">
       <MyForm
@@ -36,13 +36,13 @@ const NestedForm = () => {
 const MyForm = ({ defaultValues, onSubmit }) => {
   const form = useForm({ initialValues: defaultValues })
   console.log('FORM_RERENDER')
-  return (
+  return useMemo(() => (
     <form className="form-horizontal" onSubmit={form.formActions.submitHandler(onSubmit)}>
       <FormFields form={form}/>
 
       <FormStateAndButton form={form}/>
     </form>
-  )
+  ), [])
 }
 
 const FormStateAndButton = ({ form }) => {
@@ -74,18 +74,22 @@ const FormFields = ({ form }) => {
   return (
     <>
       <Field
-        form={name}
-        id="name"
-        label="Name"
+        form={form}
+        id="name.firstname"
+        label="Firstname"
         component={Input}
         validate={value => {
-          console.log(' validation -> ', value)
           return /\d/.test(value) && 'should not contain a number'
         }}
         onChange={value => {
-          console.log(' onChange -> ', value)
           return value.toUpperCase()
         }}
+      />
+      <Field
+        form={form}
+        id="name.lastname"
+        label="Lastname"
+        component={Input}
       />
       <Field
         form={form}
@@ -97,42 +101,6 @@ const FormFields = ({ form }) => {
           return /\d/.test(value) && 'should not contain a number'
         }}
       />
-      <Field form={form} id="date1" label="Date1" component={DatePicker}/>
-      <Field form={form} id="date2" label="Date2" component={DatePicker}/>
-      <Field form={form} id="time" label="Time" component={TimePicker}/>
-      <Field
-        form={form}
-        id="conn1"
-        label="Conn1"
-        component={Input}
-        onChange={v => {
-          // setValue("conn2", v);
-          return v
-        }}
-      />
-      <Field
-        form={form}
-        id="conn2"
-        label="Conn2"
-        component={Input}
-        validate={value => {
-          console.log(' validation -> ', value)
-          return /\d/.test(value) && 'should not contain a number'
-        }}
-      />
-      <Field
-        form={form}
-        id="same"
-        label="Same1"
-        component={Input}
-        validate={value => {
-          console.log(' validation -> ', value)
-          return /\d/.test(value) && 'should not contain a number'
-        }}
-      />
-      <Field form={form} id="same" label="Same2" component={Input}/>
-
-      <Field form={form} id="datetime" component={DateTimePicker}/>
     </>
   )
 }
