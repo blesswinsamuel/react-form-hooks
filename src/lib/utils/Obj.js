@@ -14,7 +14,7 @@ const isEmptyArray = (val) => {
   return val.length === 0
 }
 
-export function dotify(object) {
+export function dotify(object, mapFn = v => v) {
   function recurse(obj, path = '', acc = {}) {
     if (isArray(obj) && !isEmptyArray(obj)) {
       for (let i = 0; i < obj.length; i++) {
@@ -29,7 +29,7 @@ export function dotify(object) {
     } else if (path === '') {
       return obj
     } else {
-      acc[path] = obj
+      acc[path] = mapFn(obj)
     }
     return acc
   }

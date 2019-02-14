@@ -47,7 +47,6 @@ function formReducer(state = {}, action) {
 }
 
 export default function createForm({ initialValues }) {
-  console.log(initialValues)
   let flattenedInitialValues = dotify(initialValues)
   console.log(flattenedInitialValues)
   const store = createStore(formReducer, flattenedInitialValues, window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__())
@@ -67,6 +66,7 @@ export default function createForm({ initialValues }) {
   }
 
   const initField = (fieldId) => {
+    console.log("INIT_FIELD", fieldId, flattenedInitialValues[fieldId], flattenedInitialValues)
     const value = flattenedInitialValues[fieldId] || ''
     return {
       type: INIT_FIELD,

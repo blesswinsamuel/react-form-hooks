@@ -1,5 +1,5 @@
-import React, { useState, useMemo, useCallback } from 'react'
-import { Button, Code, Input } from './components'
+import React, { useCallback, useMemo, useState } from 'react'
+import { ArrayInput, Button, Code, Input } from './components'
 import { useForm, useFormState } from './lib'
 import Field from './Field'
 
@@ -63,14 +63,6 @@ const FormStateAndButton = ({ form }) => {
 }
 
 const FormFields = ({ form }) => {
-  // const {
-  //     values,
-  //     submitForm,
-  //     setValue,
-  //     resetForm,
-  //     anyDirty,
-  //     anyTouched
-  // } = form
   return (
     <>
       <Field
@@ -99,6 +91,25 @@ const FormFields = ({ form }) => {
         validate={value => {
           console.log(' validation -> ', value)
           return /\d/.test(value) && 'should not contain a number'
+        }}
+      />
+      <Field
+        form={form}
+        id="items"
+        label="Items"
+        component={ArrayInput}
+        InputProps={{
+          renderField: (id, index) => (
+            <Field
+              form={form}
+              id={id}
+              label={`Item ${index}`}
+              component={Input}
+              InputProps={{
+                type: "number",
+              }}
+            />
+          ),
         }}
       />
     </>
