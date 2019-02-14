@@ -1,39 +1,10 @@
 import { createStore } from 'redux'
 import { handleFormSubmit } from './formHandlers'
+import { dotify, nestify } from './utils/Obj'
 
 const CHANGE_FIELD_VALUE = 'CHANGE_FIELD_VALUE'
 const INIT_FIELD = 'INIT_FIELD'
 const TOUCH_FIELD = 'TOUCH_FIELD'
-
-function getProperty(obj, key) {
-  const parts = key.replace(/\[(\w+)]/g, '.$1') // convert indexes to properties
-    .replace(/^\./, '')  // strip a leading dot
-    .split('.')
-  let curObj = obj
-  for (let i = 0, n = parts.length; i < n; ++i) {
-    const k = parts[i]
-    if (curObj === undefined) {
-      return undefined
-    }
-    if (k in curObj) {
-      curObj = curObj[k]
-    } else {
-      return
-    }
-  }
-  return curObj
-}
-
-function convert(state) {
-  const r = {}
-  for (const key in state) {
-    if (state.hasOwnProperty(key)) {
-      const k = key.split('.')[0]
-      r[k] = state[key].value
-    }
-  }
-  return r
-}
 
 function fieldReducer(state = {}, action) {
   switch (action.type) {
@@ -75,32 +46,11 @@ function formReducer(state = {}, action) {
   }
 }
 
-function flattenObject(object) {
-  let res = {}
-
-  function recurse(obj, current) {
-    for (let key in obj) {
-      if (obj.hasOwnProperty(key)) {
-        const value = obj[key]
-        const newKey = (current ? current + '.' + key : key)  // joined key with dot
-        if (value && typeof value === 'object') {
-          recurse(value, newKey)  // it's a nested object, so do it again
-        } else {
-          res[newKey] = value  // it's not an object, so set the property
-        }
-      }
-    }
-    return res
-  }
-
-  return recurse(object)
-}
-
 export default function createForm({ initialValues }) {
   console.log(initialValues)
-  const flattenedInitialValues = flattenObject(initialValues)
+  let flattenedInitialValues = dotify(initialValues)
   console.log(flattenedInitialValues)
-  const store = createStore(formReducer, window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__())
+  const store = createStore(formReducer, flattenedInitialValues, window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__())
   const fieldRefs = {}
   // const formRefs = {}
 
@@ -117,7 +67,7 @@ export default function createForm({ initialValues }) {
   }
 
   const initField = (fieldId) => {
-    const value = getProperty(initialValues, fieldId) || ''
+    const value = flattenedInitialValues[fieldId] || ''
     return {
       type: INIT_FIELD,
       field: fieldId,
@@ -133,7 +83,7 @@ export default function createForm({ initialValues }) {
   const getFormState = () => {
     const state = store.getState()
     return {
-      values: convert(state),
+      values: nestify(state, state => state.value),
       anyTouched: Object.values(state).some(field => field.touched),
       anyError: Object.values(state).some(field => !!field.error),
       anyDirty: Object.values(state).some(field => field.dirty),
@@ -173,6 +123,7 @@ export default function createForm({ initialValues }) {
   const initializeForm = (newInitialValues) => {
     if (newInitialValues) {
       initialValues = newInitialValues
+      flattenedInitialValues = dotify(initialValues)
     }
     Object.keys(fieldRefs).forEach((fieldId) => {
       store.dispatch(initField(fieldId))
@@ -181,7 +132,7 @@ export default function createForm({ initialValues }) {
 
   const touchAll = () => {
     Object.keys(fieldRefs).forEach((fieldId) => {
-      store.dispatch({ type: TOUCH_FIELD, field: fieldId })
+      touchField(fieldId)()
     })
   }
 
