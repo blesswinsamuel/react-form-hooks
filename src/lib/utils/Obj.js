@@ -38,23 +38,34 @@ export function dotify(object) {
 }
 
 export function nestify(object, mapFn = v => v) {
-  function recurse(obj, path, acc = {}) {
-    for (const key in obj) {
-      if (obj.hasOwnProperty(key)) {
-        const keyParts = key.split('.')
-        for (let i = 0, last = acc; i < keyParts.length; i++) {
-          const keyPart = keyParts[i]
-          if (!last[keyPart]) {
-            last[keyPart] = {}
-          }
-          if (i === keyParts.length - 1) {
-            last[keyPart] = mapFn(obj[key])
-          }
-          last = last[keyPart]
-        }
-      }
+  const isIndex = k => /^\d+$/.test(k)
+
+  const fill = (acc, keyParts, value) => {
+    const k = keyParts.shift() // 1st element returned and is also removed from keyParts
+
+    if (keyParts.length > 0) {
+      acc[k] = acc[k] || (isIndex(keyParts[0]) ? [] : {})
+
+      fill(acc[k], keyParts, value)
+    } else {
+      acc[k] = mapFn(value)
     }
   }
 
-  return recurse(object)
+  if (isArray(object) || !isObject(object)) {
+    return mapFn(object)
+  }
+
+  const result = (Object.keys(object).every(isIndex) ? [] : {})
+  for (const path in object) {
+    if (object.hasOwnProperty(path)) {
+      const keyPath = path
+        .replace(/^\[(\w+)]/g, '$1')
+        .replace(/\[(\w+)]/g, '.$1') // convert indexes to properties
+      const keyParts = keyPath.split('.')
+      fill(result, keyParts, object[path])
+    }
+  }
+
+  return result
 }
