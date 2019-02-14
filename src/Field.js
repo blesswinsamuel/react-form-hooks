@@ -27,9 +27,6 @@ function getErrorString(error) {
   if (error.message) {
     return error.message
   }
-  if (error.errors) {
-    return error.errors.map(e => e.message).join('. ')
-  }
 }
 
 const Field = ({
@@ -44,7 +41,7 @@ const Field = ({
                  render = v => v,
                }) => {
   const fieldState = form ? useFieldState(form, id, { validate }) : {}
-  const { changeFieldValue, touchField } = form.fieldActions
+  const { changeFieldValue, touchField } = form.fieldActions || {}
   const { value, touched, dirty, error } = fieldState
 
   console.log('FIELD_STATE_UPDATE', id, fieldState)

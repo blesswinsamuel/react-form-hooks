@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import isEqual from './utils/isEqual'
 
 export default function useFieldState(form, fieldId, opts = {}, subscribeTo) { // rename to useFieldState
-  const { registerField, initFieldAndGetState } = form.fieldActions
+  const { registerField, initAndGetFieldState } = form.fieldActions
 
   const ref = useRef()
   const getRef = () => {
@@ -12,7 +12,7 @@ export default function useFieldState(form, fieldId, opts = {}, subscribeTo) { /
 
     return ref.current
   }
-  const [fieldState, setFieldState] = useState(() => initFieldAndGetState(fieldId, getRef(), opts))
+  const [fieldState, setFieldState] = useState(() => initAndGetFieldState(fieldId, getRef(), opts))
   const subscribedValues = subscribeTo || (state => [state.value, state.touched, state.error, state.dirty])
   const updateState = (newState) => {
     setFieldState(prevState => {

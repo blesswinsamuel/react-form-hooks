@@ -140,7 +140,7 @@ export default function createForm({ initialValues }) {
     }
   }
 
-  const initFieldAndGetState = (fieldId, ref, { validate } = {}) => {
+  const initAndGetFieldState = (fieldId, ref, { validate } = {}) => {
     if (!fieldRefs[fieldId]) {
       fieldRefs[fieldId] = {}
     }
@@ -215,7 +215,7 @@ export default function createForm({ initialValues }) {
       registerField,
       changeFieldValue,
       touchField,
-      initFieldAndGetState,
+      initAndGetFieldState,
     },
   }
 }
