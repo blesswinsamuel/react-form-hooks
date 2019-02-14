@@ -15,34 +15,33 @@ const isEmptyArray = (val) => {
 }
 
 export function dotify(object) {
-  function recurse(obj, path = [], acc = {}) {
+  function recurse(obj, path = '', acc = {}) {
     if (isArray(obj) && !isEmptyArray(obj)) {
       for (let i = 0; i < obj.length; i++) {
-        recurse(obj[i], path.concat(`[${i}]`), acc)  // it's a nested object, so do it again
+        recurse(obj[i], `${path}[${i}]`, acc)  // it's a nested object, so do it again
       }
     } else if (isObject(obj) && !isEmptyObject(obj)) { // object
       for (let key in obj) {
         if (obj.hasOwnProperty(key)) {
-          recurse(obj[key], path.concat(key), acc)
+          recurse(obj[key], [path, key].filter(x => x).join('.'), acc)
         }
       }
+    } else if (path === '') {
+      return obj
     } else {
-      acc[path.join('.')] = obj
+      acc[path] = obj
     }
     return acc
   }
-
-  // console.log("REC", recurse(object))
 
   return recurse(object)
 }
 
 export function nestify(object, mapFn = v => v) {
-  function recurse(obj, current, acc = {}) {
+  function recurse(obj, path, acc = {}) {
     for (const key in obj) {
       if (obj.hasOwnProperty(key)) {
         const keyParts = key.split('.')
-        recurse()
         for (let i = 0, last = acc; i < keyParts.length; i++) {
           const keyPart = keyParts[i]
           if (!last[keyPart]) {
