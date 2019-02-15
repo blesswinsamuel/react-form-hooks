@@ -106,9 +106,33 @@ const FormFields = ({ form }) => {
               label={`Item ${index}`}
               component={Input}
               InputProps={{
-                type: "number",
+                type: 'number',
               }}
             />
+          ),
+        }}
+      />
+      <Field
+        form={form}
+        id="itemsObj"
+        label="Items Object"
+        component={ArrayInput}
+        InputProps={{
+          renderField: (id, index) => (
+            <>
+              <Field
+                form={form}
+                id={`${id}.title`}
+                label={`Title ${index}`}
+                component={Input}
+              />
+              <Field
+                form={form}
+                id={`${id}.description`}
+                label={`Description ${index}`}
+                component={Input}
+              />
+            </>
           ),
         }}
       />

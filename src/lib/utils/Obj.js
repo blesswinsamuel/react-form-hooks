@@ -18,12 +18,16 @@ export function dotify(object, mapFn = v => v) {
   function recurse(obj, path = '', acc = {}) {
     if (isArray(obj) && !isEmptyArray(obj)) {
       for (let i = 0; i < obj.length; i++) {
-        recurse(obj[i], `${path}[${i}]`, acc)  // it's a nested object, so do it again
+        const newPath = `${path}[${i}]`
+        acc[newPath] = mapFn(obj[i])
+        recurse(obj[i], newPath, acc)  // it's a nested object, so do it again
       }
     } else if (isObject(obj) && !isEmptyObject(obj)) { // object
       for (let key in obj) {
         if (obj.hasOwnProperty(key)) {
-          recurse(obj[key], [path, key].filter(x => x).join('.'), acc)
+          const newPath = [path, key].filter(x => x).join('.')
+          acc[newPath] = mapFn(obj[key])
+          recurse(obj[key], newPath, acc)
         }
       }
     } else if (path === '') {
