@@ -17,6 +17,9 @@ export function getProperty(obj, key) {
     if (curObj === undefined || curObj === null) {
       return undefined
     }
+    if (typeof curObj === 'string') {
+      return undefined
+    }
     if (k in curObj) {
       curObj = curObj[k]
     } else {
@@ -37,7 +40,8 @@ export function setProperty(obj, key, value) {
   const path = key.replace(/\[(\w+)]/g, '.$1') // convert indexes to properties
     .replace(/^\./, '')  // strip a leading dot
     .split('.')
-  let nested = obj
+  const newObj = { ...obj }
+  let nested = newObj
 
   for (let i = 0; nested != null && i < path.length; ++i) {
     const key = path[i]
@@ -46,12 +50,12 @@ export function setProperty(obj, key, value) {
     if (i !== path.length - 1) {
       const objValue = nested[key]
       newValue = isObject(objValue)
-        ? objValue
+        ? { ...objValue }
         : (isIndex(path[i + 1]) ? [] : {})
     }
 
     nested[key] = newValue
     nested = nested[key]
   }
-  return { ...obj }
+  return newObj
 }

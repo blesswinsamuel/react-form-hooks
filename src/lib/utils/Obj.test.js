@@ -18,7 +18,8 @@ const obj1 = {
     },
     1,
     {},
-    null
+    null,
+    'str'
   ],
   objEmpty: {},
   email: 'asdf@dsa.com',
@@ -34,6 +35,8 @@ const getPropertyTests = [
   [obj1, 'obj[10].nonexisting', undefined],
   [obj1, 'obj[3].nonexisting', undefined],
   [obj1, 'obj[3]', null],
+  [obj1, 'obj[4]', 'str'],
+  [obj1, 'obj[4].nonexisting', undefined],
 ]
 
 test.each(getPropertyTests)(
@@ -43,18 +46,38 @@ test.each(getPropertyTests)(
   },
 )
 
-const setPropertyTests = [
+const setPropertyPrimitiveTests = [
   [obj1, 'name.firstname', 'don'],
   [obj1, 'array[0]', 12],
   [obj1, 'arrayEmpty', [1, 2]],
   [obj1, 'obj[0].title', 'abcd'],
 ]
 
-test.each(setPropertyTests)(
+test.each(setPropertyPrimitiveTests)(
   'setProperty works',
   (obj, field, value) => {
     const newObj = setProperty(obj, field, value)
-    expect(getProperty(obj, field)).toEqual(value)
+    expect(getProperty(newObj, field)).toEqual(value)
+    expect(getProperty(obj, 'checkAlways')).toEqual('present')
+  },
+)
+
+const setPropertyReferenceTests = [
+  [obj1, 'name.firstname', 'don', 'name'],
+  [obj1, 'array[0]', 12, 'array'],
+  [obj1, 'arrayEmpty', [1, 2], 'arrayEmpty'],
+  [obj1, 'obj[0].title', 'abcd', 'obj[0]'],
+]
+
+test.each(setPropertyReferenceTests)(
+  'setProperty referential works',
+  (obj, field, value, checkField) => {
+    const initialValue = getProperty(obj, checkField)
+    const newObj = setProperty(obj, field, value)
+    const newValue = getProperty(newObj, checkField)
+    expect(getProperty(newObj, field)).toEqual(value)
+    expect(obj).not.toBe(newObj)
+    expect(initialValue).not.toBe(newValue)
     expect(getProperty(obj, 'checkAlways')).toEqual('present')
   },
 )
