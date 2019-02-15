@@ -64,7 +64,6 @@ const formReducer = combineReducers({
 export default function createForm({ initialValues }) {
   const store = createStore(formReducer, { formValues: initialValues }, window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__())
   const fieldRefs = {}
-  // const formRefs = {}
 
   const validateField = (fieldId, value) => {
     if (!fieldRefs[fieldId]) {
@@ -78,7 +77,8 @@ export default function createForm({ initialValues }) {
     return validate(value)
   }
 
-  const initField = (fieldId) => {
+  // Actions
+  const initFieldAction = (fieldId) => {
     const value = getProperty(store.getState().formValues, fieldId) || ''
     return {
       type: INIT_FIELD,
@@ -88,6 +88,7 @@ export default function createForm({ initialValues }) {
     }
   }
 
+  // State selectors
   const getFieldState = (fieldId) => {
     return store.getState().fieldState[fieldId]
   }
@@ -102,17 +103,7 @@ export default function createForm({ initialValues }) {
     }
   }
 
-  const initAndGetFieldState = (fieldId, ref, { validate } = {}) => {
-    if (!fieldRefs[fieldId]) {
-      fieldRefs[fieldId] = {}
-    }
-    fieldRefs[fieldId][ref] = {
-      validate,
-    }
-    store.dispatch(initField(fieldId))
-    return getFieldState(fieldId)
-  }
-
+  // Field handlers
   const registerField = (fieldId, ref, setFieldState) => {
     console.log("REGISTER_FIELD", fieldId)
     const unsubscribe = store.subscribe(() => {
@@ -125,6 +116,26 @@ export default function createForm({ initialValues }) {
     }
   }
 
+  const initAndGetFieldState = (fieldId, ref, { validate } = {}) => {
+    if (!fieldRefs[fieldId]) {
+      fieldRefs[fieldId] = {}
+    }
+    fieldRefs[fieldId][ref] = {
+      validate,
+    }
+    store.dispatch(initFieldAction(fieldId))
+    return getFieldState(fieldId)
+  }
+
+  const changeFieldValue = (fieldId) => (value) => {
+    store.dispatch({ type: CHANGE_FIELD_VALUE, field: fieldId, value: value, error: validateField(fieldId, value) })
+  }
+
+  const touchField = (fieldId) => () => {
+    store.dispatch({ type: TOUCH_FIELD, field: fieldId })
+  }
+
+  // Form handlers
   const registerForm = (setFormState) => {
     const unsubscribe = store.subscribe(() => {
       setFormState(getFormState())
@@ -139,7 +150,7 @@ export default function createForm({ initialValues }) {
       initialValues = newInitialValues
     }
     Object.keys(fieldRefs).forEach((fieldId) => {
-      store.dispatch(initField(fieldId))
+      store.dispatch(initFieldAction(fieldId))
     })
   }
 
@@ -147,14 +158,6 @@ export default function createForm({ initialValues }) {
     Object.keys(fieldRefs).forEach((fieldId) => {
       touchField(fieldId)()
     })
-  }
-
-  const changeFieldValue = (fieldId) => (value) => {
-    store.dispatch({ type: CHANGE_FIELD_VALUE, field: fieldId, value: value, error: validateField(fieldId, value) })
-  }
-
-  const touchField = (fieldId) => () => {
-    store.dispatch({ type: TOUCH_FIELD, field: fieldId })
   }
 
   const submitHandler = fn =>
@@ -170,9 +173,9 @@ export default function createForm({ initialValues }) {
   return {
     formActions: {
       registerForm,
-      touchAll,
-      submitHandler,
       initializeForm,
+      submitHandler,
+      touchAll,
       getFormState,
     },
     fieldActions: {
