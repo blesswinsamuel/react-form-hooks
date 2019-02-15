@@ -1,6 +1,6 @@
-import { createStore } from 'redux'
+import { createStore, combineReducers } from 'redux'
 import { handleFormSubmit } from './formHandlers'
-import { dotify, nestify } from './utils/Obj'
+import { getProperty, setProperty } from './utils/Obj'
 
 const CHANGE_FIELD_VALUE = 'CHANGE_FIELD_VALUE'
 const INIT_FIELD = 'INIT_FIELD'
@@ -32,7 +32,7 @@ function fieldReducer(state = {}, action) {
   }
 }
 
-function formReducer(state = {}, action) {
+function fieldState(state = {}, action) {
   switch (action.type) {
     case INIT_FIELD:
     case CHANGE_FIELD_VALUE:
@@ -46,10 +46,23 @@ function formReducer(state = {}, action) {
   }
 }
 
+function formValues(state = {}, action) {
+  switch (action.type) {
+    case INIT_FIELD:
+    case CHANGE_FIELD_VALUE:
+      return setProperty(state, action.field, action.value)
+    default:
+      return state
+  }
+}
+
+const formReducer = combineReducers({
+  formValues,
+  fieldState,
+})
+
 export default function createForm({ initialValues }) {
-  let flattenedInitialValues = dotify(initialValues)
-  console.log(flattenedInitialValues)
-  const store = createStore(formReducer, flattenedInitialValues, window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__())
+  const store = createStore(formReducer, { formValues: initialValues }, window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__())
   const fieldRefs = {}
   // const formRefs = {}
 
@@ -66,8 +79,7 @@ export default function createForm({ initialValues }) {
   }
 
   const initField = (fieldId) => {
-    console.log("INIT_FIELD", fieldId, flattenedInitialValues[fieldId], flattenedInitialValues)
-    const value = flattenedInitialValues[fieldId] || ''
+    const value = getProperty(store.getState().formValues, fieldId) || ''
     return {
       type: INIT_FIELD,
       field: fieldId,
@@ -77,16 +89,16 @@ export default function createForm({ initialValues }) {
   }
 
   const getFieldState = (fieldId) => {
-    return store.getState()[fieldId]
+    return store.getState().fieldState[fieldId]
   }
 
   const getFormState = () => {
     const state = store.getState()
     return {
-      values: nestify(state, state => state.value),
-      anyTouched: Object.values(state).some(field => field.touched),
-      anyError: Object.values(state).some(field => !!field.error),
-      anyDirty: Object.values(state).some(field => field.dirty),
+      values: state.formValues,
+      anyTouched: Object.values(state.fieldState).some(field => field.touched),
+      anyError: Object.values(state.fieldState).some(field => !!field.error),
+      anyDirty: Object.values(state.fieldState).some(field => field.dirty),
     }
   }
 
@@ -102,10 +114,12 @@ export default function createForm({ initialValues }) {
   }
 
   const registerField = (fieldId, ref, setFieldState) => {
+    console.log("REGISTER_FIELD", fieldId)
     const unsubscribe = store.subscribe(() => {
       setFieldState(getFieldState(fieldId))
     })
     return () => {
+      console.log("DESTROY_FIELD", fieldId)
       delete fieldRefs[fieldId][ref]
       unsubscribe()
     }
@@ -123,7 +137,6 @@ export default function createForm({ initialValues }) {
   const initializeForm = (newInitialValues) => {
     if (newInitialValues) {
       initialValues = newInitialValues
-      flattenedInitialValues = dotify(initialValues)
     }
     Object.keys(fieldRefs).forEach((fieldId) => {
       store.dispatch(initField(fieldId))

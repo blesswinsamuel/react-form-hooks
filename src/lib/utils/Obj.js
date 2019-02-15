@@ -1,75 +1,57 @@
-const isObject = function(a) {
-  return (!!a) && (a.constructor === Object)
+const isObject = function(value) {
+  const type = typeof value
+  return value != null && (type === 'object' || type === 'function')
+  // return (!!value) && (value.constructor === Object)
 }
 
-const isArray = function(a) {
-  return (!!a) && (a.constructor === Array)
-}
+const indexRegex = /^\[(\d+)]$/
+const isIndex = k => indexRegex.test(k)
 
-const isEmptyObject = (val) => {
-  return Object.keys(val).length === 0
-}
-
-const isEmptyArray = (val) => {
-  return val.length === 0
-}
-
-export function dotify(object, mapFn = v => v) {
-  function recurse(obj, path = '', acc = {}) {
-    if (isArray(obj) && !isEmptyArray(obj)) {
-      for (let i = 0; i < obj.length; i++) {
-        const newPath = `${path}[${i}]`
-        acc[newPath] = mapFn(obj[i])
-        recurse(obj[i], newPath, acc)  // it's a nested object, so do it again
-      }
-    } else if (isObject(obj) && !isEmptyObject(obj)) { // object
-      for (let key in obj) {
-        if (obj.hasOwnProperty(key)) {
-          const newPath = [path, key].filter(x => x).join('.')
-          acc[newPath] = mapFn(obj[key])
-          recurse(obj[key], newPath, acc)
-        }
-      }
-    } else if (path === '') {
-      return obj
+export function getProperty(obj, key) {
+  const parts = key.replace(/\[(\w+)]/g, '.$1') // convert indexes to properties
+    .replace(/^\./, '')  // strip a leading dot
+    .split('.')
+  let curObj = obj
+  for (let i = 0; i < parts.length; ++i) {
+    const k = parts[i]
+    if (curObj === undefined || curObj === null) {
+      return undefined
+    }
+    if (k in curObj) {
+      curObj = curObj[k]
     } else {
-      acc[path] = mapFn(obj)
+      return undefined
     }
-    return acc
   }
-
-  return recurse(object)
+  return curObj
 }
 
-export function nestify(object, mapFn = v => v) {
-  const indexRegex = /^\[(\d+)]$/
-  const isIndex = k => indexRegex.test(k)
+export function setProperty(obj, key, value) {
+  if (obj === null) {
+    return obj
+  }
+  if (!isObject(obj)) {
+    return obj
+  }
 
-  const fill = (acc, keyParts, value) => {
-    const k = keyParts.shift().replace(indexRegex, '$1') // 1st element returned and is also removed from keyParts
+  const path = key.replace(/\[(\w+)]/g, '.$1') // convert indexes to properties
+    .replace(/^\./, '')  // strip a leading dot
+    .split('.')
+  let nested = obj
 
-    if (keyParts.length > 0) {
-      acc[k] = acc[k] || (isIndex(keyParts[0]) ? [] : {})
+  for (let i = 0; nested != null && i < path.length; ++i) {
+    const key = path[i]
+    let newValue = value
 
-      fill(acc[k], keyParts, value)
-    } else {
-      acc[k] = mapFn(value)
+    if (i !== path.length - 1) {
+      const objValue = nested[key]
+      newValue = isObject(objValue)
+        ? objValue
+        : (isIndex(path[i + 1]) ? [] : {})
     }
-  }
 
-  if (isArray(object) || !isObject(object)) {
-    return mapFn(object)
+    nested[key] = newValue
+    nested = nested[key]
   }
-
-  const result = Object.keys(object).every(isIndex) ? [] : {}
-  for (const path in object) {
-    if (object.hasOwnProperty(path)) {
-      const keyPath = path
-        .replace(/(?<!^)(\[\d+])/g, '.$1') // convert indexes to properties
-      const keyParts = keyPath.split('.')
-      fill(result, keyParts, object[path])
-    }
-  }
-
-  return result
+  return { ...obj }
 }

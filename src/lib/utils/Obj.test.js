@@ -1,81 +1,60 @@
 import React from 'react'
-import { dotify, nestify } from './Obj'
+import { getProperty, setProperty } from './Obj'
 
-const tests = [
-  [
-    {
-      name: {
-        firstname: 'dan',
-        lastname: 'abramov',
-      },
-      array: [1, 2],
-      nestedArray: [
-        [10, 20],
-      ],
-      arrayEmpty: [],
-      obj: [
-        {
-          title: 'abc',
-          description: 'desc',
-        },
-        1,
-        {},
-      ],
-      objEmpty: {},
-      email: 'asdf@dsa.com',
-    },
-    {
-      name: {
-        firstname: 'dan',
-        lastname: 'abramov',
-      },
-      'name.firstname': 'dan',
-      'name.lastname': 'abramov',
-      array: [1, 2],
-      'array[0]': 1,
-      'array[1]': 2,
-      nestedArray: [
-        [10, 20],
-      ],
-      'nestedArray[0]': [10, 20],
-      'nestedArray[0][0]': 10,
-      'nestedArray[0][1]': 20,
-      'arrayEmpty': [],
-      obj: [
-        {
-          title: 'abc',
-          description: 'desc',
-        },
-        1,
-        {},
-      ],
-      'obj[0]': {
-        title: 'abc',
-        description: 'desc',
-      },
-      'obj[0].title': 'abc',
-      'obj[0].description': 'desc',
-      'obj[1]': 1,
-      'obj[2]': {},
-      'objEmpty': {},
-      'email': 'asdf@dsa.com',
-    },
+const obj1 = {
+  name: {
+    firstname: 'dan',
+    lastname: 'abramov',
+  },
+  array: [1, 2],
+  nestedArray: [
+    [10, 20],
   ],
-  ['test', 'test'],
-  [[1, 2], { '[0]': 1, '[1]': 2 }],
+  arrayEmpty: [],
+  obj: [
+    {
+      title: 'abc',
+      description: 'desc',
+    },
+    1,
+    {},
+    null
+  ],
+  objEmpty: {},
+  email: 'asdf@dsa.com',
+  checkAlways: 'present',
+}
+
+const getPropertyTests = [
+  [obj1, 'name.firstname', 'dan'],
+  [obj1, 'array[0]', 1],
+  [obj1, 'arrayEmpty', []],
+  [obj1, 'obj[0].title', 'abc'],
+  [obj1, 'obj[0].nonexisting', undefined],
+  [obj1, 'obj[10].nonexisting', undefined],
+  [obj1, 'obj[3].nonexisting', undefined],
+  [obj1, 'obj[3]', null],
 ]
 
-test.each(tests)(
-  'dotify works',
-  (input, expected) => {
-    expect(dotify(input)).toEqual(expected)
+test.each(getPropertyTests)(
+  'getProperty works',
+  (obj, field, expected) => {
+    expect(getProperty(obj, field)).toEqual(expected)
   },
 )
 
-test.each(tests)(
-  'nestify works',
-  (expected, input) => {
-    expect(nestify(input)).toEqual(expected)
+const setPropertyTests = [
+  [obj1, 'name.firstname', 'don'],
+  [obj1, 'array[0]', 12],
+  [obj1, 'arrayEmpty', [1, 2]],
+  [obj1, 'obj[0].title', 'abcd'],
+]
+
+test.each(setPropertyTests)(
+  'setProperty works',
+  (obj, field, value) => {
+    const newObj = setProperty(obj, field, value)
+    expect(getProperty(obj, field)).toEqual(value)
+    expect(getProperty(obj, 'checkAlways')).toEqual('present')
   },
 )
-

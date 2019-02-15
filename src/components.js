@@ -1,5 +1,5 @@
-import React from 'react'
-import { handleStringChange } from './lib/formHandlers'
+import React, { useRef } from 'react'
+import { handleStringChange,  } from './lib/formHandlers'
 
 export const Code = props => (
   <pre className="code" data-lang="JSON">
@@ -85,18 +85,31 @@ export const DateTimePicker = ({ value, onChange, ...otherProps }) => (
 //  />
 // )
 
-export const ArrayInput = ({ onChange, id, value, renderField }) => {
-  const addItem = () => onChange([...value, null])
+export const ArrayInput = ({ onChange, onBlur, id, value, renderField }) => {
+  value = ((value && Array.isArray(value) && value) || [])
+  const fieldRefs = useRef()
+  const addItem = () => {
+    fieldRefs.current = [...fieldRefs.current, Math.max(...fieldRefs.current, 0) + 1]
+    onBlur()
+    return onChange([...value, null])
+  }
   const deleteItem = index => () => {
-    console.log("asdasdas")
-    console.log(value.filter((val, i) => index !== i))
-    return onChange(value.filter((val, i) => index !== i))
+    fieldRefs.current = fieldRefs.current.filter((_, i) => index !== i)
+    onBlur()
+    return onChange(value.filter((_, i) => index !== i))
+  }
+  const getFieldRef = (i) => {
+    if (!fieldRefs.current) {
+      fieldRefs.current = value.map((_, i) => i + 1)
+    }
+
+    return fieldRefs.current[i]
   }
   return (
     <>
-      {((value && Array.isArray(value) && value) || []).map((v, i) => {
+      {value.map((v, i) => {
         return (
-          <div key={i} style={{ position: 'relative', paddingBottom: '12px' }}>
+          <div key={getFieldRef(i)} style={{ position: 'relative', paddingBottom: '12px' }}>
             <div>{renderField(`${id}[${i}]`, i)}</div>
             <Button
               style={{ position: 'absolute', top: 0, right: 0 }}

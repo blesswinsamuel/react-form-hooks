@@ -98,6 +98,9 @@ const FormFields = ({ form }) => {
         id="items"
         label="Items"
         component={ArrayInput}
+        validate={value => {
+          return value.length < 2 && 'should have more than 1 items'
+        }}
         InputProps={{
           renderField: (id, index) => (
             <Field
@@ -105,6 +108,9 @@ const FormFields = ({ form }) => {
               id={id}
               label={`Item ${index}`}
               component={Input}
+              validate={value => {
+                return value <= 10 && 'should be greater than 10'
+              }}
               InputProps={{
                 type: 'number',
               }}
