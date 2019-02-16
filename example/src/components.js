@@ -1,4 +1,4 @@
-import React, { useMemo, useRef } from 'react'
+import React from 'react'
 import { handleStringChange } from './formHandlers'
 
 export const Code = props => (
@@ -8,7 +8,12 @@ export const Code = props => (
 )
 
 export const Button = props => (
-  <button type="button" className="btn btn-primary" style={{ margin: 3 }} {...props} />
+  <button
+    type="button"
+    className="btn btn-primary"
+    style={{ margin: 3 }}
+    {...props}
+  />
 )
 
 export const Input = ({ onChange, value, ...otherProps }) => (
@@ -65,7 +70,6 @@ export const DateTimePicker = ({ value, onChange, ...otherProps }) => (
     {...otherProps}
   />
 )
-
 
 // var options = [
 //  { value: 'one', label: 'One' },

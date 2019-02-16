@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo, useState } from 'react'
 import { Button, Code, Input } from './components'
 import { useForm, useFormState } from 'react-form-hooks'
-import { FormField, ArrayFormField } from './Field'
+import { ArrayFormField, FormField } from './Field'
 
 const NestedForm = () => {
   const [values, setValues] = useState({})
@@ -20,7 +20,10 @@ const NestedForm = () => {
     email: 'asdf@dsa.com',
   }
   const changeValues = () => setValues(defaultValues)
-  const onSubmit = useCallback(values => console.log('> onSubmit -> ', values), [])
+  const onSubmit = useCallback(
+    values => console.log('> onSubmit -> ', values),
+    []
+  )
   return (
     <div className="container">
       <MyForm
@@ -36,17 +39,26 @@ const NestedForm = () => {
 const MyForm = ({ defaultValues, onSubmit }) => {
   const form = useForm({ initialValues: defaultValues })
   console.log('FORM_RERENDER')
-  return useMemo(() => (
-    <form className="form-horizontal" onSubmit={form.formActions.submitHandler(onSubmit)}>
-      <FormFields form={form}/>
+  return useMemo(
+    () => (
+      <form
+        className="form-horizontal"
+        onSubmit={form.formActions.submitHandler(onSubmit)}
+      >
+        <FormFields form={form} />
 
-      <FormStateAndButton form={form}/>
-    </form>
-  ), [])
+        <FormStateAndButton form={form} />
+      </form>
+    ),
+    []
+  )
 }
 
 const FormStateAndButton = ({ form }) => {
-  const { anyError, anyDirty, anyTouched, values } = useFormState(form, state => [state.anyError, state.anyDirty, state.anyTouched, state.values])
+  const { anyError, anyDirty, anyTouched, values } = useFormState(
+    form,
+    state => [state.anyError, state.anyDirty, state.anyTouched, state.values]
+  )
 
   // console.log('FORM_STATE_UPDATE', { anyError, anyDirty, anyTouched, values })
   return (

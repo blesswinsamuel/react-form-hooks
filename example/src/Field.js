@@ -1,4 +1,4 @@
-import React, {useRef, useMemo, useCallback} from 'react'
+import React, { useCallback, useRef } from 'react'
 import classNames from 'classnames'
 import { useFieldState } from 'react-form-hooks'
 import { Button } from './components'
@@ -31,14 +31,14 @@ function getErrorString(error) {
 }
 
 const Field = ({
-                 id,
-                 label,
-                 InputLabelProps,
-                 error,
-                 touched,
-                 dirty,
-                 children,
-               }) => {
+  id,
+  label,
+  InputLabelProps,
+  error,
+  touched,
+  dirty,
+  children,
+}) => {
   const showError = touched && error
 
   return (
@@ -52,7 +52,9 @@ const Field = ({
       )}
       <div className="col-9 col-sm-12" style={{ position: 'relative' }}>
         {children}
-        {showError && <div className="form-input-hint">{getErrorString(error)}</div>}
+        {showError && (
+          <div className="form-input-hint">{getErrorString(error)}</div>
+        )}
         <div
           style={{
             position: 'absolute',
@@ -76,16 +78,16 @@ const Field = ({
 }
 
 const FormField = ({
-                     form,
-                     id,
-                     component: InputComponent,
-                     validate,
-                     InputProps,
-                     onChange = v => v,
-                     subscribeTo,
-                     label,
-                     InputLabelProps,
-                   }) => {
+  form,
+  id,
+  component: InputComponent,
+  validate,
+  InputProps,
+  onChange = v => v,
+  subscribeTo,
+  label,
+  InputLabelProps,
+}) => {
   const fieldState = useFieldState(form, id, subscribeTo, { validate })
   const { changeFieldValue, touchField } = form.fieldActions
   const { value, touched, dirty, error } = fieldState
@@ -112,18 +114,30 @@ const FormField = ({
   )
 }
 
-export const ArrayInput = ({ form, onChange, onBlur, id, value, renderField }) => {
+export const ArrayInput = ({
+  form,
+  onChange,
+  onBlur,
+  id,
+  value,
+  renderField,
+}) => {
   const { getFieldState } = form.fieldActions
   const fieldRefs = useRef()
   const addItem = useCallback(() => {
-    fieldRefs.current = [...fieldRefs.current, Math.max(...fieldRefs.current, 0) + 1]
+    fieldRefs.current = [
+      ...fieldRefs.current,
+      Math.max(...fieldRefs.current, 0) + 1,
+    ]
     return onChange([...(getFieldState(id).value || []), null])
   }, [])
   const deleteItem = index => () => {
     fieldRefs.current = fieldRefs.current.filter((_, i) => index !== i)
-    return onChange((getFieldState(id).value || []).filter((_, i) => index !== i))
+    return onChange(
+      (getFieldState(id).value || []).filter((_, i) => index !== i)
+    )
   }
-  const getFieldRef = (i) => {
+  const getFieldRef = i => {
     if (!fieldRefs.current) {
       fieldRefs.current = value.map((_, i) => i + 1)
     }
@@ -134,12 +148,17 @@ export const ArrayInput = ({ form, onChange, onBlur, id, value, renderField }) =
     <>
       {value.map((_, i) => {
         return (
-          <div key={getFieldRef(i)} style={{ position: 'relative', paddingBottom: '12px' }}>
+          <div
+            key={getFieldRef(i)}
+            style={{ position: 'relative', paddingBottom: '12px' }}
+          >
             <div>{renderField(`${id}[${i}]`, i)}</div>
             <Button
               style={{ position: 'absolute', top: 0, right: 0 }}
               onClick={deleteItem(i)}
-            >Delete</Button>
+            >
+              Delete
+            </Button>
           </div>
         )
       })}
@@ -153,7 +172,12 @@ export const ArrayInput = ({ form, onChange, onBlur, id, value, renderField }) =
 const ArrayFormField = ({ InputProps, ...props }) => {
   return (
     <FormField
-      subscribeTo={state => [state.value && state.value.length, state.touched, state.error, state.dirty]}
+      subscribeTo={state => [
+        state.value && state.value.length,
+        state.touched,
+        state.error,
+        state.dirty,
+      ]}
       component={ArrayInput}
       InputProps={{
         form: props.form,

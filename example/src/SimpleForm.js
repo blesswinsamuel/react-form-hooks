@@ -1,5 +1,12 @@
-import React, { useState, useMemo, useCallback } from 'react'
-import { Button, Code, DatePicker, DateTimePicker, Input, TimePicker } from './components'
+import React, { useCallback, useMemo, useState } from 'react'
+import {
+  Button,
+  Code,
+  DatePicker,
+  DateTimePicker,
+  Input,
+  TimePicker,
+} from './components'
 import { useForm, useFormState } from 'react-form-hooks'
 import { FormField } from './Field'
 
@@ -11,7 +18,10 @@ const SimpleForm = () => {
     date1: '2020-05-02T18:30:00.000Z',
   }
   const changeValues = () => setValues(defaultValues)
-  const onSubmit = useCallback(values => console.log('> onSubmit -> ', values), [])
+  const onSubmit = useCallback(
+    values => console.log('> onSubmit -> ', values),
+    []
+  )
   return (
     <div className="container">
       <MyForm
@@ -27,17 +37,26 @@ const SimpleForm = () => {
 const MyForm = ({ defaultValues, onSubmit }) => {
   const form = useForm({ initialValues: defaultValues })
   console.log('FORM_RERENDER')
-  return useMemo(() => (
-    <form className="form-horizontal" onSubmit={form.formActions.submitHandler(onSubmit)}>
-      <FormFields form={form}/>
+  return useMemo(
+    () => (
+      <form
+        className="form-horizontal"
+        onSubmit={form.formActions.submitHandler(onSubmit)}
+      >
+        <FormFields form={form} />
 
-      <FormStateAndButton form={form}/>
-    </form>
-  ), [onSubmit])
+        <FormStateAndButton form={form} />
+      </form>
+    ),
+    [onSubmit]
+  )
 }
 
 const FormStateAndButton = ({ form }) => {
-  const { anyError, anyDirty, anyTouched, values } = useFormState(form, state => [state.anyError, state.anyDirty, state.anyTouched, state.values])
+  const { anyError, anyDirty, anyTouched, values } = useFormState(
+    form,
+    state => [state.anyError, state.anyDirty, state.anyTouched, state.values]
+  )
 
   console.log('FORM_STATE_UPDATE', { anyError, anyDirty, anyTouched, values })
   return (
@@ -80,9 +99,9 @@ const FormFields = ({ form }) => {
           return /\d/.test(value) && 'should not contain a number'
         }}
       />
-      <FormField form={form} id="date1" label="Date1" component={DatePicker}/>
-      <FormField form={form} id="date2" label="Date2" component={DatePicker}/>
-      <FormField form={form} id="time" label="Time" component={TimePicker}/>
+      <FormField form={form} id="date1" label="Date1" component={DatePicker} />
+      <FormField form={form} id="date2" label="Date2" component={DatePicker} />
+      <FormField form={form} id="time" label="Time" component={TimePicker} />
       <FormField
         form={form}
         id="conn1"
@@ -106,17 +125,17 @@ const FormFields = ({ form }) => {
       />
       <FormField
         form={form}
-        id='same'
-        label='Same1'
+        id="same"
+        label="Same1"
         component={Input}
         validate={value => {
           console.log(' validation -> ', value)
           return /\d/.test(value) && 'should not contain a number'
         }}
       />
-      <FormField form={form} id="same" label="Same2" component={Input}/>
+      <FormField form={form} id="same" label="Same2" component={Input} />
 
-      <FormField form={form} id='datetime' component={DateTimePicker}/>
+      <FormField form={form} id="datetime" component={DateTimePicker} />
     </>
   )
 }
