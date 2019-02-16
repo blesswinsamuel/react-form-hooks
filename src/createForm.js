@@ -126,7 +126,7 @@ export default function createForm({ initialValues }) {
     delete fieldRefs[fieldId][ref]
   }
 
-  const changeFieldValue = (fieldId) => (value) => {
+  const changeFieldValue = (fieldId, value) => {
     store.dispatch({
       type: CHANGE_FIELD_VALUE,
       field: fieldId,
@@ -135,7 +135,7 @@ export default function createForm({ initialValues }) {
     })
   }
 
-  const touchField = (fieldId) => () => {
+  const touchField = (fieldId) => {
     store.dispatch({ type: TOUCH_FIELD, field: fieldId })
   }
 
@@ -152,7 +152,7 @@ export default function createForm({ initialValues }) {
 
   const touchAll = () => {
     Object.keys(fieldRefs).forEach((fieldId) => {
-      touchField(fieldId)()
+      touchField(fieldId)
     })
   }
 

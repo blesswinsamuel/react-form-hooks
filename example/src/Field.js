@@ -104,8 +104,8 @@ const FormField = ({
       <InputComponent
         id={id}
         value={value}
-        onChange={value => changeFieldValue(id)(onChange(value))}
-        onBlur={touchField(id)}
+        onChange={value => changeFieldValue(id, onChange(value))}
+        onBlur={() => touchField(id)}
         {...InputProps}
       />
     </Field>
