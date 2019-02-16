@@ -10,7 +10,6 @@ function fieldReducer(state = {}, action) {
   switch (action.type) {
     case INIT_FIELD:
       return {
-        value: action.value,
         error: action.error,
         touched: false,
         dirty: false,
@@ -18,7 +17,6 @@ function fieldReducer(state = {}, action) {
     case CHANGE_FIELD_VALUE:
       return {
         ...state,
-        value: action.value,
         error: action.error,
         dirty: true,
       }
@@ -48,7 +46,7 @@ function fieldState(state = {}, action) {
 
 function formValues(state = {}, action) {
   switch (action.type) {
-    case INIT_FIELD:
+    // case INIT_FIELD:
     case CHANGE_FIELD_VALUE:
       return setProperty(state, action.field, action.value)
     default:
@@ -90,7 +88,12 @@ export default function createForm({ initialValues }) {
 
   // State selectors
   const getFieldState = (fieldId) => {
-    return store.getState().fieldState[fieldId]
+    const state = store.getState()
+    const value = getProperty(state.formValues, fieldId) || ''
+    return {
+      ...state.fieldState[fieldId],
+      value
+    }
   }
 
   const getFormState = () => {

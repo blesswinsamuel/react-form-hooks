@@ -50,7 +50,7 @@ export function setProperty(obj, key, value) {
     if (i !== path.length - 1) {
       const objValue = nested[key]
       newValue = isObject(objValue)
-        ? { ...objValue }
+        ? (Array.isArray(objValue) ? [...objValue] : { ...objValue })
         : (isIndex(path[i + 1]) ? [] : {})
     }
 
