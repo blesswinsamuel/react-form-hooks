@@ -23,7 +23,7 @@ export default function useFieldState(form, fieldId, opts = {}, subscribeTo) { /
       if (isEqual(subscribedValues(prevState), subscribedValues(newState))) {
         return prevState
       }
-      console.log("FIELD CHANGED", fieldId, prevState, newState)
+      // console.log("FIELD CHANGED", fieldId, prevState, newState)
       return newState
     })
   }
@@ -35,14 +35,14 @@ export default function useFieldState(form, fieldId, opts = {}, subscribeTo) { /
 
       updateState()
     }
-    console.log('REGISTER_FIELD', fieldId)
+    // console.log('REGISTER_FIELD', fieldId)
     initField(fieldId, getRef(), opts)
     checkForUpdates()
 
     const unsubscribe = form.subscribe(checkForUpdates)
 
     return () => {
-      console.log('DESTROY_FIELD', fieldId)
+      // console.log('DESTROY_FIELD', fieldId)
       didUnsubscribe = true
       destroyField(fieldId, getRef())
       unsubscribe()
