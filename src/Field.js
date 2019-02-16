@@ -90,7 +90,7 @@ const FormField = ({
   const { changeFieldValue, touchField } = form.fieldActions
   const { value, touched, dirty, error } = fieldState
 
-  console.log('FIELD_STATE_UPDATE', id, fieldState)
+  // console.log('FIELD_STATE_UPDATE', id, fieldState)
 
   return (
     <Field

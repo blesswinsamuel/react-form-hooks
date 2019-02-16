@@ -117,26 +117,10 @@ export default function createForm({ initialValues }) {
     fieldRefs[fieldId][ref] = {
       validate,
     }
-  }
-
-  const registerField = (fieldId, ref, setFieldState, opts) => {
-    console.log('REGISTER_FIELD', fieldId)
-    initField(fieldId, ref, opts)
-    const unsubscribe = store.subscribe(() => {
-      setFieldState(getFieldState(fieldId))
-    })
     store.dispatch(initFieldAction(fieldId))
-    return () => {
-      console.log('DESTROY_FIELD', fieldId)
-      delete fieldRefs[fieldId][ref]
-      unsubscribe()
-    }
   }
-
-  const initAndGetFieldState = (fieldId, ref, opts) => {
-    initField(fieldId, ref, opts)
-    store.dispatch(initFieldAction(fieldId))
-    return getFieldState(fieldId)
+  const destroyField = (fieldId, ref) => {
+    delete fieldRefs[fieldId][ref]
   }
 
   const changeFieldValue = (fieldId) => (value) => {
@@ -186,10 +170,10 @@ export default function createForm({ initialValues }) {
       getFormState,
     },
     fieldActions: {
-      registerField,
+      initField,
+      destroyField,
       changeFieldValue,
       touchField,
-      initAndGetFieldState,
       getFieldState,
     },
   }
