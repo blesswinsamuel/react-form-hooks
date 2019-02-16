@@ -1,5 +1,5 @@
 import React, { useMemo, useRef } from 'react'
-import { handleStringChange } from './lib/formHandlers'
+import { handleStringChange } from './formHandlers'
 
 export const Code = props => (
   <pre className="code" data-lang="JSON">

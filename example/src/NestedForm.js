@@ -1,14 +1,23 @@
-import React, { useState, useMemo, useCallback } from 'react'
-import { Button, Code, DatePicker, DateTimePicker, Input, TimePicker } from './components'
-import { useForm, useFormState } from './lib'
-import { FormField } from './Field'
+import React, { useCallback, useMemo, useState } from 'react'
+import { Button, Code, Input } from './components'
+import { useForm, useFormState } from 'react-form-hooks'
+import { FormField, ArrayFormField } from './Field'
 
-const SimpleForm = () => {
+const NestedForm = () => {
   const [values, setValues] = useState({})
   const defaultValues = {
-    myfield: '123',
+    name: {
+      firstname: 'dan',
+      lastname: 'abramov',
+    },
+    items: [1, 2],
+    itemsObj: [
+      {
+        title: 'abc',
+        description: 'desc',
+      },
+    ],
     email: 'asdf@dsa.com',
-    date1: '2020-05-02T18:30:00.000Z',
   }
   const changeValues = () => setValues(defaultValues)
   const onSubmit = useCallback(values => console.log('> onSubmit -> ', values), [])
@@ -33,13 +42,13 @@ const MyForm = ({ defaultValues, onSubmit }) => {
 
       <FormStateAndButton form={form}/>
     </form>
-  ), [onSubmit])
+  ), [])
 }
 
 const FormStateAndButton = ({ form }) => {
   const { anyError, anyDirty, anyTouched, values } = useFormState(form, state => [state.anyError, state.anyDirty, state.anyTouched, state.values])
 
-  console.log('FORM_STATE_UPDATE', { anyError, anyDirty, anyTouched, values })
+  // console.log('FORM_STATE_UPDATE', { anyError, anyDirty, anyTouched, values })
   return (
     <>
       <Code>{JSON.stringify(values, null, 2)}</Code>
@@ -58,17 +67,21 @@ const FormFields = ({ form }) => {
     <>
       <FormField
         form={form}
-        id="myfield"
-        label="My field"
+        id="name.firstname"
+        label="Firstname"
         component={Input}
         validate={value => {
-          console.log(' validation -> ', value)
           return /\d/.test(value) && 'should not contain a number'
         }}
         onChange={value => {
-          console.log(' onChange -> ', value)
           return value.toUpperCase()
         }}
+      />
+      <FormField
+        form={form}
+        id="name.lastname"
+        label="Lastname"
+        component={Input}
       />
       <FormField
         form={form}
@@ -80,45 +93,55 @@ const FormFields = ({ form }) => {
           return /\d/.test(value) && 'should not contain a number'
         }}
       />
-      <FormField form={form} id="date1" label="Date1" component={DatePicker}/>
-      <FormField form={form} id="date2" label="Date2" component={DatePicker}/>
-      <FormField form={form} id="time" label="Time" component={TimePicker}/>
-      <FormField
+      <ArrayFormField
         form={form}
-        id="conn1"
-        label="Conn1"
-        component={Input}
-        onChange={v => {
-          console.log(v)
-          form.fieldActions.changeFieldValue('conn2')(v)
-          return v
-        }}
-      />
-      <FormField
-        form={form}
-        id="conn2"
-        label="Conn2"
-        component={Input}
+        id="items"
+        label="Items"
         validate={value => {
-          console.log(' validation -> ', value)
-          return /\d/.test(value) && 'should not contain a number'
+          return value.length < 2 && 'should have more than 1 items'
+        }}
+        InputProps={{
+          renderField: (id, index) => (
+            <FormField
+              form={form}
+              id={id}
+              label={`Item ${index}`}
+              component={Input}
+              validate={value => {
+                return value <= 10 && 'should be greater than 10'
+              }}
+              InputProps={{
+                type: 'number',
+              }}
+            />
+          ),
         }}
       />
-      <FormField
+      <ArrayFormField
         form={form}
-        id='same'
-        label='Same1'
-        component={Input}
-        validate={value => {
-          console.log(' validation -> ', value)
-          return /\d/.test(value) && 'should not contain a number'
+        id="itemsObj"
+        label="Items Object"
+        InputProps={{
+          renderField: (id, index) => (
+            <>
+              <FormField
+                form={form}
+                id={`${id}.title`}
+                label={`Title ${index}`}
+                component={Input}
+              />
+              <FormField
+                form={form}
+                id={`${id}.description`}
+                label={`Description ${index}`}
+                component={Input}
+              />
+            </>
+          ),
         }}
       />
-      <FormField form={form} id="same" label="Same2" component={Input}/>
-
-      <FormField form={form} id='datetime' component={DateTimePicker}/>
     </>
   )
 }
 
-export default SimpleForm
+export default NestedForm

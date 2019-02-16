@@ -1,6 +1,6 @@
 import React, {useRef, useMemo, useCallback} from 'react'
 import classNames from 'classnames'
-import { useFieldState } from './lib'
+import { useFieldState } from 'react-form-hooks'
 import { Button } from './components'
 
 function getErrorString(error) {
@@ -117,12 +117,10 @@ export const ArrayInput = ({ form, onChange, onBlur, id, value, renderField }) =
   const fieldRefs = useRef()
   const addItem = useCallback(() => {
     fieldRefs.current = [...fieldRefs.current, Math.max(...fieldRefs.current, 0) + 1]
-    // onBlur()
     return onChange([...(getFieldState(id).value || []), null])
   }, [])
   const deleteItem = index => () => {
     fieldRefs.current = fieldRefs.current.filter((_, i) => index !== i)
-    // onBlur()
     return onChange((getFieldState(id).value || []).filter((_, i) => index !== i))
   }
   const getFieldRef = (i) => {

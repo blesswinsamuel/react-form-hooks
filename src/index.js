@@ -1,15 +1,3 @@
-import React from 'react'
-import ReactDOM from 'react-dom'
-import './index.css'
-import 'spectre.css'
-import App from './App'
-
-const render = () => {
-  ReactDOM.render(<App />, document.getElementById('root'))
-}
-
-render()
-
-if (module.hot) {
-  module.hot.accept('./App', render)
-}
+export { default as useForm } from './useForm'
+export { default as useFormState } from './useFormState'
+export { default as useFieldState } from './useFieldState'
