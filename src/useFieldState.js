@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import isEqual from './utils/isEqual'
 
-export default function useFieldState(form, fieldId, opts = {}, subscribeTo) { // rename to useFieldState
+export default function useFieldState(form, fieldId, subscribeTo, opts = {}) {
   const { initField, destroyField, getFieldState } = form.fieldActions
 
   const ref = useRef()
