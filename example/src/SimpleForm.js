@@ -48,7 +48,7 @@ const FormStateAndButton = ({ form }) => {
       {anyDirty && <div>Form Dirty</div>}
       {anyTouched && <div>Form Touched</div>}
       <Button type="submit">Submit</Button>
-      <Button onClick={form.formActions.initializeForm}>Reset</Button>
+      <Button onClick={form.formActions.resetFormValues}>Reset</Button>
     </>
   )
 }

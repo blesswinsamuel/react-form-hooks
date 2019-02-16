@@ -140,7 +140,7 @@ export default function createForm({ initialValues }) {
   }
 
   // Form handlers
-  const initializeForm = (newInitialValues) => {
+  const resetFormValues = (newInitialValues) => {
     if (newInitialValues) {
       initialValues = newInitialValues
     }
@@ -169,7 +169,7 @@ export default function createForm({ initialValues }) {
   return {
     subscribe: store.subscribe,
     formActions: {
-      initializeForm,
+      resetFormValues,
       submitHandler,
       getFormState,
     },
