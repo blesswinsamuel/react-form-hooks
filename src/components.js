@@ -1,5 +1,5 @@
-import React, { useRef } from 'react'
-import { handleStringChange,  } from './lib/formHandlers'
+import React, { useMemo, useRef } from 'react'
+import { handleStringChange } from './lib/formHandlers'
 
 export const Code = props => (
   <pre className="code" data-lang="JSON">
@@ -105,12 +105,16 @@ export const ArrayInput = ({ onChange, onBlur, id, value, renderField }) => {
 
     return fieldRefs.current[i]
   }
+  const n = value.length
+  const renderedField = useMemo(() => {
+    return Array(n).fill().map((_, i) => renderField(`${id}[${i}]`, i))
+  }, [id, n])
   return (
     <>
       {value.map((v, i) => {
         return (
           <div key={getFieldRef(i)} style={{ position: 'relative', paddingBottom: '12px' }}>
-            <div>{renderField(`${id}[${i}]`, i)}</div>
+            <div>{renderedField[i]}</div>
             <Button
               style={{ position: 'absolute', top: 0, right: 0 }}
               onClick={deleteItem(i)}
