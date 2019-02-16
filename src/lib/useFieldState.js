@@ -19,6 +19,7 @@ export default function useFieldState(form, fieldId, opts = {}, subscribeTo) { /
       if (isEqual(subscribedValues(prevState), subscribedValues(newState))) {
         return prevState
       }
+      console.log("FIELD CHANGED", fieldId, prevState, newState)
       return newState
     })
   }

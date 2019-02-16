@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useCallback } from 'react'
 import { Button, Code, DatePicker, DateTimePicker, Input, TimePicker } from './components'
 import { useForm, useFormState } from './lib'
-import Field from './Field'
+import { FormField } from './Field'
 
 const SimpleForm = () => {
   const [values, setValues] = useState({})
@@ -56,7 +56,7 @@ const FormStateAndButton = ({ form }) => {
 const FormFields = ({ form }) => {
   return (
     <>
-      <Field
+      <FormField
         form={form}
         id="myfield"
         label="My field"
@@ -70,7 +70,7 @@ const FormFields = ({ form }) => {
           return value.toUpperCase()
         }}
       />
-      <Field
+      <FormField
         form={form}
         id="email"
         label="Email"
@@ -80,10 +80,10 @@ const FormFields = ({ form }) => {
           return /\d/.test(value) && 'should not contain a number'
         }}
       />
-      <Field form={form} id="date1" label="Date1" component={DatePicker}/>
-      <Field form={form} id="date2" label="Date2" component={DatePicker}/>
-      <Field form={form} id="time" label="Time" component={TimePicker}/>
-      <Field
+      <FormField form={form} id="date1" label="Date1" component={DatePicker}/>
+      <FormField form={form} id="date2" label="Date2" component={DatePicker}/>
+      <FormField form={form} id="time" label="Time" component={TimePicker}/>
+      <FormField
         form={form}
         id="conn1"
         label="Conn1"
@@ -94,7 +94,7 @@ const FormFields = ({ form }) => {
           return v
         }}
       />
-      <Field
+      <FormField
         form={form}
         id="conn2"
         label="Conn2"
@@ -104,7 +104,7 @@ const FormFields = ({ form }) => {
           return /\d/.test(value) && 'should not contain a number'
         }}
       />
-      <Field
+      <FormField
         form={form}
         id='same'
         label='Same1'
@@ -114,9 +114,9 @@ const FormFields = ({ form }) => {
           return /\d/.test(value) && 'should not contain a number'
         }}
       />
-      <Field form={form} id="same" label="Same2" component={Input}/>
+      <FormField form={form} id="same" label="Same2" component={Input}/>
 
-      <Field form={form} id='datetime' component={DateTimePicker}/>
+      <FormField form={form} id='datetime' component={DateTimePicker}/>
     </>
   )
 }

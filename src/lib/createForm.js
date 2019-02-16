@@ -1,4 +1,4 @@
-import { createStore, combineReducers } from 'redux'
+import { combineReducers, createStore } from 'redux'
 import { handleFormSubmit } from './formHandlers'
 import { getProperty, setProperty } from './utils/Obj'
 
@@ -87,12 +87,14 @@ export default function createForm({ initialValues }) {
   }
 
   // State selectors
+  const getFieldValue = (fieldId) => {
+    return getProperty(store.getState().formValues, fieldId) || ''
+  }
+
   const getFieldState = (fieldId) => {
-    const state = store.getState()
-    const value = getProperty(state.formValues, fieldId) || ''
     return {
-      ...state.fieldState[fieldId],
-      value
+      ...store.getState().fieldState[fieldId],
+      value: getFieldValue(fieldId),
     }
   }
 
@@ -108,12 +110,13 @@ export default function createForm({ initialValues }) {
 
   // Field handlers
   const registerField = (fieldId, ref, setFieldState) => {
-    console.log("REGISTER_FIELD", fieldId)
+    console.log('REGISTER_FIELD', fieldId)
+    setFieldState(getFieldState(fieldId))
     const unsubscribe = store.subscribe(() => {
       setFieldState(getFieldState(fieldId))
     })
     return () => {
-      console.log("DESTROY_FIELD", fieldId)
+      console.log('DESTROY_FIELD', fieldId)
       delete fieldRefs[fieldId][ref]
       unsubscribe()
     }
@@ -131,7 +134,13 @@ export default function createForm({ initialValues }) {
   }
 
   const changeFieldValue = (fieldId) => (value) => {
-    store.dispatch({ type: CHANGE_FIELD_VALUE, field: fieldId, value: value, error: validateField(fieldId, value) })
+    const v = typeof value === 'function' ? value(getFieldValue(fieldId)) : value
+    store.dispatch({
+      type: CHANGE_FIELD_VALUE,
+      field: fieldId,
+      value: v,
+      error: validateField(fieldId, v)
+    })
   }
 
   const touchField = (fieldId) => () => {

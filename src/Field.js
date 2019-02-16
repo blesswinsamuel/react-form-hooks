@@ -1,6 +1,7 @@
-import React from 'react'
+import React, {useRef, useMemo} from 'react'
 import classNames from 'classnames'
 import { useFieldState } from './lib'
+import { Button } from './components'
 
 function getErrorString(error) {
   if (!error) {
@@ -30,22 +31,14 @@ function getErrorString(error) {
 }
 
 const Field = ({
-                 form,
                  id,
-                 component: InputComponent,
-                 validate,
-                 InputProps,
-                 onChange = v => v,
                  label,
                  InputLabelProps,
-                 render = v => v,
+                 error,
+                 touched,
+                 dirty,
+                 children,
                }) => {
-  const fieldState = form ? useFieldState(form, id, { validate }) : {}
-  const { changeFieldValue, touchField } = form.fieldActions || {}
-  const { value, touched, dirty, error } = fieldState
-
-  console.log('FIELD_STATE_UPDATE', id, fieldState)
-
   const showError = touched && error
 
   return (
@@ -58,15 +51,7 @@ const Field = ({
         </div>
       )}
       <div className="col-9 col-sm-12" style={{ position: 'relative' }}>
-        {render(
-          <InputComponent
-            id={id}
-            value={value}
-            onChange={value => changeFieldValue(id)(onChange(value))}
-            onBlur={touchField(id)}
-            {...InputProps}
-          />,
-        )}
+        {children}
         {showError && <div className="form-input-hint">{getErrorString(error)}</div>}
         <div
           style={{
@@ -90,4 +75,102 @@ const Field = ({
   )
 }
 
+const FormField = ({
+                     form,
+                     id,
+                     component: InputComponent,
+                     validate,
+                     InputProps,
+                     onChange = v => v,
+                     subscribeTo,
+                     label,
+                     InputLabelProps,
+                   }) => {
+  const fieldState = useFieldState(form, id, { validate }, subscribeTo)
+  const { changeFieldValue, touchField } = form.fieldActions
+  const { value, touched, dirty, error } = fieldState
+
+  console.log('FIELD_STATE_UPDATE', id, fieldState)
+
+  return (
+    <Field
+      id={id}
+      label={label}
+      InputLabelProps={InputLabelProps}
+      error={getErrorString(error)}
+      touched={touched}
+      dirty={dirty}
+    >
+      <InputComponent
+        id={id}
+        value={value}
+        onChange={value => changeFieldValue(id)(onChange(value))}
+        onBlur={touchField(id)}
+        {...InputProps}
+      />
+    </Field>
+  )
+}
+
+export const ArrayInput = ({ form, onChange, onBlur, id, value, renderField }) => {
+  const { changeFieldValue } = form.fieldActions
+  const fieldRefs = useRef()
+  const addItem = () => {
+    fieldRefs.current = [...fieldRefs.current, Math.max(...fieldRefs.current, 0) + 1]
+    // onBlur()
+    return changeFieldValue(id)(val => [...(val || []), null])
+  }
+  const deleteItem = index => () => {
+    fieldRefs.current = fieldRefs.current.filter((_, i) => index !== i)
+    // onBlur()
+    return changeFieldValue(id)(val => (val || []).filter((_, i) => index !== i))
+  }
+  const getFieldRef = (i) => {
+    if (!fieldRefs.current) {
+      fieldRefs.current = value.map((_, i) => i + 1)
+    }
+
+    return fieldRefs.current[i]
+  }
+  const n = value.length
+  const renderedField = useMemo(() => {
+    return Array(n).fill(1).map((_, i) => renderField(`${id}[${i}]`, i))
+  }, [id, n])
+  return (
+    <>
+      {value.map((_, i) => {
+        console.log(i, getFieldRef(i))
+        return (
+          <div key={getFieldRef(i)} style={{ position: 'relative', paddingBottom: '12px' }}>
+            <div>{renderedField[i]}</div>
+            {/*<div>{renderField(`${id}[${i}]`, i)}</div>*/}
+            <Button
+              style={{ position: 'absolute', top: 0, right: 0 }}
+              onClick={deleteItem(i)}
+            >Delete</Button>
+          </div>
+        )
+      })}
+      <Button onClick={addItem} style={{ width: '100%' }}>
+        Add
+      </Button>
+    </>
+  )
+}
+
+const ArrayFormField = ({ InputProps, ...props }) => {
+  return (
+    <FormField
+      subscribeTo={state => [state.value && state.value.length, state.touched, state.error, state.dirty]}
+      component={ArrayInput}
+      InputProps={{
+        form: props.form,
+        ...InputProps,
+      }}
+      {...props}
+    />
+  )
+}
+
 export default Field
+export { FormField, ArrayFormField }

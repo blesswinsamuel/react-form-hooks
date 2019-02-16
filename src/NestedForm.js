@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo, useState } from 'react'
-import { ArrayInput, Button, Code, Input } from './components'
+import { Button, Code, Input } from './components'
 import { useForm, useFormState } from './lib'
-import Field from './Field'
+import { FormField, ArrayFormField } from './Field'
 
 const NestedForm = () => {
   const [values, setValues] = useState({})
@@ -48,7 +48,7 @@ const MyForm = ({ defaultValues, onSubmit }) => {
 const FormStateAndButton = ({ form }) => {
   const { anyError, anyDirty, anyTouched, values } = useFormState(form, state => [state.anyError, state.anyDirty, state.anyTouched, state.values])
 
-  console.log('FORM_STATE_UPDATE', { anyError, anyDirty, anyTouched, values })
+  // console.log('FORM_STATE_UPDATE', { anyError, anyDirty, anyTouched, values })
   return (
     <>
       <Code>{JSON.stringify(values, null, 2)}</Code>
@@ -65,7 +65,7 @@ const FormStateAndButton = ({ form }) => {
 const FormFields = ({ form }) => {
   return (
     <>
-      <Field
+      <FormField
         form={form}
         id="name.firstname"
         label="Firstname"
@@ -77,13 +77,13 @@ const FormFields = ({ form }) => {
           return value.toUpperCase()
         }}
       />
-      <Field
+      <FormField
         form={form}
         id="name.lastname"
         label="Lastname"
         component={Input}
       />
-      <Field
+      <FormField
         form={form}
         id="email"
         label="Email"
@@ -93,17 +93,16 @@ const FormFields = ({ form }) => {
           return /\d/.test(value) && 'should not contain a number'
         }}
       />
-      <Field
+      <ArrayFormField
         form={form}
         id="items"
         label="Items"
-        component={ArrayInput}
         validate={value => {
           return value.length < 2 && 'should have more than 1 items'
         }}
         InputProps={{
           renderField: (id, index) => (
-            <Field
+            <FormField
               form={form}
               id={id}
               label={`Item ${index}`}
@@ -118,21 +117,20 @@ const FormFields = ({ form }) => {
           ),
         }}
       />
-      <Field
+      <ArrayFormField
         form={form}
         id="itemsObj"
         label="Items Object"
-        component={ArrayInput}
         InputProps={{
           renderField: (id, index) => (
             <>
-              <Field
+              <FormField
                 form={form}
                 id={`${id}.title`}
                 label={`Title ${index}`}
                 component={Input}
               />
-              <Field
+              <FormField
                 form={form}
                 id={`${id}.description`}
                 label={`Description ${index}`}
