@@ -109,12 +109,23 @@ export default function createForm({ initialValues }) {
   }
 
   // Field handlers
-  const registerField = (fieldId, ref, setFieldState) => {
+  const initField = (fieldId, ref, opts) => {
+    const { validate } = opts || {}
+    if (!fieldRefs[fieldId]) {
+      fieldRefs[fieldId] = {}
+    }
+    fieldRefs[fieldId][ref] = {
+      validate,
+    }
+  }
+
+  const registerField = (fieldId, ref, setFieldState, opts) => {
     console.log('REGISTER_FIELD', fieldId)
-    setFieldState(getFieldState(fieldId))
+    initField(fieldId, ref, opts)
     const unsubscribe = store.subscribe(() => {
       setFieldState(getFieldState(fieldId))
     })
+    store.dispatch(initFieldAction(fieldId))
     return () => {
       console.log('DESTROY_FIELD', fieldId)
       delete fieldRefs[fieldId][ref]
@@ -122,24 +133,18 @@ export default function createForm({ initialValues }) {
     }
   }
 
-  const initAndGetFieldState = (fieldId, ref, { validate } = {}) => {
-    if (!fieldRefs[fieldId]) {
-      fieldRefs[fieldId] = {}
-    }
-    fieldRefs[fieldId][ref] = {
-      validate,
-    }
+  const initAndGetFieldState = (fieldId, ref, opts) => {
+    initField(fieldId, ref, opts)
     store.dispatch(initFieldAction(fieldId))
     return getFieldState(fieldId)
   }
 
   const changeFieldValue = (fieldId) => (value) => {
-    const v = typeof value === 'function' ? value(getFieldValue(fieldId)) : value
     store.dispatch({
       type: CHANGE_FIELD_VALUE,
       field: fieldId,
-      value: v,
-      error: validateField(fieldId, v)
+      value: value,
+      error: validateField(fieldId, value)
     })
   }
 
@@ -148,15 +153,6 @@ export default function createForm({ initialValues }) {
   }
 
   // Form handlers
-  const registerForm = (setFormState) => {
-    const unsubscribe = store.subscribe(() => {
-      setFormState(getFormState())
-    })
-    return () => {
-      unsubscribe()
-    }
-  }
-
   const initializeForm = (newInitialValues) => {
     if (newInitialValues) {
       initialValues = newInitialValues
@@ -183,11 +179,10 @@ export default function createForm({ initialValues }) {
     })
 
   return {
+    subscribe: store.subscribe,
     formActions: {
-      registerForm,
       initializeForm,
       submitHandler,
-      touchAll,
       getFormState,
     },
     fieldActions: {
@@ -195,6 +190,7 @@ export default function createForm({ initialValues }) {
       changeFieldValue,
       touchField,
       initAndGetFieldState,
+      getFieldState,
     },
   }
 }

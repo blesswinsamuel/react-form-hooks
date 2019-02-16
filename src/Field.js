@@ -1,4 +1,4 @@
-import React, {useRef, useMemo} from 'react'
+import React, {useRef, useMemo, useCallback} from 'react'
 import classNames from 'classnames'
 import { useFieldState } from './lib'
 import { Button } from './components'
@@ -113,17 +113,17 @@ const FormField = ({
 }
 
 export const ArrayInput = ({ form, onChange, onBlur, id, value, renderField }) => {
-  const { changeFieldValue } = form.fieldActions
+  const { getFieldState } = form.fieldActions
   const fieldRefs = useRef()
-  const addItem = () => {
+  const addItem = useCallback(() => {
     fieldRefs.current = [...fieldRefs.current, Math.max(...fieldRefs.current, 0) + 1]
     // onBlur()
-    return changeFieldValue(id)(val => [...(val || []), null])
-  }
+    return onChange([...(getFieldState(id).value || []), null])
+  }, [])
   const deleteItem = index => () => {
     fieldRefs.current = fieldRefs.current.filter((_, i) => index !== i)
     // onBlur()
-    return changeFieldValue(id)(val => (val || []).filter((_, i) => index !== i))
+    return onChange((getFieldState(id).value || []).filter((_, i) => index !== i))
   }
   const getFieldRef = (i) => {
     if (!fieldRefs.current) {
@@ -132,18 +132,12 @@ export const ArrayInput = ({ form, onChange, onBlur, id, value, renderField }) =
 
     return fieldRefs.current[i]
   }
-  const n = value.length
-  const renderedField = useMemo(() => {
-    return Array(n).fill(1).map((_, i) => renderField(`${id}[${i}]`, i))
-  }, [id, n])
   return (
     <>
       {value.map((_, i) => {
-        console.log(i, getFieldRef(i))
         return (
           <div key={getFieldRef(i)} style={{ position: 'relative', paddingBottom: '12px' }}>
-            <div>{renderedField[i]}</div>
-            {/*<div>{renderField(`${id}[${i}]`, i)}</div>*/}
+            <div>{renderField(`${id}[${i}]`, i)}</div>
             <Button
               style={{ position: 'absolute', top: 0, right: 0 }}
               onClick={deleteItem(i)}

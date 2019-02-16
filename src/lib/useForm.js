@@ -3,19 +3,7 @@ import createForm from './createForm'
 
 export default function useForm(opts) {
   const form = useRef()
-
-  const prevInitialValues = useRef(opts.initialValues)
-
-  useEffect(() => {
-    if (opts.initialValues === prevInitialValues.current) {
-      return
-    }
-
-    if (opts.initialValues && opts.initialValues !== prevInitialValues.current) {
-      form.current.formActions.initializeForm(opts.initialValues)
-    }
-    prevInitialValues.current = opts.initialValues
-  })
+  const { initialValues } = opts
 
   const getForm = () => {
     if (!form.current) {
@@ -24,6 +12,17 @@ export default function useForm(opts) {
 
     return form.current
   }
+
+  const firstUpdate = useRef(true)
+  useEffect(() => {
+    const { initializeForm } = getForm().formActions
+    if (firstUpdate.current) {
+      firstUpdate.current = false
+      return
+    }
+
+    initializeForm(initialValues)
+  }, [initialValues])
 
   return getForm()
 }

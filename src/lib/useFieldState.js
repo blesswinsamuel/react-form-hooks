@@ -23,7 +23,7 @@ export default function useFieldState(form, fieldId, opts = {}, subscribeTo) { /
       return newState
     })
   }
-  useEffect(() => registerField(fieldId, getRef(), updateState), [fieldId])
+  useEffect(() => registerField(fieldId, getRef(), updateState, opts), [fieldId])
 
   return fieldState
 }
