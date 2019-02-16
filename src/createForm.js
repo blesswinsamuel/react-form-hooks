@@ -74,7 +74,7 @@ export default function createForm({ initialValues }) {
         .map(ref => fieldRefs[fieldId][ref])
         .map(x => x.validate)
         .find(x => !!x)
-      || (() => null)
+      || (() => undefined)
     return validate(value)
   }
 
