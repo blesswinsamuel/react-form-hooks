@@ -2,6 +2,7 @@ import { combineReducers, createStore } from 'redux'
 import { handleFormSubmit } from './formHandlers'
 import { getProperty, setProperty } from './utils/Obj'
 
+const INIT_FORM_VALUES = 'INIT_FORM_VALUES'
 const CHANGE_FIELD_VALUE = 'CHANGE_FIELD_VALUE'
 const INIT_FIELD = 'INIT_FIELD'
 const TOUCH_FIELD = 'TOUCH_FIELD'
@@ -46,7 +47,8 @@ function fieldState(state = {}, action) {
 
 function formValues(state = {}, action) {
   switch (action.type) {
-    // case INIT_FIELD:
+    case INIT_FORM_VALUES:
+      return action.values
     case CHANGE_FIELD_VALUE:
       return setProperty(state, action.field, action.value)
     default:
@@ -65,7 +67,8 @@ export default function createForm({ initialValues }) {
 
   const validateField = (fieldId, value) => {
     if (!fieldRefs[fieldId]) {
-      throw new Error(`Field "${fieldId}" is not registered`)
+      return undefined;
+      // throw new Error(`Field "${fieldId}" is not registered`)
     }
     const validate = Object.getOwnPropertySymbols(fieldRefs[fieldId])
         .map(ref => fieldRefs[fieldId][ref])
@@ -77,7 +80,7 @@ export default function createForm({ initialValues }) {
 
   // Actions
   const initFieldAction = (fieldId) => {
-    const value = getProperty(store.getState().formValues, fieldId) || ''
+    const value = getFieldValue(fieldId)
     return {
       type: INIT_FIELD,
       field: fieldId,
@@ -141,6 +144,7 @@ export default function createForm({ initialValues }) {
     if (newInitialValues) {
       initialValues = newInitialValues
     }
+    store.dispatch({ type: INIT_FORM_VALUES, values: initialValues })
     Object.keys(fieldRefs).forEach((fieldId) => {
       store.dispatch(initFieldAction(fieldId))
     })

@@ -1,5 +1,7 @@
 export const handleFormSubmit = func => event => {
-  event.preventDefault()
+  if (event) {
+    event.preventDefault()
+  }
   return func()
 }
 
