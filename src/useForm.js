@@ -13,15 +13,13 @@ export default function useForm(opts = {}) {
     return form.current
   }
 
-  const firstUpdate = useRef(true)
+  const prevInitialValues = useRef(initialValues)
   useEffect(() => {
     const { resetFormValues } = getForm().formActions
-    if (firstUpdate.current) {
-      firstUpdate.current = false
-      return
+    if (prevInitialValues.current !== initialValues) {
+      resetFormValues(initialValues)
     }
-
-    resetFormValues(initialValues)
+    prevInitialValues.current = initialValues
   }, [initialValues])
 
   return getForm()

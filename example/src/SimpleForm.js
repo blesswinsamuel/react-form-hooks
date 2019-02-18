@@ -11,13 +11,16 @@ import { useForm, useFormState } from 'react-form-hooks'
 import { FormField } from './Field'
 
 const SimpleForm = () => {
-  const [values, setValues] = useState({})
-  const defaultValues = {
+  const [values, setValues] = useState({
     myfield: '123',
-    email: 'asdf@dsa.com',
+    email: 'form@email.me',
     date1: '2020-05-02T18:30:00.000Z',
-  }
-  const changeValues = () => setValues(defaultValues)
+  })
+  const changeValues = () => setValues({
+    myfield: '1234',
+    email: 'changed@email.me',
+    date1: '2020-05-02T18:30:00.000Z',
+  })
   const onSubmit = useCallback(
     values => console.log('> onSubmit -> ', values),
     []
@@ -25,8 +28,7 @@ const SimpleForm = () => {
   return (
     <div className="container">
       <MyForm
-        defaultValues={defaultValues}
-        values={values}
+        defaultValues={values}
         onSubmit={onSubmit}
       />
       <Button onClick={changeValues}>Reset to default values</Button>

@@ -141,7 +141,7 @@ export default function createForm({ initialValues }) {
 
   // Form handlers
   const resetFormValues = (newInitialValues) => {
-    if (newInitialValues && !newInitialValues.originalEvent instanceof Event) {
+    if (newInitialValues && !(newInitialValues.target && newInitialValues.target instanceof Element)) {
       initialValues = newInitialValues
     }
     store.dispatch({ type: INIT_FORM_VALUES, values: initialValues })
