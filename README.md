@@ -17,18 +17,18 @@ npm install --save react-form-hooks
 
 ## Goals
 
-- No Dependencies (currently has redux as dependency. This can be removed in the future)
-- Minimal API - provides only 3 hooks - `useForm`, `useFormState`, `useFieldState`
-- Blazing Fast - no unnecessary re-renders 
-- Tiny Size - under 4KB gzipped (could be even smaller)
+- No Dependencies (currently has redux as dependency. This can be avoided)
+- [Minimal](https://www.youtube.com/watch?v=4anAwXYqLG8) API - provides 3 hooks - `useForm`, `useFormState`, `useFieldState`
+- Blazing Fast - re-render only when it needs to
+- Tiny Size - under 4KB gzipped (could be even smaller once redux is removed)
 
 ## Roadmap
 
 - [x] MVP
-- [ ] Remove redux dependency
 - [ ] Add unit tests
 - [ ] Documentation
 - [ ] Recipes
+- [ ] Remove redux dependency
 
 ## API
 
