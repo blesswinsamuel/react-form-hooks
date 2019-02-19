@@ -7,17 +7,17 @@ const NestedForm = () => {
   const [values, setValues] = useState({})
   const defaultValues = {
     name: {
-      firstname: 'dan',
-      lastname: 'abramov',
+      firstname: 'John',
+      lastname: 'Doe',
     },
     items: [1, 2],
     itemsObj: [
       {
-        title: 'abc',
-        description: 'desc',
+        title: 'My title',
+        description: 'My desc',
       },
     ],
-    email: 'asdf@dsa.com',
+    email: 'form@email.me',
   }
   const changeValues = () => setValues(defaultValues)
   const onSubmit = useCallback(
