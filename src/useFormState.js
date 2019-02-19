@@ -1,19 +1,18 @@
-// import { createSelector } from 'reselect'
 import { useEffect, useState } from 'react'
-import isEqual from './utils/isEqual'
+import shallowEqual from './utils/shallowEqual'
 
-export default function useFormState(form, subscribeTo) {
+export default function useFormState(form, mapState = s => s) {
   const { getFormState } = form.formActions
 
   const [formState, setFormState] = useState(() => getFormState())
-  const subscribedValues = subscribeTo || (state => [state.values, state.anyTouched, state.anyError, state.anyDirty])
   const updateState = () => {
     const newState = getFormState()
     setFormState(prevState => {
-      if (isEqual(subscribedValues(prevState), subscribedValues(newState))) {
+      const newMappedState = mapState(newState)
+      if (shallowEqual(prevState, newMappedState)) {
         return prevState
       }
-      return newState
+      return newMappedState
     })
   }
 

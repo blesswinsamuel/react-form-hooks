@@ -56,11 +56,11 @@ const FormField = ({
   validate,
   InputProps,
   onChange = v => v,
-  subscribeTo,
+  mapState,
   label,
   InputLabelProps,
 }) => {
-  const fieldState = useFieldState(form, id, subscribeTo, { validate })
+  const fieldState = useFieldState(form, id, mapState, { validate })
   const { changeFieldValue, touchField } = form.fieldActions
   const { value, touched, dirty, error } = fieldState
 

@@ -57,7 +57,12 @@ const MyForm = ({ defaultValues, onSubmit }) => {
 const FormStateAndButton = ({ form }) => {
   const { anyError, anyDirty, anyTouched, values } = useFormState(
     form,
-    state => [state.anyError, state.anyDirty, state.anyTouched, state.values]
+    state => ({
+      anyError: state.anyError,
+      anyDirty: state.anyDirty,
+      anyTouched: state.anyTouched,
+      values: state.values,
+    })
   )
 
   console.log('FORM_STATE_UPDATE', { anyError, anyDirty, anyTouched, values })

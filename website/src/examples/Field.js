@@ -84,11 +84,11 @@ const FormField = ({
   validate,
   InputProps,
   onChange = v => v,
-  subscribeTo,
+  mapState,
   label,
   InputLabelProps,
 }) => {
-  const fieldState = useFieldState(form, id, subscribeTo, { validate })
+  const fieldState = useFieldState(form, id, mapState, { validate })
   const { changeFieldValue, touchField } = form.fieldActions
   const { value, touched, dirty, error } = fieldState
 
@@ -172,12 +172,11 @@ export const ArrayInput = ({
 const ArrayFormField = ({ InputProps, ...props }) => {
   return (
     <FormField
-      subscribeTo={state => [
-        state.value && state.value.length,
-        state.touched,
-        state.error,
-        state.dirty,
-      ]}
+      mapState={state => ({
+        value: state.value ? state.value.length : 0,
+        error: state.error,
+        dirty: state.dirty,
+      })}
       component={ArrayInput}
       InputProps={{
         form: props.form,

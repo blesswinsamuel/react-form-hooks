@@ -1,7 +1,12 @@
 import { useEffect, useRef, useState } from 'react'
-import isEqual from './utils/isEqual'
+import shallowEqual from './utils/shallowEqual'
 
-export default function useFieldState(form, fieldId, subscribeTo, opts = {}) {
+export default function useFieldState(
+  form,
+  fieldId,
+  mapState = s => s,
+  opts = {}
+) {
   const { initField, destroyField, getFieldState } = form.fieldActions
 
   const ref = useRef()
@@ -16,15 +21,15 @@ export default function useFieldState(form, fieldId, subscribeTo, opts = {}) {
     initField(fieldId, getRef(), opts)
     return getFieldState(fieldId)
   })
-  const subscribedValues = subscribeTo || (state => [state.value, state.touched, state.error, state.dirty])
   const updateState = () => {
     const newState = getFieldState(fieldId)
     setFieldState(prevState => {
-      if (isEqual(subscribedValues(prevState), subscribedValues(newState))) {
+      const newMappedState = mapState(newState)
+      if (shallowEqual(prevState, newMappedState)) {
         return prevState
       }
       // console.log("FIELD CHANGED", fieldId, prevState, newState)
-      return newState
+      return newMappedState
     })
   }
   useEffect(() => {
