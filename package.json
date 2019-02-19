@@ -19,9 +19,7 @@
     "build": "rollup -c",
     "start": "rollup -c -w",
     "prepare": "yarn run build",
-    "predeploy": "cd website && yarn install && yarn run build",
-    "website": "cd website && yarn install && yarn start",
-    "deploy": "gh-pages -d website/build"
+    "website": "cd website && yarn install && yarn start"
   },
   "dependencies": {
     "redux": "^4.0.1"
