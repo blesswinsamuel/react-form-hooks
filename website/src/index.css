@@ -2,66 +2,44 @@
   min-height: 100vh;
 }
 
-.docs-navbar {
-  height: 3.8rem;
-  position: fixed;
-  right: 0;
-  top: 0;
-  z-index: 100;
-}
-
-.docs-navbar .btns {
-  position: absolute;
-  right: 1.5rem;
-  top: 1rem;
-  width: 14rem;
-}
-
 .docs-brand {
   color: #5755d9;
-  height: 2rem;
-  left: 1.5rem;
-  position: fixed;
-  top: .85rem;
+  padding: .8rem 1rem;
 }
 
-.docs-brand .docs-logo {
-  align-items: center;
-  border-radius: .1rem;
-  display: inline-flex;
-  font-size: .7rem;
-  height: 2rem;
-  padding: .2rem;
-  width: auto;
-}
-
-.docs-brand .docs-logo:focus,
-.docs-brand .docs-logo:hover {
+.docs-logo:focus,
+.docs-logo:hover {
   text-decoration: none;
 }
 
-.docs-brand .docs-logo img {
+.docs-logo h2 {
   display: inline-block;
-  height: auto;
-  width: 1.6rem;
-}
-
-.docs-brand .docs-logo h2 {
-  display: inline-block;
-  font-size: .8rem;
+  font-size: 0.8rem;
   font-weight: 700;
-  line-height: 1.5rem;
-  margin-bottom: 0;
-  margin-left: .5rem;
-  margin-right: .3rem;
+  margin-right: 0.3rem;
 }
 
 .docs-sidebar .docs-nav {
-  bottom: 1.5rem;
-  -webkit-overflow-scrolling: touch;
-  overflow-y: auto;
-  padding: .5rem 1.5rem;
-  position: fixed;
-  top: 3.5rem;
-  width: 12rem;
+  /*width: 12rem;*/
+  padding: 0 .7rem;
+}
+
+.off-canvas .off-canvas-content {
+  padding: 0;
+}
+
+.docs-content {
+  flex: 1 1 auto;
+  padding: 1rem 4rem;
+}
+
+.nav .nav-item div {
+  color: #66758c;
+  font-size: 0.7rem;
+  padding: 0.2rem 0.4rem;
+}
+
+.docs-nav > .nav > .nav-item > a {
+  text-transform: uppercase;
+  font-weight: bold;
 }
