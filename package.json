@@ -19,7 +19,9 @@
     "build": "rollup -c",
     "start": "rollup -c -w",
     "prepare": "yarn run build",
-    "website": "cd website && yarn install && yarn start"
+    "website": "yarn run website:start",
+    "website:build": "cd website && yarn install && yarn build",
+    "website:start": "cd website && yarn install && yarn start"
   },
   "dependencies": {
     "redux": "^4.0.1"
