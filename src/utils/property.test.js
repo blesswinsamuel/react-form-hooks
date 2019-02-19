@@ -1,5 +1,5 @@
 import React from 'react'
-import { getProperty, setProperty } from './Obj'
+import { getProperty, setProperty } from './property'
 
 const obj1 = {
   name: {

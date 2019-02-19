@@ -1,6 +1,6 @@
 import { combineReducers, createStore } from 'redux'
 import { handleFormSubmit } from './formHandlers'
-import { getProperty, setProperty } from './utils/Obj'
+import { getProperty, setProperty } from './utils/property'
 
 const INIT_FORM_VALUES = 'INIT_FORM_VALUES'
 const CHANGE_FIELD_VALUE = 'CHANGE_FIELD_VALUE'
