@@ -9,13 +9,7 @@
 
 > This library is currently experimental and is a Work In Progress. The API is likely to change frequently till it reaches a stable version. Not to be used in production.
 
-## Install
-
-```bash
-npm install --save react-form-hooks
-```
-
-## Goals
+## Features
 
 - No Dependencies (currently has redux as dependency. This can be avoided)
 - [Minimal](https://www.youtube.com/watch?v=4anAwXYqLG8) API - provides 3 hooks - `useForm`, `useFormState`, `useFieldState`
@@ -29,6 +23,12 @@ npm install --save react-form-hooks
 - [ ] Documentation
 - [ ] Recipes
 - [ ] Remove redux dependency
+
+## Install
+
+```bash
+npm install --save react-form-hooks
+```
 
 ## Usage
 
@@ -137,6 +137,7 @@ ReactDOM.render(<MyForm />, document.getElementById('root'))
 ## Documentation
 
 - [API](./docs/API.md)
+- [Examples](./website/src/examples)
 
 ## License
 
