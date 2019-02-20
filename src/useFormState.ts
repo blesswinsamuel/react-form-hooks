@@ -1,7 +1,11 @@
 import { useEffect, useState } from 'react'
 import shallowEqual from './utils/shallowEqual'
+import { Form, FormState } from './types'
 
-export default function useFormState(form, mapState = s => s) {
+export default function useFormState(
+  form: Form,
+  mapState: (state: FormState) => FormState = s => s
+) {
   const { getFormState } = form.formActions
 
   const [formState, setFormState] = useState(() => getFormState())

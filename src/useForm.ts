@@ -1,8 +1,9 @@
 import { useEffect, useRef } from 'react'
 import createForm from './createForm'
+import { FormOptions } from './types'
 
-export default function useForm(opts = {}) {
-  const form = useRef()
+export default function useForm(opts: FormOptions = {}) {
+  const form = useRef(null)
   const { initialValues } = opts
 
   const getForm = () => {

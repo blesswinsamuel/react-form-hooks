@@ -5,7 +5,11 @@
   "author": "Blesswin Samuel <blesswinsamuel@gmail.com>",
   "homepage": "https://github.com/blesswinsamuel/react-form-hooks",
   "license": "MIT",
-  "keywords": ["react", "form", "hooks"],
+  "keywords": [
+    "react",
+    "form",
+    "hooks"
+  ],
   "main": "dist/index.js",
   "module": "dist/index.es.js",
   "jsnext:main": "dist/index.es.js",
@@ -31,27 +35,12 @@
     "react-dom": "^16.8.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.0.0",
-    "@babel/plugin-external-helpers": "^7.0.0",
-    "@babel/plugin-proposal-class-properties": "^7.0.0",
-    "@babel/plugin-proposal-decorators": "^7.0.0",
-    "@babel/plugin-proposal-do-expressions": "^7.0.0",
-    "@babel/plugin-proposal-export-default-from": "^7.0.0",
-    "@babel/plugin-proposal-export-namespace-from": "^7.0.0",
-    "@babel/plugin-proposal-function-bind": "^7.0.0",
-    "@babel/plugin-proposal-function-sent": "^7.0.0",
-    "@babel/plugin-proposal-json-strings": "^7.0.0",
-    "@babel/plugin-proposal-logical-assignment-operators": "^7.0.0",
-    "@babel/plugin-proposal-nullish-coalescing-operator": "^7.0.0",
-    "@babel/plugin-proposal-numeric-separator": "^7.0.0",
-    "@babel/plugin-proposal-optional-chaining": "^7.0.0",
-    "@babel/plugin-proposal-pipeline-operator": "^7.0.0",
-    "@babel/plugin-proposal-throw-expressions": "^7.0.0",
-    "@babel/plugin-syntax-dynamic-import": "^7.0.0",
-    "@babel/plugin-syntax-import-meta": "^7.0.0",
-    "@babel/preset-env": "^7.0.0",
-    "@babel/preset-react": "^7.0.0",
+    "@babel/core": "^7.3.3",
+    "@babel/runtime": "^7.3.1",
     "@svgr/rollup": "^2.4.1",
+    "@types/jest": "^24.0.6",
+    "@types/react": "^16.8.3",
+    "@types/react-dom": "^16.8.2",
     "cross-env": "^5.1.4",
     "gh-pages": "^1.2.0",
     "prettier": "^1.16.4",
@@ -64,7 +53,9 @@
     "rollup-plugin-node-resolve": "^3.3.0",
     "rollup-plugin-peer-deps-external": "^2.2.0",
     "rollup-plugin-postcss": "^1.6.2",
-    "rollup-plugin-url": "^1.4.0"
+    "rollup-plugin-typescript2": "^0.19.2",
+    "rollup-plugin-url": "^1.4.0",
+    "typescript": "^3.3.3"
   },
   "files": [
     "dist"

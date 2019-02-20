@@ -1,15 +1,16 @@
 import { useEffect, useRef, useState } from 'react'
 import shallowEqual from './utils/shallowEqual'
+import { FieldState, Form } from './types'
 
 export default function useFieldState(
-  form,
-  fieldId,
-  mapState = s => s,
+  form: Form,
+  fieldId: string,
+  mapState: (state: FieldState) => FieldState = s => s,
   opts = {}
 ) {
   const { initField, destroyField, getFieldState } = form.fieldActions
 
-  const ref = useRef()
+  const ref = useRef(null)
   const getRef = () => {
     if (!ref.current) {
       ref.current = Symbol()

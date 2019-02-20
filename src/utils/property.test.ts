@@ -1,4 +1,3 @@
-import React from 'react'
 import { getProperty, setProperty } from './property'
 
 const obj1 = {
@@ -7,9 +6,8 @@ const obj1 = {
     lastname: 'abramov',
   },
   array: [1, 2],
-  nestedArray: [
-    [10, 20],
-  ],
+  nestedArray: [[10, 20]],
+  // @ts-ignore
   arrayEmpty: [],
   obj: [
     {
@@ -19,14 +17,14 @@ const obj1 = {
     1,
     {},
     null,
-    'str'
+    'str',
   ],
   objEmpty: {},
   email: 'asdf@dsa.com',
   checkAlways: 'present',
 }
 
-const getPropertyTests = [
+const getPropertyTests: any[][] = [
   [obj1, 'name.firstname', 'dan'],
   [obj1, 'array[0]', 1],
   [obj1, 'arrayEmpty', []],
@@ -39,12 +37,9 @@ const getPropertyTests = [
   [obj1, 'obj[4].nonexisting', undefined],
 ]
 
-test.each(getPropertyTests)(
-  'getProperty works',
-  (obj, field, expected) => {
-    expect(getProperty(obj, field)).toEqual(expected)
-  },
-)
+test.each(getPropertyTests)('getProperty works', (obj, field, expected) => {
+  expect(getProperty(obj, field)).toEqual(expected)
+})
 
 const setPropertyPrimitiveTests = [
   [obj1, 'name.firstname', 'don'],
@@ -59,7 +54,7 @@ test.each(setPropertyPrimitiveTests)(
     const newObj = setProperty(obj, field, value)
     expect(getProperty(newObj, field)).toEqual(value)
     expect(getProperty(obj, 'checkAlways')).toEqual('present')
-  },
+  }
 )
 
 const setPropertyReferenceTests = [
@@ -79,10 +74,10 @@ test.each(setPropertyReferenceTests)(
     expect(obj).not.toBe(newObj)
     expect(initialValue).not.toBe(newValue)
     expect(getProperty(obj, 'checkAlways')).toEqual('present')
-  },
+  }
 )
 
-const setPropertyTypeTests = [
+const setPropertyTypeTests: any[][] = [
   [obj1, 'name.firstname', 'dan', 'name'],
   [obj1, 'array[0]', 1, 'array'],
   [obj1, 'arrayEmpty', [], 'arrayEmpty'],
@@ -100,5 +95,5 @@ test.each(setPropertyTypeTests)(
     expect(initialValue).not.toBe(newValue)
     expect(initialValue).toEqual(newValue)
     expect(getProperty(obj, 'checkAlways')).toEqual('present')
-  },
+  }
 )

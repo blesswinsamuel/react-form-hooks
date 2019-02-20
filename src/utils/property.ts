@@ -1,13 +1,13 @@
-const isObject = function(value) {
+const isObject = function(value: any) {
   const type = typeof value
   return value != null && (type === 'object' || type === 'function')
   // return (!!value) && (value.constructor === Object)
 }
 
 const indexRegex = /^\[(\d+)]$/
-const isIndex = k => indexRegex.test(k)
+const isIndex = (k: string) => indexRegex.test(k)
 
-export function getProperty(obj, key) {
+export function getProperty(obj: object, key: string): any {
   const parts = key.replace(/\[(\w+)]/g, '.$1') // convert indexes to properties
     .replace(/^\./, '')  // strip a leading dot
     .split('.')
@@ -29,7 +29,7 @@ export function getProperty(obj, key) {
   return curObj
 }
 
-export function setProperty(obj, key, value) {
+export function setProperty(obj: any, key: string, value: any): any {
   if (obj === null) {
     return obj
   }

@@ -1,13 +1,31 @@
 import { combineReducers, createStore } from 'redux'
 import { handleFormSubmit } from './formHandlers'
 import { getProperty, setProperty } from './utils/property'
+import { FieldState, Form, FormOptions } from './types'
 
 const INIT_FORM_VALUES = 'INIT_FORM_VALUES'
 const CHANGE_FIELD_VALUE = 'CHANGE_FIELD_VALUE'
 const INIT_FIELD = 'INIT_FIELD'
 const TOUCH_FIELD = 'TOUCH_FIELD'
 
-function fieldReducer(state = {}, action) {
+type InitFormValues = {
+  type: typeof INIT_FORM_VALUES
+  field: string
+  values: object
+}
+type ChangeFieldValue = {
+  type: typeof CHANGE_FIELD_VALUE
+  field: string
+  value: any
+  error: any
+}
+type InitField = { type: typeof INIT_FIELD; field: string; error: any }
+type TouchField = { type: typeof TOUCH_FIELD; field: string }
+
+export type Action = InitFormValues | ChangeFieldValue | InitField | TouchField
+
+// @ts-ignore
+function fieldReducer(state: FieldState = {}, action: Action): FieldState {
   switch (action.type) {
     case INIT_FIELD:
       return {
@@ -31,7 +49,10 @@ function fieldReducer(state = {}, action) {
   }
 }
 
-function fieldState(state = {}, action) {
+function fieldState(
+  state = {},
+  action: Action
+): { [field: string]: FieldState } {
   switch (action.type) {
     case INIT_FIELD:
     case CHANGE_FIELD_VALUE:
@@ -45,7 +66,7 @@ function fieldState(state = {}, action) {
   }
 }
 
-function formValues(state = {}, action) {
+function formValues(state = {}, action: Action) {
   switch (action.type) {
     case INIT_FORM_VALUES:
       return action.values
@@ -61,25 +82,32 @@ const formReducer = combineReducers({
   fieldState,
 })
 
-export default function createForm({ initialValues }) {
-  const store = createStore(formReducer, { formValues: initialValues }, window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__())
+// @ts-ignore
+export default function createForm({ initialValues }: FormOptions): Form {
+  const store = createStore(
+    formReducer,
+    { formValues: initialValues },
+    // @ts-ignore
+    window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
+  )
   const fieldRefs = {}
 
-  const validateField = (fieldId, value) => {
+  const validateField = (fieldId: string, value: any) => {
     if (!fieldRefs[fieldId]) {
-      return undefined;
+      return undefined
       // throw new Error(`Field "${fieldId}" is not registered`)
     }
-    const validate = Object.getOwnPropertySymbols(fieldRefs[fieldId])
+    const validate =
+      Object.getOwnPropertySymbols(fieldRefs[fieldId])
         .map(ref => fieldRefs[fieldId][ref])
         .map(x => x.validate)
-        .find(x => !!x)
-      || (() => undefined)
+        // @ts-ignore
+        .find(x => !!x) || (() => undefined)
     return validate(value)
   }
 
   // Actions
-  const initFieldAction = (fieldId) => {
+  const initFieldAction = (fieldId: string) => {
     const value = getFieldValue(fieldId)
     return {
       type: INIT_FIELD,
@@ -90,11 +118,11 @@ export default function createForm({ initialValues }) {
   }
 
   // State selectors
-  const getFieldValue = (fieldId) => {
+  const getFieldValue = (fieldId: string) => {
     return getProperty(store.getState().formValues, fieldId) || ''
   }
 
-  const getFieldState = (fieldId) => {
+  const getFieldState = (fieldId: string) => {
     return {
       ...store.getState().fieldState[fieldId],
       value: getFieldValue(fieldId),
@@ -105,14 +133,18 @@ export default function createForm({ initialValues }) {
     const state = store.getState()
     return {
       values: state.formValues,
+      // @ts-ignore
       anyTouched: Object.values(state.fieldState).some(field => field.touched),
+      // @ts-ignore
       anyError: Object.values(state.fieldState).some(field => !!field.error),
+      // @ts-ignore
       anyDirty: Object.values(state.fieldState).some(field => field.dirty),
     }
   }
 
   // Field handlers
-  const initField = (fieldId, ref, opts) => {
+  const initField = (fieldId: string, ref: Symbol, opts: any) => {
+    // @ts-ignore
     const { validate } = opts || {}
     if (!fieldRefs[fieldId]) {
       fieldRefs[fieldId] = {}
@@ -122,41 +154,44 @@ export default function createForm({ initialValues }) {
     }
     store.dispatch(initFieldAction(fieldId))
   }
-  const destroyField = (fieldId, ref) => {
+  const destroyField = (fieldId: string, ref: Symbol) => {
     delete fieldRefs[fieldId][ref]
   }
 
-  const changeFieldValue = (fieldId, value) => {
+  const changeFieldValue = (fieldId: string, value: any) => {
     store.dispatch({
       type: CHANGE_FIELD_VALUE,
       field: fieldId,
       value: value,
-      error: validateField(fieldId, value)
+      error: validateField(fieldId, value),
     })
   }
 
-  const touchField = (fieldId) => {
+  const touchField = (fieldId: string) => {
     store.dispatch({ type: TOUCH_FIELD, field: fieldId })
   }
 
   // Form handlers
-  const resetFormValues = (newInitialValues) => {
-    if (newInitialValues && !(newInitialValues.target && newInitialValues.target instanceof Element)) {
+  const resetFormValues = (newInitialValues: any) => {
+    if (
+      newInitialValues &&
+      !(newInitialValues.target && newInitialValues.target instanceof Element)
+    ) {
       initialValues = newInitialValues
     }
     store.dispatch({ type: INIT_FORM_VALUES, values: initialValues })
-    Object.keys(fieldRefs).forEach((fieldId) => {
+    Object.keys(fieldRefs).forEach(fieldId => {
       store.dispatch(initFieldAction(fieldId))
     })
   }
 
   const touchAll = () => {
-    Object.keys(fieldRefs).forEach((fieldId) => {
+    Object.keys(fieldRefs).forEach(fieldId => {
       touchField(fieldId)
     })
   }
 
-  const submitHandler = fn =>
+  const submitHandler = (fn: (val: any) => any) =>
     handleFormSubmit(() => {
       const state = getFormState()
       if (state.anyError) {
