@@ -11,18 +11,18 @@
 
 ## Features
 
-- No Dependencies (currently has redux as dependency. This can be avoided)
+- No Dependencies
 - [Minimal](https://www.youtube.com/watch?v=4anAwXYqLG8) API - provides 3 hooks - `useForm`, `useFormState`, `useFieldState`
 - Blazing Fast - re-render only when it needs to
-- Tiny Size - under 4KB gzipped (could be even smaller once redux is removed)
+- Tiny Size - under 2KB gzipped
 
 ## Roadmap
 
 - [x] MVP
 - [x] Add unit tests
+- [x] Remove redux dependency
 - [ ] Documentation
 - [ ] Recipes
-- [x] Remove redux dependency
 
 ## Install
 
