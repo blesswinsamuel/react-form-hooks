@@ -111,8 +111,8 @@ describe('createForm', () => {
       const form = createForm()
       const aFieldRef = Symbol()
       const bFieldRef = Symbol()
-      form.fieldActions.initField('a', aFieldRef, {})
-      form.fieldActions.initField('b', bFieldRef, {})
+      form.fieldActions.initField('a', aFieldRef)
+      form.fieldActions.initField('b', bFieldRef)
       expect(form.fieldActions.getFieldState('a')).toEqual({
         value: '',
         error: undefined,
@@ -241,7 +241,7 @@ describe('createForm', () => {
       })
       form.fieldActions.initField('b', Symbol(), {})
       const mockFn = jest.fn()
-      form.formActions.submitHandler(mockFn)(new Event('test'))
+      form.formActions.submitHandler(mockFn)()
       expect(mockFn.mock.calls.length).toBe(0)
       // Fields touched because of error
       expect(form.formActions.getFormState()).toEqual({

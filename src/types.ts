@@ -26,11 +26,11 @@ export type Form<TValues> = {
   subscribe(listener: () => void): Unsubscribe
   formActions: {
     resetFormValues: (newInitialValues?: any) => void
-    submitHandler: (fn: (val: any) => any) => (event: Event) => any
+    submitHandler: (fn: (val: any) => any) => (event?: Event) => any
     getFormState: () => FormState<TValues>
   }
   fieldActions: {
-    initField: (fieldId: string, ref: symbol, opts: FieldOptions) => void
+    initField: (fieldId: string, ref: symbol, opts?: FieldOptions) => void
     destroyField: (fieldId: string, ref: symbol) => void
     changeFieldValue: (fieldId: string, value: any) => void
     touchField: (fieldId: string) => void

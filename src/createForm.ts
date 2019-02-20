@@ -23,9 +23,16 @@ type InitField = { type: typeof INIT_FIELD; field: string; error: any }
 type TouchField = { type: typeof TOUCH_FIELD; field: string }
 
 export type Action = InitFormValues | ChangeFieldValue | InitField | TouchField
+export type FieldAction = ChangeFieldValue | InitField | TouchField
 
-// @ts-ignore
-function fieldReducer(state: FieldState = {}, action: Action): FieldState {
+type Diff<T, U> = T extends U ? never : T
+type ObjectDiff<T, U> = Pick<T, Diff<keyof T, keyof U>>
+type ReduxFieldState = ObjectDiff<FieldState, { value: any }>
+
+function fieldReducer(
+  state: ReduxFieldState,
+  action: FieldAction
+): ReduxFieldState {
   switch (action.type) {
     case INIT_FIELD:
       return {
@@ -48,9 +55,9 @@ function fieldReducer(state: FieldState = {}, action: Action): FieldState {
 }
 
 function fieldState(
-  state: { [fieldId: string]: FieldState } = {},
+  state: { [fieldId: string]: ReduxFieldState } = {},
   action: Action
-): { [field: string]: FieldState } {
+): { [field: string]: ReduxFieldState } {
   switch (action.type) {
     case INIT_FIELD:
     case CHANGE_FIELD_VALUE:
@@ -80,13 +87,18 @@ const formReducer = combineReducers({
   fieldState,
 })
 
-// @ts-ignore
-export default function createForm<TValues>({ initialValues }: FormOptions<TValues> = {}): Form {
+const reduxDevToolExtension /* instanbul ignore next */ =
+  // @ts-ignore
+  window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
+
+export default function createForm<TValues>({
+  initialValues,
+}: FormOptions<TValues> = {}): Form<TValues> {
+  /* instanbul ignore next */
   const store = createStore(
     formReducer,
     { formValues: initialValues },
-    // @ts-ignore
-    window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
+    reduxDevToolExtension
   )
   const fieldRefs: { [fieldId: string]: any } = {} // any = { [ref: symbol]: FieldOptions }
 
@@ -165,10 +177,7 @@ export default function createForm<TValues>({ initialValues }: FormOptions<TValu
 
   // Form handlers
   const resetFormValues = (newInitialValues?: any) => {
-    if (
-      newInitialValues &&
-      !(newInitialValues.target && newInitialValues.target instanceof Element)
-    ) {
+    if (newInitialValues) {
       initialValues = newInitialValues
     }
     store.dispatch({ type: INIT_FORM_VALUES, values: initialValues })
@@ -183,7 +192,7 @@ export default function createForm<TValues>({ initialValues }: FormOptions<TValu
     })
   }
 
-  const submitHandler: (fn: (val: any) => any) => (event: Event) => any = fn =>
+  const submitHandler: (fn: (val: any) => any) => (event?: Event) => any = fn =>
     handleFormSubmit(() => {
       const state = getFormState()
       if (state.anyError) {

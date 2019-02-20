@@ -128,7 +128,7 @@ describe('react-form-hooks', () => {
     it('re-renders on state change', () => {
       let renderCount = 0
       const Component = () => {
-        const formState = useFormState<{ a: string; b: string }, string>(
+        const formState = useFormState(
           form,
           state => state.values['a'] + ' ' + state.values['b']
         )

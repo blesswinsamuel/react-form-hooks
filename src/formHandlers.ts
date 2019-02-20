@@ -1,4 +1,4 @@
-export const handleFormSubmit = (func: () => any) => (event: Event) => {
+export const handleFormSubmit = (func: () => any) => (event?: Event) => {
   if (event) {
     event.preventDefault()
   }
