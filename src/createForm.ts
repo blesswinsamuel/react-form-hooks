@@ -81,7 +81,7 @@ const formReducer = combineReducers({
 })
 
 // @ts-ignore
-export default function createForm<TValues extends object>({ initialValues }: FormOptions<TValues> = {}): Form {
+export default function createForm<TValues>({ initialValues }: FormOptions<TValues> = {}): Form {
   const store = createStore(
     formReducer,
     { formValues: initialValues },

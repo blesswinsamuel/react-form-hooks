@@ -6,12 +6,12 @@ const NULL_FORM_ERROR_MESSAGE =
   'react-form-hooks requires the form instance created using useForm() to be passed to useFieldState as 1st argument'
 const NULL_FIELD_ID_ERROR_MESSAGE = `react-form-hooks requires the id of the field to be passed to useFieldState as 2nd argument`
 
-export default function useFieldState<TResult>(
-  form: Form,
+export default function useFieldState<TValues, TResult = FieldState>(
+  form: Form<TValues>,
   fieldId: string,
-  mapState: (state: FieldState) => TResult | FieldState = s => s,
+  mapState: (state: FieldState) => TResult = (s: FieldState) => s as any,
   opts = {}
-): TResult | FieldState {
+): TResult {
   if (!form) {
     throw new Error(NULL_FORM_ERROR_MESSAGE)
   }
@@ -44,6 +44,10 @@ export default function useFieldState<TResult>(
       prevFieldState.current = newState
     }
   }
+  // useEffect(() => {
+  //   initField(fieldId, getRef(), opts)
+  //   return () => destroyField(fieldId, getRef())
+  // }, [form, fieldId])
   useEffect(() => {
     const checkForUpdates = () => {
       updateState()

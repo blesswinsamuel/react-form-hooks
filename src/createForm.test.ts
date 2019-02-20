@@ -215,10 +215,10 @@ describe('createForm', () => {
       const form = createForm({ initialValues: { a: 1, b: 'abc' } })
       form.fieldActions.initField('a', Symbol(), {})
       form.fieldActions.initField('b', Symbol(), {})
-      const mockFn = jest.fn()
-      form.formActions.submitHandler(mockFn)(new Event('test'))
-      expect(mockFn.mock.calls.length).toBe(1)
-      expect(mockFn.mock.calls[0][0]).toEqual({ a: 1, b: 'abc' })
+      const submitFn = jest.fn()
+      form.formActions.submitHandler(submitFn)(new Event('test'))
+      expect(submitFn).toHaveBeenCalledTimes(1)
+      expect(submitFn).toHaveBeenLastCalledWith({ a: 1, b: 'abc' })
       // Fields not touched because no error
       expect(form.formActions.getFormState()).toEqual({
         anyDirty: false,
@@ -237,7 +237,7 @@ describe('createForm', () => {
     it('works with validate', () => {
       const form = createForm({ initialValues: { a: 1, b: 'abc' } })
       form.fieldActions.initField('a', Symbol(), {
-        validate: val => val < 2 && 'should be greater than 2',
+        validate: (val: number) => val < 2 && 'should be greater than 2',
       })
       form.fieldActions.initField('b', Symbol(), {})
       const mockFn = jest.fn()

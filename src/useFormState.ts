@@ -5,10 +5,10 @@ import { Form, FormState } from './types'
 const NULL_FORM_ERROR_MESSAGE =
   'react-form-hooks requires the form instance created using useForm() to be passed to useFormState as 1st argument'
 
-export default function useFormState<TResult>(
-  form: Form,
-  mapState: (state: FormState) => TResult | FormState = s => s
-) {
+export default function useFormState<TValues, TResult = FormState<TValues>>(
+  form: Form<TValues>,
+  mapState: (state: FormState<TValues>) => TResult = s => s as any
+): TResult {
   if (!form) {
     throw new Error(NULL_FORM_ERROR_MESSAGE)
   }

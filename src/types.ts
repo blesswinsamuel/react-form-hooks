@@ -5,28 +5,29 @@ export type FormOptions<TValues> = {
 }
 
 export type FieldState = {
+  value: any
   error: any
   touched: boolean
   dirty: boolean
 }
 
-export type FormState = {
+export type FormState<TValues> = {
   anyTouched: boolean
   anyDirty: boolean
   anyError: boolean
-  values: any
+  values: TValues
 }
 
 export type FieldOptions = {
   validate?: (val: any) => boolean | string
 }
 
-export type Form = {
+export type Form<TValues> = {
   subscribe(listener: () => void): Unsubscribe
   formActions: {
     resetFormValues: (newInitialValues?: any) => void
     submitHandler: (fn: (val: any) => any) => (event: Event) => any
-    getFormState: () => FormState
+    getFormState: () => FormState<TValues>
   }
   fieldActions: {
     initField: (fieldId: string, ref: symbol, opts: FieldOptions) => void
