@@ -4,8 +4,7 @@ const isObject = function(value: any) {
   // return (!!value) && (value.constructor === Object)
 }
 
-const indexRegex = /^\[(\d+)]$/
-const isIndex = (k: string) => indexRegex.test(k)
+const isIndex = (k: string) => /^(\d+)$/.test(k)
 
 export function getProperty(obj: { [key: string]: any }, key: string): any {
   const parts = key
@@ -51,13 +50,11 @@ export function setProperty(obj: any, key: string, value: any): any {
 
     if (i !== path.length - 1) {
       const objValue = nested[key]
-      newValue = isObject(objValue)
-        ? Array.isArray(objValue)
-          ? [...objValue]
-          : { ...objValue }
-        : isIndex(path[i + 1])
-        ? []
-        : {}
+      if (isObject(objValue)) {
+        newValue = Array.isArray(objValue) ? [...objValue] : { ...objValue }
+      } else {
+        newValue = isIndex(path[i + 1]) ? [] : {}
+      }
     }
 
     nested[key] = newValue
