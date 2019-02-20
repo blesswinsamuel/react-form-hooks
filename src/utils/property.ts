@@ -7,9 +7,10 @@ const isObject = function(value: any) {
 const indexRegex = /^\[(\d+)]$/
 const isIndex = (k: string) => indexRegex.test(k)
 
-export function getProperty(obj: object, key: string): any {
-  const parts = key.replace(/\[(\w+)]/g, '.$1') // convert indexes to properties
-    .replace(/^\./, '')  // strip a leading dot
+export function getProperty(obj: { [key: string]: any }, key: string): any {
+  const parts = key
+    .replace(/\[(\w+)]/g, '.$1') // convert indexes to properties
+    .replace(/^\./, '') // strip a leading dot
     .split('.')
   let curObj = obj
   for (let i = 0; i < parts.length; ++i) {
@@ -37,8 +38,9 @@ export function setProperty(obj: any, key: string, value: any): any {
     return obj
   }
 
-  const path = key.replace(/\[(\w+)]/g, '.$1') // convert indexes to properties
-    .replace(/^\./, '')  // strip a leading dot
+  const path = key
+    .replace(/\[(\w+)]/g, '.$1') // convert indexes to properties
+    .replace(/^\./, '') // strip a leading dot
     .split('.')
   const newObj = { ...obj }
   let nested = newObj
@@ -50,8 +52,12 @@ export function setProperty(obj: any, key: string, value: any): any {
     if (i !== path.length - 1) {
       const objValue = nested[key]
       newValue = isObject(objValue)
-        ? (Array.isArray(objValue) ? [...objValue] : { ...objValue })
-        : (isIndex(path[i + 1]) ? [] : {})
+        ? Array.isArray(objValue)
+          ? [...objValue]
+          : { ...objValue }
+        : isIndex(path[i + 1])
+        ? []
+        : {}
     }
 
     nested[key] = newValue

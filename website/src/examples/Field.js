@@ -124,6 +124,7 @@ export const ArrayInput = ({
 }) => {
   const { getFieldState } = form.fieldActions
   const fieldRefs = useRef()
+  const arr = Array(value).fill(1)
   const addItem = useCallback(() => {
     fieldRefs.current = [
       ...fieldRefs.current,
@@ -139,14 +140,15 @@ export const ArrayInput = ({
   }
   const getFieldRef = i => {
     if (!fieldRefs.current) {
-      fieldRefs.current = value.map((_, i) => i + 1)
+      fieldRefs.current = arr.map((_, i) => i + 1)
     }
 
     return fieldRefs.current[i]
   }
+  console.log(value, arr)
   return (
     <>
-      {value.map((_, i) => {
+      {arr.map((_, i) => {
         return (
           <div
             key={getFieldRef(i)}

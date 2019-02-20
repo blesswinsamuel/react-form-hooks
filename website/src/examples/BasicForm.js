@@ -3,7 +3,7 @@ import React from 'react'
 import { useFieldState, useForm, useFormState } from 'react-form-hooks'
 import { Button, Code } from './components'
 
-export default function MyForm() {
+export default function BasicForm() {
   const form = useForm({ initialValues: {} })
   const onSubmit = values => console.log(values)
   return (

@@ -1,7 +1,7 @@
 const hasOwnProperty = Object.prototype.hasOwnProperty
 
-export default function shallowEqual(a: object, b: object): boolean {
-  if (a === b) {
+export default function shallowEqual(a: any, b: any): boolean {
+  if (Object.is(a, b)) {
     return true
   }
   if (typeof a !== 'object' || !a || typeof b !== 'object' || !b) {
@@ -15,7 +15,7 @@ export default function shallowEqual(a: object, b: object): boolean {
   // Test for A's keys different from B.
   for (let i = 0; i < keysA.length; i++) {
     const key = keysA[i]
-    if (!hasOwnProperty.call(b, keysA[i]) || b[key] !== b[key]) {
+    if (!hasOwnProperty.call(b, keysA[i]) || a[key] !== b[key]) {
       return false
     }
   }

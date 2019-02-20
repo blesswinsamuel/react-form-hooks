@@ -10,7 +10,7 @@ export default function useFieldState(
 ) {
   const { initField, destroyField, getFieldState } = form.fieldActions
 
-  const ref = useRef(null)
+  const ref = useRef<symbol | null>(null)
   const getRef = () => {
     if (!ref.current) {
       ref.current = Symbol()
@@ -20,7 +20,7 @@ export default function useFieldState(
   }
   const [fieldState, setFieldState] = useState(() => {
     initField(fieldId, getRef(), opts)
-    return getFieldState(fieldId)
+    return mapState(getFieldState(fieldId))
   })
   const updateState = () => {
     const newState = getFieldState(fieldId)
