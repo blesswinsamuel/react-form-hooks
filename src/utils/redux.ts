@@ -1,6 +1,10 @@
+type Reducer<TState> = <TAction>(state: TState, action: TAction) => TState
 type Listener = () => void
 
-export default function createStore<TState>(initialState: TState) {
+export default function createStore<TState>(
+  reducer: Reducer<TState>,
+  initialState: TState
+) {
   let state: TState = initialState
   let listeners: Listener[] = []
 
@@ -8,8 +12,8 @@ export default function createStore<TState>(initialState: TState) {
     return state
   }
 
-  function setState(newState: TState): void {
-    state = newState
+  function dispatch<TAction>(action: TAction): void {
+    state = reducer(state, action)
     listeners.forEach(listener => listener())
   }
 
@@ -20,5 +24,5 @@ export default function createStore<TState>(initialState: TState) {
     }
   }
 
-  return { subscribe, getState, setState }
+  return { subscribe, getState, dispatch }
 }

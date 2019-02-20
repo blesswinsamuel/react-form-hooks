@@ -85,7 +85,7 @@ function formValues<TValues>(state: TValues, action: Action) {
   }
 }
 
-function formReducer<TValues>(state: ReduxState<TValues>, action: Action) {
+function formReducer<TValues>(state: ReduxState<TValues>, action: any): ReduxState<TValues> {
   return {
     formValues: formValues(state.formValues, action),
     fieldState: fieldState(state.fieldState, action),
@@ -95,14 +95,10 @@ function formReducer<TValues>(state: ReduxState<TValues>, action: Action) {
 export default function createForm<TValues>(
   { initialValues }: FormOptions<TValues> = { initialValues: {} as any }
 ): Form<TValues> {
-  const store = createStore<ReduxState<TValues>>({
+  const store = createStore<ReduxState<TValues>>(formReducer, {
     formValues: initialValues,
     fieldState: {},
   })
-
-  function dispatch(action: any) {
-    store.setState(formReducer(store.getState(), action))
-  }
 
   const fieldRefs: { [fieldId: string]: any } = {} // any = { [ref: symbol]: FieldOptions }
 
@@ -144,7 +140,7 @@ export default function createForm<TValues>(
   const initializeField = (fieldId: string) => {
     const value = getFieldValue(fieldId)
     const error = validateField(fieldId, value)
-    dispatch({ type: INIT_FIELD, field: fieldId, error: error })
+    store.dispatch({ type: INIT_FIELD, field: fieldId, error: error })
   }
 
   const initField = (fieldId: string, ref: symbol, opts: FieldOptions = {}) => {
@@ -162,7 +158,7 @@ export default function createForm<TValues>(
   }
 
   const changeFieldValue = (fieldId: string, value: any) => {
-    dispatch({
+    store.dispatch({
       type: CHANGE_FIELD_VALUE,
       field: fieldId,
       value: value,
@@ -171,7 +167,7 @@ export default function createForm<TValues>(
   }
 
   const touchField = (fieldId: string) => {
-    dispatch({ type: TOUCH_FIELD, field: fieldId })
+    store.dispatch({ type: TOUCH_FIELD, field: fieldId })
   }
 
   // Form handlers
@@ -179,7 +175,7 @@ export default function createForm<TValues>(
     if (newInitialValues) {
       initialValues = newInitialValues
     }
-    dispatch({ type: INIT_FORM_VALUES, values: initialValues })
+    store.dispatch({ type: INIT_FORM_VALUES, values: initialValues })
     Object.keys(fieldRefs).forEach(fieldId => {
       initializeField(fieldId)
     })
