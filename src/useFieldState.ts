@@ -44,25 +44,15 @@ export default function useFieldState<TValues, TResult = FieldState>(
       prevFieldState.current = newState
     }
   }
-  // useEffect(() => {
-  //   initField(fieldId, getRef(), opts)
-  //   return () => destroyField(fieldId, getRef())
-  // }, [form, fieldId])
+
   useEffect(() => {
-    const checkForUpdates = () => {
-      updateState()
-    }
-    // console.log('REGISTER_FIELD', fieldId)
     initField(fieldId, getRef(), opts)
-    checkForUpdates()
+    return () => destroyField(fieldId, getRef())
+  }, [form, fieldId])
 
-    const unsubscribe = form.subscribe(checkForUpdates)
-
-    return () => {
-      // console.log('DESTROY_FIELD', fieldId)
-      destroyField(fieldId, getRef())
-      unsubscribe()
-    }
+  useEffect(() => {
+    updateState()
+    return form.subscribe(updateState)
   }, [form, fieldId])
 
   return fieldState

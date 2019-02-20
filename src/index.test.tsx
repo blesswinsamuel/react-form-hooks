@@ -156,6 +156,17 @@ describe('react-form-hooks', () => {
 
       ReactDOM.unmountComponentAtNode(reactRoot)
     })
+
+    it('throws error if form is not passed', () => {
+      const Component = () => {
+        // @ts-ignore
+        const formState = useFormState()
+        return <div>{JSON.stringify(formState.values)}</div>
+      }
+
+      jest.spyOn(console, 'error').mockImplementation(() => {});
+      expect(() => render(<Component />)).toThrowError('react-form-hooks requires the form instance created using useForm() to be passed to useFormState as 1st argument')
+    })
   })
 
   describe('useFieldState', () => {
