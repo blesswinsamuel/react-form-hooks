@@ -1,7 +1,7 @@
 import { Unsubscribe } from 'redux'
 
 export type FormOptions<TValues> = {
-  initialValues?: TValues
+  initialValues: TValues
 }
 
 export type FieldState = {

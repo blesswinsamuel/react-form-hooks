@@ -1,7 +1,7 @@
-import { combineReducers, createStore } from 'redux'
 import { handleFormSubmit } from './formHandlers'
 import { getProperty, setProperty } from './utils/property'
 import { FieldOptions, FieldState, Form, FormOptions } from './types'
+import createStore from './utils/redux'
 
 const INIT_FORM_VALUES = 'INIT_FORM_VALUES'
 const CHANGE_FIELD_VALUE = 'CHANGE_FIELD_VALUE'
@@ -24,6 +24,9 @@ type TouchField = { type: typeof TOUCH_FIELD; field: string }
 
 export type Action = InitFormValues | ChangeFieldValue | InitField | TouchField
 export type FieldAction = ChangeFieldValue | InitField | TouchField
+
+type ReduxFieldStates = { [fieldId: string]: ReduxFieldState }
+type ReduxState<TValues> = { formValues: TValues; fieldState: ReduxFieldStates }
 
 type Diff<T, U> = T extends U ? never : T
 type ObjectDiff<T, U> = Pick<T, Diff<keyof T, keyof U>>
@@ -55,9 +58,9 @@ function fieldReducer(
 }
 
 function fieldState(
-  state: { [fieldId: string]: ReduxFieldState } = {},
+  state: ReduxFieldStates,
   action: Action
-): { [field: string]: ReduxFieldState } {
+): ReduxFieldStates {
   switch (action.type) {
     case INIT_FIELD:
     case CHANGE_FIELD_VALUE:
@@ -71,7 +74,7 @@ function fieldState(
   }
 }
 
-function formValues(state = {}, action: Action) {
+function formValues<TValues>(state: TValues, action: Action) {
   switch (action.type) {
     case INIT_FORM_VALUES:
       return action.values
@@ -82,24 +85,25 @@ function formValues(state = {}, action: Action) {
   }
 }
 
-const formReducer = combineReducers({
-  formValues,
-  fieldState,
-})
+function formReducer<TValues>(state: ReduxState<TValues>, action: Action) {
+  return {
+    formValues: formValues(state.formValues, action),
+    fieldState: fieldState(state.fieldState, action),
+  }
+}
 
-const reduxDevToolExtension /* instanbul ignore next */ =
-  // @ts-ignore
-  window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
+export default function createForm<TValues>(
+  { initialValues }: FormOptions<TValues> = { initialValues: {} as any }
+): Form<TValues> {
+  const store = createStore<ReduxState<TValues>>({
+    formValues: initialValues,
+    fieldState: {},
+  })
 
-export default function createForm<TValues>({
-  initialValues,
-}: FormOptions<TValues> = {}): Form<TValues> {
-  /* instanbul ignore next */
-  const store = createStore(
-    formReducer,
-    { formValues: initialValues },
-    reduxDevToolExtension
-  )
+  function dispatch(action: any) {
+    store.setState(formReducer(store.getState(), action))
+  }
+
   const fieldRefs: { [fieldId: string]: any } = {} // any = { [ref: symbol]: FieldOptions }
 
   const validateField = (fieldId: string, value: any) => {
@@ -112,17 +116,6 @@ export default function createForm<TValues>({
         .map(x => x.validate)
         .find(x => !!x) || ((): any => undefined)
     return validate(value)
-  }
-
-  // Actions
-  const initFieldAction = (fieldId: string) => {
-    const value = getFieldValue(fieldId)
-    return {
-      type: INIT_FIELD,
-      field: fieldId,
-      value: value,
-      error: validateField(fieldId, value),
-    }
   }
 
   // State selectors
@@ -148,6 +141,12 @@ export default function createForm<TValues>({
   }
 
   // Field handlers
+  const initializeField = (fieldId: string) => {
+    const value = getFieldValue(fieldId)
+    const error = validateField(fieldId, value)
+    dispatch({ type: INIT_FIELD, field: fieldId, error: error })
+  }
+
   const initField = (fieldId: string, ref: symbol, opts: FieldOptions = {}) => {
     const { validate } = opts
     if (!fieldRefs[fieldId]) {
@@ -156,14 +155,14 @@ export default function createForm<TValues>({
     fieldRefs[fieldId][ref] = {
       validate,
     }
-    store.dispatch(initFieldAction(fieldId))
+    initializeField(fieldId)
   }
   const destroyField = (fieldId: string, ref: symbol) => {
     delete fieldRefs[fieldId][ref]
   }
 
   const changeFieldValue = (fieldId: string, value: any) => {
-    store.dispatch({
+    dispatch({
       type: CHANGE_FIELD_VALUE,
       field: fieldId,
       value: value,
@@ -172,7 +171,7 @@ export default function createForm<TValues>({
   }
 
   const touchField = (fieldId: string) => {
-    store.dispatch({ type: TOUCH_FIELD, field: fieldId })
+    dispatch({ type: TOUCH_FIELD, field: fieldId })
   }
 
   // Form handlers
@@ -180,9 +179,9 @@ export default function createForm<TValues>({
     if (newInitialValues) {
       initialValues = newInitialValues
     }
-    store.dispatch({ type: INIT_FORM_VALUES, values: initialValues })
+    dispatch({ type: INIT_FORM_VALUES, values: initialValues })
     Object.keys(fieldRefs).forEach(fieldId => {
-      store.dispatch(initFieldAction(fieldId))
+      initializeField(fieldId)
     })
   }
 

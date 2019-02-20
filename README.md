@@ -19,10 +19,10 @@
 ## Roadmap
 
 - [x] MVP
-- [ ] Add unit tests
+- [x] Add unit tests
 - [ ] Documentation
 - [ ] Recipes
-- [ ] Remove redux dependency
+- [x] Remove redux dependency
 
 ## Install
 

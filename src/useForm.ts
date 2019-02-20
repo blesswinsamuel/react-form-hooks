@@ -2,11 +2,13 @@ import { useEffect, useRef } from 'react'
 import createForm from './createForm'
 import { Form, FormOptions } from './types'
 
-export default function useForm<TValues>(opts: FormOptions<TValues> = {}) {
+export default function useForm<TValues>(
+  opts: FormOptions<TValues> = { initialValues: {} as any }
+) {
   const form = useRef<Form<TValues> | null>(null)
   const { initialValues } = opts
 
-  function getForm(): Form<TValues> {
+  function getForm() {
     if (!form.current) {
       form.current = createForm(opts)
     }
