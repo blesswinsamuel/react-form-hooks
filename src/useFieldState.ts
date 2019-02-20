@@ -2,13 +2,26 @@ import { useEffect, useRef, useState } from 'react'
 import shallowEqual from './utils/shallowEqual'
 import { FieldState, Form } from './types'
 
-export default function useFieldState(
+const NULL_FORM_ERROR_MESSAGE =
+  'react-form-hooks requires the form instance created using useForm() to be passed to useFieldState as 1st argument'
+const NULL_FIELD_ID_ERROR_MESSAGE = `react-form-hooks requires the id of the field to be passed to useFieldState as 2nd argument`
+
+export default function useFieldState<TResult>(
   form: Form,
   fieldId: string,
-  mapState: (state: FieldState) => FieldState = s => s,
+  mapState: (state: FieldState) => TResult | FieldState = s => s,
   opts = {}
-) {
+): TResult | FieldState {
+  if (!form) {
+    throw new Error(NULL_FORM_ERROR_MESSAGE)
+  }
+  if (!fieldId) {
+    throw new Error(NULL_FIELD_ID_ERROR_MESSAGE)
+  }
+
   const { initField, destroyField, getFieldState } = form.fieldActions
+
+  const getMappedFieldState = () => mapState(getFieldState(fieldId))
 
   const ref = useRef<symbol | null>(null)
   const getRef = () => {
@@ -20,25 +33,19 @@ export default function useFieldState(
   }
   const [fieldState, setFieldState] = useState(() => {
     initField(fieldId, getRef(), opts)
-    return mapState(getFieldState(fieldId))
+    return getMappedFieldState()
   })
+  const prevFieldState = useRef(fieldState)
   const updateState = () => {
-    const newState = getFieldState(fieldId)
-    setFieldState(prevState => {
-      const newMappedState = mapState(newState)
-      if (shallowEqual(prevState, newMappedState)) {
-        return prevState
-      }
-      // console.log("FIELD CHANGED", fieldId, prevState, newState)
-      return newMappedState
-    })
+    const newState = getMappedFieldState()
+    if (!shallowEqual(newState, prevFieldState.current)) {
+      // console.log("FIELD CHANGED", fieldId, prevFieldState.current, newState)
+      setFieldState(newState)
+      prevFieldState.current = newState
+    }
   }
   useEffect(() => {
-    let didUnsubscribe = false
-
     const checkForUpdates = () => {
-      if (didUnsubscribe) return
-
       updateState()
     }
     // console.log('REGISTER_FIELD', fieldId)
@@ -49,7 +56,6 @@ export default function useFieldState(
 
     return () => {
       // console.log('DESTROY_FIELD', fieldId)
-      didUnsubscribe = true
       destroyField(fieldId, getRef())
       unsubscribe()
     }

@@ -1,41 +1,34 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import shallowEqual from './utils/shallowEqual'
 import { Form, FormState } from './types'
 
-export default function useFormState(
+const NULL_FORM_ERROR_MESSAGE =
+  'react-form-hooks requires the form instance created using useForm() to be passed to useFormState as 1st argument'
+
+export default function useFormState<TResult>(
   form: Form,
-  mapState: (state: FormState) => FormState = s => s
+  mapState: (state: FormState) => TResult | FormState = s => s
 ) {
+  if (!form) {
+    throw new Error(NULL_FORM_ERROR_MESSAGE)
+  }
   const { getFormState } = form.formActions
 
-  const [formState, setFormState] = useState(() => getFormState())
+  const getMappedFormState = () => mapState(getFormState())
+
+  const [formState, setFormState] = useState(getMappedFormState)
+  const prevFormState = useRef(formState)
   const updateState = () => {
-    const newState = getFormState()
-    setFormState(prevState => {
-      const newMappedState = mapState(newState)
-      if (shallowEqual(prevState, newMappedState)) {
-        return prevState
-      }
-      return newMappedState
-    })
+    const newState = getMappedFormState()
+    if (!shallowEqual(newState, prevFormState.current)) {
+      setFormState(newState)
+      prevFormState.current = newState
+    }
   }
 
   useEffect(() => {
-    let didUnsubscribe = false
-
-    const checkForUpdates = () => {
-      if (didUnsubscribe) return
-
-      updateState()
-    }
-    checkForUpdates()
-
-    const unsubscribe = form.subscribe(checkForUpdates)
-
-    return () => {
-      didUnsubscribe = true
-      unsubscribe()
-    }
+    updateState()
+    return form.subscribe(updateState)
   }, [form])
 
   return formState
