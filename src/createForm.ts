@@ -57,10 +57,7 @@ function fieldReducer(
   }
 }
 
-function fieldState(
-  state: ReduxFieldStates,
-  action: Action
-): ReduxFieldStates {
+function fieldState(state: ReduxFieldStates, action: Action): ReduxFieldStates {
   switch (action.type) {
     case INIT_FIELD:
     case CHANGE_FIELD_VALUE:
@@ -85,7 +82,10 @@ function formValues<TValues>(state: TValues, action: Action) {
   }
 }
 
-function formReducer<TValues>(state: ReduxState<TValues>, action: any): ReduxState<TValues> {
+function formReducer<TValues>(
+  state: ReduxState<TValues>,
+  action: any
+): ReduxState<TValues> {
   return {
     formValues: formValues(state.formValues, action),
     fieldState: fieldState(state.fieldState, action),
@@ -164,6 +164,7 @@ export default function createForm<TValues>(
       value: value,
       error: validateField(fieldId, value),
     })
+    return value
   }
 
   const touchField = (fieldId: string) => {

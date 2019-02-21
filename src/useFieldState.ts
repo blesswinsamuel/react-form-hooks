@@ -2,10 +2,6 @@ import { useEffect, useRef, useState } from 'react'
 import shallowEqual from './utils/shallowEqual'
 import { FieldState, Form } from './types'
 
-const NULL_FORM_ERROR_MESSAGE =
-  'react-form-hooks requires the form instance created using useForm() to be passed to useFieldState as 1st argument'
-const NULL_FIELD_ID_ERROR_MESSAGE = `react-form-hooks requires the id of the field to be passed to useFieldState as 2nd argument`
-
 export default function useFieldState<TValues, TResult = FieldState>(
   form: Form<TValues>,
   fieldId: string,
@@ -13,10 +9,16 @@ export default function useFieldState<TValues, TResult = FieldState>(
   opts = {}
 ): TResult {
   if (!form) {
-    throw new Error(NULL_FORM_ERROR_MESSAGE)
+    throw new Error(
+      'react-form-hooks requires the form instance ' +
+        'created using useForm() to be passed to useFieldState as 1st argument'
+    )
   }
   if (!fieldId) {
-    throw new Error(NULL_FIELD_ID_ERROR_MESSAGE)
+    throw new Error(
+      'react-form-hooks requires the id of the field ' +
+        'to be passed to useFieldState as 2nd argument'
+    )
   }
 
   const { initField, destroyField, getFieldState } = form.fieldActions

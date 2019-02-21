@@ -1,5 +1,3 @@
-import { Unsubscribe } from 'redux'
-
 export type FormOptions<TValues> = {
   initialValues: TValues
 }
@@ -23,7 +21,7 @@ export type FieldOptions = {
 }
 
 export type Form<TValues> = {
-  subscribe(listener: () => void): Unsubscribe
+  subscribe(listener: () => void): () => void
   formActions: {
     resetFormValues: (newInitialValues?: any) => void
     submitHandler: (fn: (val: any) => any) => (event?: Event) => any
@@ -37,4 +35,3 @@ export type Form<TValues> = {
     getFieldState: (fieldId: string) => FieldState
   }
 }
-

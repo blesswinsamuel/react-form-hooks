@@ -164,8 +164,10 @@ describe('react-form-hooks', () => {
         return <div>{JSON.stringify(formState.values)}</div>
       }
 
-      jest.spyOn(console, 'error').mockImplementation(() => {});
-      expect(() => render(<Component />)).toThrowError('react-form-hooks requires the form instance created using useForm() to be passed to useFormState as 1st argument')
+      jest.spyOn(console, 'error').mockImplementation(() => {})
+      expect(() => render(<Component />)).toThrowError(
+        'react-form-hooks requires the form instance created using useForm() to be passed to useFormState as 1st argument'
+      )
     })
   })
 
@@ -184,11 +186,7 @@ describe('react-form-hooks', () => {
 
     it('renders mapped value', () => {
       const Component = () => {
-        const fieldState = useFieldState(
-          form,
-          'a',
-          state => state.value
-        )
+        const fieldState = useFieldState(form, 'a', state => state.value)
         return <div>{fieldState}</div>
       }
 
@@ -271,8 +269,10 @@ describe('react-form-hooks', () => {
         return <div>{fieldState.value}</div>
       }
 
-      jest.spyOn(console, 'error').mockImplementation(() => {});
-      expect(() => render(<Component />)).toThrowError('react-form-hooks requires the form instance created using useForm() to be passed to useFieldState as 1st argument')
+      jest.spyOn(console, 'error').mockImplementation(() => {})
+      expect(() => render(<Component />)).toThrowError(
+        'react-form-hooks requires the form instance created using useForm() to be passed to useFieldState as 1st argument'
+      )
     })
 
     it('throws error if field id is not passed', () => {
@@ -282,8 +282,10 @@ describe('react-form-hooks', () => {
         return <div>{fieldState.value}</div>
       }
 
-      jest.spyOn(console, 'error').mockImplementation(() => {});
-      expect(() => render(<Component />)).toThrowError('react-form-hooks requires the id of the field to be passed to useFieldState as 2nd argument')
+      jest.spyOn(console, 'error').mockImplementation(() => {})
+      expect(() => render(<Component />)).toThrowError(
+        'react-form-hooks requires the id of the field to be passed to useFieldState as 2nd argument'
+      )
     })
   })
 })

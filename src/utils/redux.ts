@@ -1,6 +1,7 @@
 type Reducer<TState> = <TAction>(state: TState, action: TAction) => TState
 type Listener = () => void
 
+// Simplified version of createStore from Redux to keep the size small
 export default function createStore<TState>(
   reducer: Reducer<TState>,
   initialState: TState

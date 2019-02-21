@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useLayoutEffect, useRef } from 'react'
 import { handleStringChange } from './formHandlers'
 
 export const Code = props => (
@@ -16,14 +16,30 @@ export const Button = props => (
   />
 )
 
-export const Input = ({ onChange, value, ...otherProps }) => (
-  <input
-    className="form-input"
-    onChange={handleStringChange(onChange)}
-    value={value}
-    {...otherProps}
-  />
-)
+export const Input = ({ onChange, value, ...otherProps }) => {
+  const cursorStart = useRef(null)
+  const cursorEnd = useRef(null)
+  const inputRef = useRef(null)
+  useLayoutEffect(() => {
+    if (cursorStart.current && cursorEnd.current) {
+      inputRef.current.setSelectionRange(cursorStart.current, cursorEnd.current)
+    }
+  }, [value])
+
+  return (
+    <input
+      ref={inputRef}
+      className="form-input"
+      onChange={e => {
+        cursorStart.current = e.target.selectionStart
+        cursorEnd.current = e.target.selectionEnd
+        return handleStringChange(onChange)(e)
+      }}
+      value={value}
+      {...otherProps}
+    />
+  )
+}
 
 function formatDate(date) {
   let d = new Date(date),
@@ -48,10 +64,6 @@ export const DatePicker = ({ value, onChange, ...otherProps }) => (
     {...otherProps}
   />
 )
-
-// function formatTime(time) {
-//   return time + ':00'
-// }
 
 export const TimePicker = props => <Input type="time" {...props} />
 
