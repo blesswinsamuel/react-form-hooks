@@ -1,55 +1,58 @@
 import { handleFormSubmit } from './formHandlers'
 import { getProperty, setProperty } from './utils/property'
-import { FieldOptions, FieldState, Form, FormOptions } from './types'
+import { FieldOptions, Form, FormOptions } from './types'
 import createStore from './utils/redux'
 
-const INIT_FORM_VALUES = 'INIT_FORM_VALUES'
-const CHANGE_FIELD_VALUE = 'CHANGE_FIELD_VALUE'
-const INIT_FIELD = 'INIT_FIELD'
-const TOUCH_FIELD = 'TOUCH_FIELD'
+export enum ActionTypes {
+  INIT_FORM_VALUES = '@@form/INIT_FORM_VALUES',
+  CHANGE_FIELD_VALUE = '@@form/CHANGE_FIELD_VALUE',
+  INIT_FIELD = '@@form/INIT_FIELD',
+  TOUCH_FIELD = '@@form/TOUCH_FIELD',
+}
 
-type InitFormValues = {
-  type: typeof INIT_FORM_VALUES
-  field: string
-  values: object
+type InitFormValues<V> = {
+  type: typeof ActionTypes.INIT_FORM_VALUES
+  values: V
 }
 type ChangeFieldValue = {
-  type: typeof CHANGE_FIELD_VALUE
+  type: typeof ActionTypes.CHANGE_FIELD_VALUE
   field: string
   value: any
   error: any
 }
-type InitField = { type: typeof INIT_FIELD; field: string; error: any }
-type TouchField = { type: typeof TOUCH_FIELD; field: string }
+type InitField = {
+  type: typeof ActionTypes.INIT_FIELD
+  field: string
+  error: any
+}
+type TouchField = { type: typeof ActionTypes.TOUCH_FIELD; field: string }
 
-export type Action = InitFormValues | ChangeFieldValue | InitField | TouchField
-export type FieldAction = ChangeFieldValue | InitField | TouchField
+type FieldAction = ChangeFieldValue | InitField | TouchField
+type FormAction<V> = InitFormValues<V> | FieldAction
 
 type ReduxFieldStates = { [fieldId: string]: ReduxFieldState }
-type ReduxState<TValues> = { formValues: TValues; fieldState: ReduxFieldStates }
+type ReduxState<V> = { formValues: V; fieldState: ReduxFieldStates }
 
-type Diff<T, U> = T extends U ? never : T
-type ObjectDiff<T, U> = Pick<T, Diff<keyof T, keyof U>>
-type ReduxFieldState = ObjectDiff<FieldState, { value: any }>
+type ReduxFieldState = { error: any; touched: boolean; dirty: boolean }
 
 function fieldReducer(
   state: ReduxFieldState,
   action: FieldAction
 ): ReduxFieldState {
   switch (action.type) {
-    case INIT_FIELD:
+    case ActionTypes.INIT_FIELD:
       return {
         error: action.error,
         touched: false,
         dirty: false,
       }
-    case CHANGE_FIELD_VALUE:
+    case ActionTypes.CHANGE_FIELD_VALUE:
       return {
         ...state,
         error: action.error,
         dirty: true,
       }
-    case TOUCH_FIELD:
+    case ActionTypes.TOUCH_FIELD:
       return {
         ...state,
         touched: true,
@@ -57,11 +60,14 @@ function fieldReducer(
   }
 }
 
-function fieldState(state: ReduxFieldStates, action: Action): ReduxFieldStates {
+function fieldState(
+  state: ReduxFieldStates,
+  action: FormAction<any>
+): ReduxFieldStates {
   switch (action.type) {
-    case INIT_FIELD:
-    case CHANGE_FIELD_VALUE:
-    case TOUCH_FIELD:
+    case ActionTypes.INIT_FIELD:
+    case ActionTypes.CHANGE_FIELD_VALUE:
+    case ActionTypes.TOUCH_FIELD:
       return {
         ...state,
         [action.field]: fieldReducer(state[action.field], action),
@@ -71,31 +77,31 @@ function fieldState(state: ReduxFieldStates, action: Action): ReduxFieldStates {
   }
 }
 
-function formValues<TValues>(state: TValues, action: Action) {
+function formValues<V>(state: V, action: FormAction<V>) {
   switch (action.type) {
-    case INIT_FORM_VALUES:
+    case ActionTypes.INIT_FORM_VALUES:
       return action.values
-    case CHANGE_FIELD_VALUE:
+    case ActionTypes.CHANGE_FIELD_VALUE:
       return setProperty(state, action.field, action.value)
     default:
       return state
   }
 }
 
-function formReducer<TValues>(
-  state: ReduxState<TValues>,
-  action: any
-): ReduxState<TValues> {
+function formReducer<V>(
+  state: ReduxState<V>,
+  action: FormAction<V>
+): ReduxState<V> {
   return {
     formValues: formValues(state.formValues, action),
     fieldState: fieldState(state.fieldState, action),
   }
 }
 
-export default function createForm<TValues>(
-  { initialValues }: FormOptions<TValues> = { initialValues: {} as any }
-): Form<TValues> {
-  const store = createStore<ReduxState<TValues>>(formReducer, {
+export default function createForm<V>(
+  { initialValues }: FormOptions<V> = { initialValues: {} as any }
+): Form<V> {
+  const store = createStore<ReduxState<V>, FormAction<V>>(formReducer, {
     formValues: initialValues,
     fieldState: {},
   })
@@ -140,7 +146,11 @@ export default function createForm<TValues>(
   const initializeField = (fieldId: string) => {
     const value = getFieldValue(fieldId)
     const error = validateField(fieldId, value)
-    store.dispatch({ type: INIT_FIELD, field: fieldId, error: error })
+    store.dispatch({
+      type: ActionTypes.INIT_FIELD,
+      field: fieldId,
+      error: error,
+    })
   }
 
   const initField = (fieldId: string, ref: symbol, opts: FieldOptions = {}) => {
@@ -159,7 +169,7 @@ export default function createForm<TValues>(
 
   const changeFieldValue = (fieldId: string, value: any) => {
     store.dispatch({
-      type: CHANGE_FIELD_VALUE,
+      type: ActionTypes.CHANGE_FIELD_VALUE,
       field: fieldId,
       value: value,
       error: validateField(fieldId, value),
@@ -168,15 +178,18 @@ export default function createForm<TValues>(
   }
 
   const touchField = (fieldId: string) => {
-    store.dispatch({ type: TOUCH_FIELD, field: fieldId })
+    store.dispatch({ type: ActionTypes.TOUCH_FIELD, field: fieldId })
   }
 
   // Form handlers
-  const resetFormValues = (newInitialValues?: any) => {
+  const resetFormValues = (newInitialValues?: V) => {
     if (newInitialValues) {
       initialValues = newInitialValues
     }
-    store.dispatch({ type: INIT_FORM_VALUES, values: initialValues })
+    store.dispatch({
+      type: ActionTypes.INIT_FORM_VALUES,
+      values: initialValues,
+    })
     Object.keys(fieldRefs).forEach(fieldId => {
       initializeField(fieldId)
     })

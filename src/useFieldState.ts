@@ -2,8 +2,8 @@ import { useEffect, useRef, useState } from 'react'
 import shallowEqual from './utils/shallowEqual'
 import { FieldState, Form } from './types'
 
-export default function useFieldState<TValues, TResult = FieldState>(
-  form: Form<TValues>,
+export default function useFieldState<V, TResult = FieldState>(
+  form: Form<V>,
   fieldId: string,
   mapState: (state: FieldState) => TResult = (s: FieldState) => s as any,
   opts = {}

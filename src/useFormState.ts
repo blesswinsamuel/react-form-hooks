@@ -2,9 +2,9 @@ import { useEffect, useRef, useState } from 'react'
 import shallowEqual from './utils/shallowEqual'
 import { Form, FormState } from './types'
 
-export default function useFormState<TValues, TResult = FormState<TValues>>(
-  form: Form<TValues>,
-  mapState: (state: FormState<TValues>) => TResult = s => s as any
+export default function useFormState<V, TResult = FormState<V>>(
+  form: Form<V>,
+  mapState: (state: FormState<V>) => TResult = s => s as any
 ): TResult {
   if (!form) {
     throw new Error(

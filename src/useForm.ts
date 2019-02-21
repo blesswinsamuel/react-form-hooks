@@ -2,10 +2,10 @@ import { useEffect, useRef } from 'react'
 import createForm from './createForm'
 import { Form, FormOptions } from './types'
 
-export default function useForm<TValues>(
-  opts: FormOptions<TValues> = { initialValues: {} as any }
+export default function useForm<V>(
+  opts: FormOptions<V> = { initialValues: {} as any }
 ) {
-  const form = useRef<Form<TValues> | null>(null)
+  const form = useRef<Form<V> | null>(null)
   const { initialValues } = opts
 
   function getForm() {
