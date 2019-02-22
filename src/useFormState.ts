@@ -2,10 +2,10 @@ import { useEffect, useRef, useState } from 'react'
 import shallowEqual from './utils/shallowEqual'
 import { Form, FormState } from './types'
 
-export default function useFormState<V, TResult = FormState<V>>(
+export default function useFormState<V, R = FormState<V>>(
   form: Form<V>,
-  mapState: (state: FormState<V>) => TResult = s => s as any
-): TResult {
+  mapState: (state: FormState<V>) => R = s => s as any
+): R {
   if (!form) {
     throw new Error(
       'react-form-hooks requires the form instance ' +
