@@ -1,5 +1,8 @@
 import React, { useLayoutEffect, useRef } from 'react'
-import { handleStringChange } from './formHandlers'
+
+export function handleStringChange(handler) {
+  return event => handler(event.target.value)
+}
 
 export const Code = props => (
   <pre className="code" data-lang="JSON">
@@ -83,20 +86,50 @@ export const DateTimePicker = ({ value, onChange, ...otherProps }) => (
   />
 )
 
-// var options = [
-//  { value: 'one', label: 'One' },
-//  { value: 'two', label: 'Two' }
-// ];
+export const FormFooter = ({
+  anyTouched,
+  anyDirty,
+  anyError,
+  values,
+  resetToInitial,
+  resetToNew,
+}) => {
+  return (
+    <div style={{ position: 'relative' }}>
+      <Code>{JSON.stringify(values, null, 2)}</Code>
 
-// const Dropdown = ({ onChange, value, ...otherProps }) => (
-//  <Select
-//    name="form-field-name"
-//    value="one"
-//    options={options}
-//    onChange={(val) => {
-//      console.log(val)
-//      onChange(val)
-//    }}
-//    {...otherProps}
-//  />
-// )
+      <div
+        style={{
+          position: 'absolute',
+          top: 0,
+          right: 0,
+          padding: 6,
+          pointerEvents: 'none',
+        }}
+      >
+        {anyTouched && (
+          <span className="label label-primary">Form Touched</span>
+        )}
+        {anyDirty && (
+          <span className="label label-warning" style={{ marginLeft: 3 }}>
+            Form Dirty
+          </span>
+        )}
+        {anyError && (
+          <span className="label label-error" style={{ marginLeft: 6 }}>
+            Form Invalid
+          </span>
+        )}
+      </div>
+      <Button disabled={anyError || !anyDirty} type="submit">
+        Submit
+      </Button>
+      {resetToInitial && (
+        <Button onClick={resetToInitial}>Reset to initial values</Button>
+      )}
+      {resetToNew && (
+        <Button onClick={resetToNew}>Reset to new initial values</Button>
+      )}
+    </div>
+  )
+}

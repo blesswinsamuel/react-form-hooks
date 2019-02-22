@@ -10,7 +10,9 @@
     "react": "link:../node_modules/react",
     "react-dom": "link:../node_modules/react-dom",
     "react-form-hooks": "link:..",
+    "react-markdown": "^4.0.6",
     "react-scripts": "link:../node_modules/react-scripts",
+    "react-syntax-highlighter": "^10.1.3",
     "spectre.css": "^0.5.8"
   },
   "scripts": {
@@ -27,5 +29,8 @@
     "not dead",
     "not ie <= 11",
     "not op_mini all"
-  ]
+  ],
+  "devDependencies": {
+    "raw-loader": "^1.0.0"
+  }
 }

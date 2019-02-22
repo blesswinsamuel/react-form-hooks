@@ -3,33 +3,6 @@ import classNames from 'classnames'
 import { useFieldState } from 'react-form-hooks'
 import { Button } from './components'
 
-function getErrorString(error) {
-  if (!error) {
-    return null
-  }
-  if (typeof error === 'string') {
-    return error
-  }
-  if (
-    error.request &&
-    error.request.data &&
-    typeof error.request.data === 'string'
-  ) {
-    return error.request.data
-  }
-  if (error.response && error.response.data) {
-    const rd = error.response.data
-    if (typeof rd === 'string') {
-      return rd
-    } else if (rd.message && typeof rd.message === 'string') {
-      return rd.message
-    }
-  }
-  if (error.message) {
-    return error.message
-  }
-}
-
 const Field = ({
   id,
   label,
@@ -52,9 +25,7 @@ const Field = ({
       )}
       <div className="col-9 col-sm-12" style={{ position: 'relative' }}>
         {children}
-        {showError && (
-          <div className="form-input-hint">{getErrorString(error)}</div>
-        )}
+        {showError && <div className="form-input-hint">{error}</div>}
         <div
           style={{
             position: 'absolute',
@@ -99,7 +70,7 @@ const FormField = ({
       id={id}
       label={label}
       InputLabelProps={InputLabelProps}
-      error={getErrorString(error)}
+      error={error}
       touched={touched}
       dirty={dirty}
     >

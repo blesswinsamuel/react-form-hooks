@@ -6,6 +6,7 @@
 - If `initialValues` changes, the form is reset.
 - Doesn't cause any re-renders unless `initialValues` changes.
 - Returns
+
 ```js
 {
   subscribe: store.subscribe(fn), // function will be called for all form state changes. Returns unsubscribe function.

@@ -1,28 +1,33 @@
 import React from 'react'
 
-import { useFieldState, useForm, useFormState } from 'react-form-hooks'
-import { Button, Code } from './components'
+import { useForm, useFormState } from 'react-form-hooks'
+import { Button, Code, Input } from './components'
+import { FormField } from './Field'
 
 export default function BasicForm() {
   const form = useForm({ initialValues: {} })
   const onSubmit = values => console.log(values)
   return (
-    <form onSubmit={form.formActions.submitHandler(onSubmit)}>
+    <form
+      className="form-horizontal"
+      onSubmit={form.formActions.submitHandler(onSubmit)}
+    >
       <FormField
         form={form}
-        id="firstname"
-        label="First name"
+        id="name"
+        label="Name"
         component={Input}
         validate={value => /\d/.test(value) && 'should not contain a number'}
         onChange={value => value.toUpperCase()}
       />
       <FormField
         form={form}
-        id="lastname"
-        label="Last name"
+        id="email"
+        label="Email"
         component={Input}
-        validate={value => /\d/.test(value) && 'should not contain a number'}
-        onChange={value => value.toLowerCase()}
+        validate={value =>
+          !/^\S+@\S+\.\S+$/.test(value) && 'should be a valid email'
+        }
       />
 
       <FormStateAndButton form={form} />
@@ -31,10 +36,7 @@ export default function BasicForm() {
 }
 
 const FormStateAndButton = ({ form }) => {
-  const { anyError, anyDirty, anyTouched, values } = useFormState(
-    form,
-    state => [state.anyError, state.anyDirty, state.anyTouched, state.values]
-  )
+  const { anyError, anyDirty, anyTouched, values } = useFormState(form)
 
   return (
     <>
@@ -47,51 +49,4 @@ const FormStateAndButton = ({ form }) => {
       <Button onClick={form.formActions.resetFormValues}>Reset</Button>
     </>
   )
-}
-
-const FormField = ({
-  form,
-  id,
-  component: InputComponent,
-  validate,
-  InputProps,
-  onChange = v => v,
-  mapState,
-  label,
-  InputLabelProps,
-}) => {
-  const fieldState = useFieldState(form, id, mapState, { validate })
-  const { changeFieldValue, touchField } = form.fieldActions
-  const { value, touched, dirty, error } = fieldState
-
-  return (
-    <div>
-      {label && (
-        <label htmlFor={id} {...InputLabelProps}>
-          {label}
-        </label>
-      )}
-      <InputComponent
-        id={id}
-        value={value}
-        onChange={value => changeFieldValue(id, onChange(value))}
-        onBlur={() => touchField(id)}
-        {...InputProps}
-      />
-      {touched && error && <div className="form-input-hint">{error}</div>}
-      {dirty && <div>Field Modified</div>}
-    </div>
-  )
-}
-
-const Input = ({ onChange, value, ...otherProps }) => (
-  <input
-    onChange={handleStringChange(onChange)}
-    value={value}
-    {...otherProps}
-  />
-)
-
-function handleStringChange(handler) {
-  return event => handler(event.target.value)
 }

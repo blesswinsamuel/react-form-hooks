@@ -1,9 +1,9 @@
 import React, { useCallback, useMemo, useState } from 'react'
 import {
   Button,
-  Code,
   DatePicker,
   DateTimePicker,
+  FormFooter,
   Input,
   TimePicker,
 } from './components'
@@ -16,21 +16,19 @@ const SimpleForm = () => {
     email: 'form@email.me',
     date1: '2020-05-02T18:30:00.000Z',
   })
-  const changeValues = () => setValues({
-    myfield: '1234',
-    email: 'changed@email.me',
-    date1: '2020-05-02T18:30:00.000Z',
-  })
+  const changeValues = () =>
+    setValues({
+      myfield: '1234',
+      email: 'changed@email.me',
+      date1: '2020-05-02T18:30:00.000Z',
+    })
   const onSubmit = useCallback(
     values => console.log('> onSubmit -> ', values),
     []
   )
   return (
     <div className="container">
-      <MyForm
-        defaultValues={values}
-        onSubmit={onSubmit}
-      />
+      <MyForm defaultValues={values} onSubmit={onSubmit} />
       <Button onClick={changeValues}>Reset to default values</Button>
     </div>
   )
@@ -67,15 +65,10 @@ const FormStateAndButton = ({ form }) => {
 
   console.log('FORM_STATE_UPDATE', { anyError, anyDirty, anyTouched, values })
   return (
-    <>
-      <Code>{JSON.stringify(values, null, 2)}</Code>
-
-      {anyError && <div>Form Error</div>}
-      {anyDirty && <div>Form Dirty</div>}
-      {anyTouched && <div>Form Touched</div>}
-      <Button type="submit">Submit</Button>
-      <Button onClick={form.formActions.resetFormValues}>Reset</Button>
-    </>
+    <FormFooter
+      {...{ anyError, anyDirty, anyTouched, values }}
+      resetToInitial={() => form.formActions.resetFormValues()}
+    />
   )
 }
 

@@ -2,6 +2,6 @@
 
 ## Install
 
-```
+```shell
 yarn add react-form-hooks
 ```
