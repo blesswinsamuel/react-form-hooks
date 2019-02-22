@@ -1,3 +1,4 @@
 # Documentation
 
-- [API](./API.md)
+- [Getting Started](GettingStarted.md)
+- [API](API.md)

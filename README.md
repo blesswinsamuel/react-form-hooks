@@ -10,17 +10,21 @@
 ## Features
 
 - No Dependencies.
-- [Minimal](https://www.youtube.com/watch?v=4anAwXYqLG8) API - provides 3 hooks - `useForm`, `useFormState`, `useFieldState`
-- Blazing Fast - re-render only when it needs to
-- Tiny Size - under 3KB gzipped
+- Minimal API - provides 3 hooks - `useForm`, `useFormState`, `useFieldState` and 2 render prop helper components which use the `use{Form|Field}State` hooks.
+- Blazing Fast - re-render only when it needs to.
+- Tiny Size - under 3KB gzipped.
 
 ## Install
 
 ```bash
-npm install --save react-form-hooks
+npm install --save react-form-hooks@next
 ```
 
+`react-form-hooks` is alpha quality as of now. So, there may be bugs hidden in the hooks (no pun intended) and the APIs are likely to change till it reaches a stable version.
+
 ## Usage
+
+### Using hooks
 
 ```jsx
 import React from 'react'
@@ -56,10 +60,7 @@ function MyForm() {
 }
 
 const FormStateAndButton = ({ form }) => {
-  const { anyError, anyDirty, anyTouched, values } = useFormState(
-    form,
-    state => [state.anyError, state.anyDirty, state.anyTouched, state.values]
-  )
+  const { anyError, anyDirty, anyTouched, values } = useFormState(form)
 
   return (
     <>
@@ -69,7 +70,7 @@ const FormStateAndButton = ({ form }) => {
       {anyDirty && <div>Form Dirty</div>}
       {anyTouched && <div>Form Touched</div>}
       <button type="submit">Submit</button>
-      <button onClick={form.formActions.resetFormValues}>Reset</button>
+      <button onClick={() => form.formActions.resetFormValues()}>Reset</button>
     </>
   )
 }
@@ -81,11 +82,11 @@ const FormField = ({
   validate,
   InputProps,
   onChange = v => v,
-  subscribeTo,
+  mapState,
   label,
   InputLabelProps,
 }) => {
-  const fieldState = useFieldState(form, id, subscribeTo, { validate })
+  const fieldState = useFieldState(form, id, mapState, { validate })
   const { changeFieldValue, touchField } = form.fieldActions
   const { value, touched, dirty, error } = fieldState
 
@@ -124,10 +125,87 @@ function handleStringChange(handler) {
 ReactDOM.render(<MyForm />, document.getElementById('root'))
 ```
 
+### Using render props
+
+```jsx
+import React, { useState } from 'react'
+import { Button, Code, Input } from './components'
+import { FormState, useForm } from 'react-form-hooks'
+import { FormField } from './Field'
+
+const MyForm = () => {
+  const [values, setValues] = useState({
+    name: 'John',
+    email: 'john@example.com',
+  })
+  const form = useForm({ initialValues: values })
+  const changeValues = () =>
+    setValues({
+      name: 'Doe',
+      email: 'doe@example.com',
+    })
+  return (
+    <div className="container">
+      <form
+        className="form-horizontal"
+        onSubmit={form.formActions.submitHandler(values =>
+          console.log('FORM SUBMIT', values)
+        )}
+      >
+        <FormField
+          form={form}
+          id="name"
+          label="Name"
+          component={Input}
+          validate={value => /\d/.test(value) && 'should not contain a number'}
+          onChange={value => value.toUpperCase()}
+        />
+        <FormField
+          form={form}
+          id="email"
+          label="Email"
+          component={Input}
+          validate={value =>
+            !/^\S+@\S+\.\S+$/.test(value) && 'should be a valid email'
+          }
+        />
+
+        <FormState
+          form={form}
+          render={state => {
+            const { anyError, anyDirty, anyTouched, values } = state
+            return (
+              <div style={{ position: 'relative' }}>
+                <Code>{JSON.stringify(values, null, 2)}</Code>
+
+                <div>
+                  {anyTouched && (<span>Form Touched</span>)}
+                  {anyDirty && (<span>Form Dirty</span>)}
+                  {anyError && (<span>Form Invalid</span>)}
+                </div>
+                <Button disabled={anyError || !anyDirty} type="submit">
+                  Submit
+                </Button>
+                <Button onClick={() => form.formActions.resetFormValues()}>
+                  Reset to initial values
+                </Button>
+                <Button onClick={changeValues}>Reset to new initial values</Button>
+              </div>
+            )
+          }}
+        />
+      </form>
+    </div>
+  )
+}
+
+ReactDOM.render(<MyForm />, document.getElementById('root'))
+```
+
 ## Documentation
 
-- [API](./docs/API.md)
-- [Examples](./website/src/examples)
+- [API](docs/API.md)
+- [Examples](website/src/examples)
 
 ## License
 

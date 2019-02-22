@@ -89,8 +89,14 @@
   color: #555555;
 }
 
+.markdown-body .code {
+  border-radius: 10px;
+}
+
 .markdown-body .code code {
   background: inherit;
   color: inherit;
+  padding: .5rem;
+  font-size: 90%;
 }
 
