@@ -1,28 +1,18 @@
 # React Form Hooks
 
-> Minimal form library using React hooks
+> Minimal form library using React hooks and subscriptions.
 
 [![NPM](https://img.shields.io/npm/v/react-form-hooks.svg?style=flat-square)](https://www.npmjs.com/package/react-form-hooks)
 [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/prettier)
 [![bundlephobia minified](https://flat.badgen.net/bundlephobia/min/react-form-hooks)](https://bundlephobia.com/result?p=react-form-hooks)
 [![bundlephobia minified + gzip](https://flat.badgen.net/bundlephobia/minzip/react-form-hooks)](https://bundlephobia.com/result?p=react-form-hooks)
 
-> This library is currently experimental and is a Work In Progress. The API is likely to change frequently till it reaches a stable version. Not to be used in production.
-
 ## Features
 
-- No Dependencies
+- No Dependencies.
 - [Minimal](https://www.youtube.com/watch?v=4anAwXYqLG8) API - provides 3 hooks - `useForm`, `useFormState`, `useFieldState`
 - Blazing Fast - re-render only when it needs to
-- Tiny Size - under 2KB gzipped
-
-## Roadmap
-
-- [x] MVP
-- [x] Add unit tests
-- [x] Remove redux dependency
-- [ ] Documentation
-- [ ] Recipes
+- Tiny Size - under 3KB gzipped
 
 ## Install
 
