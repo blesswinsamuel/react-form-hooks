@@ -1,10 +1,11 @@
 import React from 'react'
+import { useForm } from 'react-form-hooks'
 
-import { useForm, useFormState } from 'react-form-hooks'
-import { FormFooter, Input } from './components'
-import { FormField } from './Field'
+import { Input } from '../recipes/Components'
+import FormFooter from '../recipes/FormFooter'
+import FormField from '../recipes/FormField'
 
-export default function BasicForm() {
+export default function BasicHooks() {
   const form = useForm({ initialValues: {} })
   const onSubmit = values => console.log(values)
   return (
@@ -30,18 +31,7 @@ export default function BasicForm() {
         }
       />
 
-      <FormStateAndButton form={form} />
+      <FormFooter form={form} />
     </form>
-  )
-}
-
-const FormStateAndButton = ({ form }) => {
-  const { anyError, anyDirty, anyTouched, values } = useFormState(form)
-
-  return (
-    <FormFooter
-      {...{ anyError, anyDirty, anyTouched, values }}
-      resetToInitial={() => form.formActions.resetFormValues()}
-    />
   )
 }

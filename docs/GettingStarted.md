@@ -89,7 +89,7 @@ when there is no change to the form or adding an error message when there is an 
       <button onClick={() => form.formActions.resetFormValues()}>Reset</button>
 ```
 
-For the completed form, check `PlainHooks.js` file in `website/src/examples` directory.
+For the completed form, check `GettingStartedHooks.js` file in `website/src/examples` directory.
 
 For more options that can be passed to the hooks, check the API documentation.
 
@@ -102,7 +102,7 @@ whenever the values has be updated like the field and form state here.
 Also, the form would perform better if the hooks are moved to their own components and then reused.
 
 For a better approach where most of the boilerplate is reused, it is better to move `useFieldState` to a
-common component and then reused. Check `BasicForm.ts` in `website/src/examples` directory for
+common component and then reused. Check `BasicHooks.ts` in `website/src/examples` directory for
 and example implementing this approach.
 
 
@@ -116,4 +116,4 @@ respectively. They accept the same arguments passed to the hooks, but as props. 
 they accept a render prop which is a function accepting the current form/field state and re-renders 
 only the elements inside the render function as necessary.  
 
-Check `PlainRenderProps.js` in `website/src/examples` directory for an example.
+Check `GettingStartedRenderProps.js` in `website/src/examples` directory for an example.

@@ -1,0 +1,87 @@
+import React from 'react'
+import { useFieldState, FieldState } from 'react-form-hooks'
+
+import { Field } from './Components'
+
+export default function FormField({
+  form,
+  id,
+  component: InputComponent,
+  validate,
+  InputProps,
+  onChange = v => v,
+  mapState,
+  label,
+  InputLabelProps,
+}) {
+  const fieldState = useFieldState(form, id, mapState, { validate })
+  const { changeFieldValue, touchField } = form.fieldActions
+  const { value, touched, dirty, error } = fieldState
+
+  // console.log('FIELD_STATE_UPDATE', id, fieldState)
+
+  return (
+    <Field
+      id={id}
+      label={label}
+      InputLabelProps={InputLabelProps}
+      error={error}
+      touched={touched}
+      dirty={dirty}
+    >
+      <InputComponent
+        id={id}
+        value={value}
+        onChange={value => changeFieldValue(id, onChange(value))}
+        onBlur={() => touchField(id)}
+        {...InputProps}
+      />
+    </Field>
+  )
+}
+
+/**
+ * Render props version of above
+ */
+export const FormFieldRP = ({
+  form,
+  id,
+  component: InputComponent,
+  validate,
+  InputProps,
+  onChange = v => v,
+  mapState,
+  label,
+  InputLabelProps,
+}) => {
+  const { changeFieldValue, touchField } = form.fieldActions
+  return (
+    <FieldState
+      form={form}
+      id={id}
+      mapState={mapState}
+      opts={{ validate }}
+      render={fieldState => {
+        const { value, touched, dirty, error } = fieldState
+        return (
+          <Field
+            id={id}
+            label={label}
+            InputLabelProps={InputLabelProps}
+            error={error}
+            touched={touched}
+            dirty={dirty}
+          >
+            <InputComponent
+              id={id}
+              value={value}
+              onChange={value => changeFieldValue(id, onChange(value))}
+              onBlur={() => touchField(id)}
+              {...InputProps}
+            />
+          </Field>
+        )
+      }}
+    />
+  )
+}

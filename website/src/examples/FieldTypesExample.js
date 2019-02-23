@@ -1,15 +1,16 @@
-import React, { useCallback, useState } from 'react'
+import React, { useState } from 'react'
+import { useForm } from 'react-form-hooks'
+
 import {
   DatePicker,
   DateTimePicker,
-  FormFooter,
   Input,
   TimePicker,
-} from './components'
-import { useForm, useFormState } from 'react-form-hooks'
-import { FormField } from './Field'
+} from '../recipes/Components'
+import FormField from '../recipes/FormField'
+import FormFooter from '../recipes/FormFooter'
 
-const FieldTypesExample = () => {
+export default function FieldTypesExample() {
   const [values, setValues] = useState({
     myfield: '123',
     email: 'form@email.me',
@@ -21,13 +22,11 @@ const FieldTypesExample = () => {
       email: 'changed@email.me',
       date1: '2020-05-02T18:30:00.000Z',
     })
-  const onSubmit = useCallback(
-    values => console.log('> onSubmit -> ', values),
-    []
-  )
 
   const form = useForm({ initialValues: values })
   console.log('FORM_RERENDER')
+
+  const onSubmit = values => console.log('> onSubmit -> ', values)
   return (
     <form
       className="form-horizontal"
@@ -95,22 +94,7 @@ const FieldTypesExample = () => {
 
       <FormField form={form} id="datetime" component={DateTimePicker} />
 
-      <FormStateAndButton form={form} resetToNewValues={changeValues} />
+      <FormFooter form={form} resetToNewValues={changeValues} />
     </form>
   )
 }
-
-const FormStateAndButton = ({ form, resetToNewValues }) => {
-  const { anyError, anyDirty, anyTouched, values } = useFormState(form)
-
-  console.log('FORM_STATE_UPDATE', { anyError, anyDirty, anyTouched, values })
-  return (
-    <FormFooter
-      {...{ anyError, anyDirty, anyTouched, values }}
-      resetToInitial={() => form.formActions.resetFormValues()}
-      resetToNew={resetToNewValues}
-    />
-  )
-}
-
-export default FieldTypesExample

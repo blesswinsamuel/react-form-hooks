@@ -15,7 +15,7 @@ import { useFieldState, useForm, useFormState } from 'react-form-hooks'
  */
 function MyForm() {
   // useRef is necessary here because otherwise, the form will be reset
-  // when initialValues reference changes on rerender.
+  // when initialValues reference changes on re-render.
   const initialValues = useRef({ name: 'John' }).current
   const form = useForm({ initialValues })
 

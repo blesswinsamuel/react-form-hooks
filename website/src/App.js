@@ -6,25 +6,32 @@ import NotFound from './components/NotFound'
 import Home from './Home'
 import Markdown from './components/Markdown'
 import Example from './components/Example'
+import Recipe from './components/Recipe'
 
 const examples = [
   {
-    text: 'Plain example (hooks)',
+    text: 'Getting Started (hooks)',
     link: '/examples/plain-hooks',
-    component: require('./examples/PlainHooks').default,
-    code: require('!raw-loader!./examples/PlainHooks'),
+    component: require('./examples/GettingStartedHooks').default,
+    code: require('!raw-loader!./examples/GettingStartedHooks'),
   },
   {
-    text: 'Plain example (render props)',
+    text: 'Getting Started (render props)',
     link: '/examples/plain-render-props',
-    component: require('./examples/PlainRenderProps').default,
-    code: require('!raw-loader!./examples/PlainRenderProps'),
+    component: require('./examples/GettingStartedRenderProps').default,
+    code: require('!raw-loader!./examples/GettingStartedRenderProps'),
   },
   {
-    text: 'Basic Form',
+    text: 'Basic Form (hooks)',
     link: '/examples/basic',
-    component: require('./examples/BasicForm').default,
-    code: require('!raw-loader!./examples/BasicForm'),
+    component: require('./examples/BasicHooks').default,
+    code: require('!raw-loader!./examples/BasicHooks'),
+  },
+  {
+    text: 'Basic Form (render props)',
+    link: '/examples/renderprops',
+    component: require('./examples/BasicRenderProps').default,
+    code: require('!raw-loader!./examples/BasicRenderProps'),
   },
   {
     text: 'Field types example',
@@ -38,11 +45,28 @@ const examples = [
     component: require('./examples/NestedForm').default,
     code: require('!raw-loader!./examples/NestedForm'),
   },
+]
+
+const recipes = [
   {
-    text: 'Using render props',
-    link: '/examples/renderprops',
-    component: require('./examples/RenderProps').default,
-    code: require('!raw-loader!./examples/RenderProps'),
+    text: 'FormField.js',
+    link: '/recipes/form-field',
+    code: require('!raw-loader!./recipes/FormField'),
+  },
+  {
+    text: 'ArrayFormField.js',
+    link: '/recipes/array-form-field',
+    code: require('!raw-loader!./recipes/ArrayFormField'),
+  },
+  {
+    text: 'FormFooter.js',
+    link: '/recipes/form-footer',
+    code: require('!raw-loader!./recipes/FormFooter'),
+  },
+  {
+    text: 'Components.js',
+    link: '/recipes/components',
+    code: require('!raw-loader!./recipes/Components'),
   },
 ]
 
@@ -58,10 +82,12 @@ const menu = [
   {
     text: 'Examples',
     link: '/examples',
-    children: examples.map(example => ({
-      text: example.text,
-      link: example.link,
-    })),
+    children: examples,
+  },
+  {
+    text: 'Recipes',
+    link: '/recipes',
+    children: recipes,
   },
   {
     text: 'GitHub',
@@ -84,6 +110,21 @@ const ExamplesIndex = ({ examples }) => {
   )
 }
 
+const RecipesIndex = ({ recipes }) => {
+  return (
+    <>
+      <h1>Recipes</h1>
+      <ul>
+        {recipes.map((recipe, i) => (
+          <li key={i}>
+            <Link to={recipe.link}>{recipe.text}</Link>
+          </li>
+        ))}
+      </ul>
+    </>
+  )
+}
+
 const App = () => {
   return (
     <Layout menu={menu}>
@@ -95,7 +136,7 @@ const App = () => {
         />
         <Markdown path="/api" input={require('!raw-loader!./docs/API.md')} />
         <ExamplesIndex
-          examples={menu.find(menu => menu.link === '/examples').children}
+          examples={examples}
           path="/examples"
         />
         {examples.map((example, i) => (
@@ -105,6 +146,18 @@ const App = () => {
             title={example.text}
             component={example.component}
             code={example.code}
+          />
+        ))}
+        <RecipesIndex
+          recipes={menu.find(menu => menu.link === '/recipes').children}
+          path="/recipes"
+        />
+        {recipes.map((recipe, i) => (
+          <Recipe
+            key={i}
+            path={recipe.link}
+            title={recipe.text}
+            code={recipe.code}
           />
         ))}
         <NotFound default />

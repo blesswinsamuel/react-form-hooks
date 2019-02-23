@@ -1,9 +1,12 @@
 import React, { useCallback, useState } from 'react'
-import { FormFooter, Input } from './components'
-import { useForm, useFormState } from 'react-form-hooks'
-import { ArrayFormField, FormField } from './Field'
+import { useForm } from 'react-form-hooks'
 
-const NestedForm = () => {
+import { Input } from '../recipes/Components'
+import FormField from '../recipes/FormField'
+import ArrayFormField from '../recipes/ArrayFormField'
+import FormFooter from '../recipes/FormFooter'
+
+export default function NestedForm() {
   const [values, setValues] = useState({})
   const defaultValues = {
     name: {
@@ -108,30 +111,7 @@ const NestedForm = () => {
         }}
       />
 
-      <FormStateAndButton form={form} resetToNewValues={changeValues} />
+      <FormFooter form={form} resetToNewValues={changeValues} />
     </form>
   )
 }
-
-const FormStateAndButton = ({ form, resetToNewValues }) => {
-  const { anyError, anyDirty, anyTouched, values } = useFormState(
-    form,
-    state => ({
-      anyError: state.anyError,
-      anyDirty: state.anyDirty,
-      anyTouched: state.anyTouched,
-      values: state.values,
-    })
-  )
-
-  // console.log('FORM_STATE_UPDATE', { anyError, anyDirty, anyTouched, values })
-  return (
-    <FormFooter
-      {...{ anyError, anyDirty, anyTouched, values }}
-      resetToInitial={() => form.formActions.resetFormValues()}
-      resetToNew={resetToNewValues}
-    />
-  )
-}
-
-export default NestedForm
