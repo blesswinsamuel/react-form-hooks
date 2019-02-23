@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react'
+import React, { useState } from 'react'
 import { useForm } from 'react-form-hooks'
 
 import { Input } from '../recipes/Components'
@@ -7,7 +7,12 @@ import ArrayFormField from '../recipes/ArrayFormField'
 import FormFooter from '../recipes/FormFooter'
 
 export default function NestedForm() {
-  const [values, setValues] = useState({})
+  const [values, setValues] = useState({
+    name: {
+      firstname: 'John',
+      lastname: 'Doe',
+    },
+  })
   const defaultValues = {
     name: {
       firstname: 'John',
@@ -23,10 +28,7 @@ export default function NestedForm() {
     email: 'form@email.me',
   }
   const changeValues = () => setValues(defaultValues)
-  const onSubmit = useCallback(
-    values => console.log('> onSubmit -> ', values),
-    []
-  )
+  const onSubmit = values => console.log('> onSubmit -> ', values)
   const form = useForm({ initialValues: values })
   console.log('FORM_RERENDER')
 

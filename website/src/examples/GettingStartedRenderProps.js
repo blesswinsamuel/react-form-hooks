@@ -4,10 +4,10 @@ import { useForm, FormState, FieldState } from 'react-form-hooks'
 
 /**
  This is an example where everything is defined in a single component.
- This may be fine for starting out. But it can become cumbersome to manage
+ This may be fine for getting started. But it can become cumbersome to manage
  especially when working with large number of inputs.
 
- Check the other examples here for patterns to reuse code.
+ Check the BasicRenderProps example for a sample pattern to reuse code.
  */
 function MyForm() {
   const form = useForm({ initialValues: {} })

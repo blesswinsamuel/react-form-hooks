@@ -4,14 +4,14 @@ import { useFieldState, useForm, useFormState } from 'react-form-hooks'
 
 /**
  This is an example where everything is defined in a single component.
- This may be fine for starting out. But it can become cumbersome to manage
+ This may be fine for getting started. But it can become cumbersome to manage
  especially when working with large number of inputs.
  Also, when using hooks, the component hosting the hook will be re-rendered
- whenever the values has be updated like the field and form state here.
- The form would perform better if the hooks are moved to their own components
- and then reused.
+ whenever the state is updated like the field and form state here.
+ For large forms, the form would perform better if the hooks are moved to their
+ own components and then reused.
 
- Check the other examples here for patterns to reuse code.
+ Check the BasicHooks example for a sample pattern to reuse code.
  */
 function MyForm() {
   // useRef is necessary here because otherwise, the form will be reset

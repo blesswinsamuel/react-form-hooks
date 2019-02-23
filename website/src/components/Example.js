@@ -8,6 +8,11 @@ export default function Example({ title, component: Component, code }) {
       <div style={{ paddingBottom: 16 }}>
         <Component />
       </div>
+      <p>
+        <strong>TIP:</strong> Open react developer tools, go to preferences
+        and enable Highlight updates and then start typing on the form inputs to
+        see which components update.
+      </p>
       {code && (
         <>
           <h2>Code</h2>
