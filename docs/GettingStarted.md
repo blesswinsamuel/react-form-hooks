@@ -3,5 +3,5 @@
 ## Install
 
 ```bash
-yarn add react-form-hooks@next
+yarn add react-form-hooks
 ```

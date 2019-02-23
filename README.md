@@ -3,6 +3,7 @@
 > Form library using React hooks and subscriptions.
 
 [![NPM](https://img.shields.io/npm/v/react-form-hooks.svg?style=flat-square)](https://www.npmjs.com/package/react-form-hooks)
+![Actions Status](https://wdp9fww0r9.execute-api.us-west-2.amazonaws.com/production/badge/blesswinsamuel/react-form-hooks?style=flat-square)
 [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/prettier)
 [![Coverage Status](https://img.shields.io/coveralls/github/blesswinsamuel/react-form-hooks.svg?style=flat-square)](https://coveralls.io/github/blesswinsamuel/react-form-hooks?branch=master)
 [![bundlephobia minified](https://img.shields.io/bundlephobia/min/react-form-hooks.svg?style=flat-square)](https://bundlephobia.com/result?p=react-form-hooks)
@@ -18,7 +19,7 @@
 ## Install
 
 ```bash
-npm install --save react-form-hooks@next
+npm install --save react-form-hooks
 ```
 
 ## Usage

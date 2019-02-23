@@ -98,8 +98,9 @@ const App = () => {
           examples={menu.find(menu => menu.link === '/examples').children}
           path="/examples"
         />
-        {examples.map(example => (
+        {examples.map((example, i) => (
           <Example
+            key={i}
             path={example.link}
             title={example.text}
             component={example.component}
