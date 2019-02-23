@@ -38,6 +38,7 @@ describe('react-form-hooks', () => {
       expect(getText()).toEqual(
         JSON.stringify({
           values: {},
+          errors: {},
           anyTouched: false,
           anyError: false,
           anyDirty: false,
@@ -57,6 +58,7 @@ describe('react-form-hooks', () => {
       expect(getText()).toEqual(
         JSON.stringify({
           values: { a: 1, b: 'abc' },
+          errors: {},
           anyTouched: false,
           anyError: false,
           anyDirty: false,
@@ -76,6 +78,7 @@ describe('react-form-hooks', () => {
       expect(getText()).toEqual(
         JSON.stringify({
           values: { a: 2, b: 'abcd' },
+          errors: {},
           anyTouched: false,
           anyError: false,
           anyDirty: false,
@@ -105,6 +108,7 @@ describe('react-form-hooks', () => {
       expect(getText()).toEqual(
         JSON.stringify({
           values: { a: 1, b: 'abc' },
+          errors: {},
           anyTouched: false,
           anyError: false,
           anyDirty: false,

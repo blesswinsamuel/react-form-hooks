@@ -41,6 +41,7 @@ describe('renderprops', () => {
       expect(getText()).toEqual(
         JSON.stringify({
           values: {},
+          errors: {},
           anyTouched: false,
           anyError: false,
           anyDirty: false,

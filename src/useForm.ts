@@ -4,16 +4,16 @@ import { Form, FormOptions } from './types'
 
 export default function useForm<V>(
   opts: FormOptions<V> = { initialValues: {} as any }
-) {
+): Form<V> {
   const form = useRef<Form<V> | null>(null)
   const { initialValues } = opts
 
-  function getForm() {
-    if (!form.current) {
+  function getForm(): Form<V> {
+    if (form.current === null) {
       form.current = createForm(opts)
     }
 
-    return form.current!
+    return form.current
   }
 
   const prevInitialValues = useRef(initialValues)

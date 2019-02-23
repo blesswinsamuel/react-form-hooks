@@ -8,6 +8,7 @@ describe('createForm', () => {
         anyDirty: false,
         anyError: false,
         anyTouched: false,
+        errors: {},
         values: {},
       })
     })
@@ -18,6 +19,7 @@ describe('createForm', () => {
         anyDirty: false,
         anyError: false,
         anyTouched: false,
+        errors: {},
         values: { a: 1, b: 'abc' },
       })
     })
@@ -31,6 +33,7 @@ describe('createForm', () => {
         anyDirty: false,
         anyError: false,
         anyTouched: false,
+        errors: {},
         values: { a: 1, b: 'abc' },
       })
       expect(form.fieldActions.getFieldState('a')).toEqual({
@@ -45,6 +48,7 @@ describe('createForm', () => {
         anyDirty: false,
         anyError: false,
         anyTouched: false,
+        errors: {},
         values: { a: 2, b: 'abcd' },
       })
       expect(form.fieldActions.getFieldState('a')).toEqual({
@@ -60,6 +64,7 @@ describe('createForm', () => {
         anyDirty: false,
         anyError: false,
         anyTouched: false,
+        errors: { a: undefined },
         values: { a: 2, b: 'abcd' },
       })
       expect(form.fieldActions.getFieldState('a')).toEqual({
@@ -79,6 +84,7 @@ describe('createForm', () => {
         anyDirty: false,
         anyError: false,
         anyTouched: false,
+        errors: { a: undefined },
         values: { a: 2, b: 'abcd' },
       })
       expect(form.fieldActions.getFieldState('a')).toEqual({
@@ -162,6 +168,7 @@ describe('createForm', () => {
         anyDirty: true,
         anyError: false,
         anyTouched: false,
+        errors: { a: undefined, b: undefined },
         values: { a: 2, b: 'abc' },
       })
       expect(form.fieldActions.getFieldState('a')).toEqual({
@@ -179,6 +186,7 @@ describe('createForm', () => {
         anyDirty: true,
         anyError: false,
         anyTouched: false,
+        errors: { a: undefined, b: undefined },
         values: { a: 2, b: 'abc' },
       })
       expect(form.fieldActions.getFieldState('a')).toEqual({
@@ -199,6 +207,7 @@ describe('createForm', () => {
         anyDirty: false,
         anyError: false,
         anyTouched: true,
+        errors: { a: undefined, b: undefined },
         values: { a: 1, b: 'abc' },
       })
       expect(form.fieldActions.getFieldState('a')).toEqual({
@@ -224,6 +233,7 @@ describe('createForm', () => {
         anyDirty: false,
         anyError: false,
         anyTouched: false,
+        errors: { a: undefined, b: undefined },
         values: { a: 1, b: 'abc' },
       })
       expect(form.fieldActions.getFieldState('b')).toEqual({
@@ -248,6 +258,7 @@ describe('createForm', () => {
         anyDirty: false,
         anyError: true,
         anyTouched: true,
+        errors: { a: 'should be greater than 2', b: undefined },
         values: { a: 1, b: 'abc' },
       })
       expect(form.fieldActions.getFieldState('a')).toEqual({
