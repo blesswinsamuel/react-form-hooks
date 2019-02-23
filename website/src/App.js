@@ -7,6 +7,45 @@ import Home from './Home'
 import Markdown from './components/Markdown'
 import Example from './components/Example'
 
+const examples = [
+  {
+    text: 'Plain example (hooks)',
+    link: '/examples/plain-hooks',
+    component: require('./examples/PlainHooks').default,
+    code: require('!raw-loader!./examples/PlainHooks'),
+  },
+  {
+    text: 'Plain example (render props)',
+    link: '/examples/plain-render-props',
+    component: require('./examples/PlainRenderProps').default,
+    code: require('!raw-loader!./examples/PlainRenderProps'),
+  },
+  {
+    text: 'Basic Form',
+    link: '/examples/basic',
+    component: require('./examples/BasicForm').default,
+    code: require('!raw-loader!./examples/BasicForm'),
+  },
+  {
+    text: 'Field types example',
+    link: '/examples/field-types',
+    component: require('./examples/FieldTypesExample').default,
+    code: require('!raw-loader!./examples/FieldTypesExample'),
+  },
+  {
+    text: 'Nested Fields',
+    link: '/examples/nested',
+    component: require('./examples/NestedForm').default,
+    code: require('!raw-loader!./examples/NestedForm'),
+  },
+  {
+    text: 'Using render props',
+    link: '/examples/renderprops',
+    component: require('./examples/RenderProps').default,
+    code: require('!raw-loader!./examples/RenderProps'),
+  },
+]
+
 const menu = [
   {
     text: 'Getting Started',
@@ -19,12 +58,10 @@ const menu = [
   {
     text: 'Examples',
     link: '/examples',
-    children: [
-      { text: 'Basic Form', link: '/examples/basic' },
-      { text: 'Simple Form', link: '/examples/simple' },
-      { text: 'Nested Fields', link: '/examples/nested' },
-      { text: 'Using render props', link: '/examples/renderprops' },
-    ],
+    children: examples.map(example => ({
+      text: example.text,
+      link: example.link,
+    })),
   },
   {
     text: 'GitHub',
@@ -61,30 +98,14 @@ const App = () => {
           examples={menu.find(menu => menu.link === '/examples').children}
           path="/examples"
         />
-        <Example
-          path="/examples/basic"
-          title="Basic Example"
-          component={require('./examples/BasicForm').default}
-          code={require('!raw-loader!./examples/BasicForm')}
-        />
-        <Example
-          path="/examples/simple"
-          title="Simple Form"
-          component={require('./examples/SimpleForm').default}
-          code={require('!raw-loader!./examples/SimpleForm')}
-        />
-        <Example
-          path="/examples/nested"
-          title="Nested Form"
-          component={require('./examples/NestedForm').default}
-          code={require('!raw-loader!./examples/NestedForm')}
-        />
-        <Example
-          path="/examples/renderprops"
-          title="Form using render props"
-          component={require('./examples/RenderProps').default}
-          code={require('!raw-loader!./examples/RenderProps')}
-        />
+        {examples.map(example => (
+          <Example
+            path={example.link}
+            title={example.text}
+            component={example.component}
+            code={example.code}
+          />
+        ))}
         <NotFound default />
       </Router>
     </Layout>

@@ -1,6 +1,5 @@
-import React, { useCallback, useMemo, useState } from 'react'
+import React, { useCallback, useState } from 'react'
 import {
-  Button,
   DatePicker,
   DateTimePicker,
   FormFooter,
@@ -10,11 +9,11 @@ import {
 import { useForm, useFormState } from 'react-form-hooks'
 import { FormField } from './Field'
 
-const SimpleForm = () => {
+const FieldTypesExample = () => {
   const [values, setValues] = useState({
     myfield: '123',
     email: 'form@email.me',
-    date1: '2020-05-02T18:30:00.000Z',
+    date1: '2020-05-02T00:00:00.000Z',
   })
   const changeValues = () =>
     setValues({
@@ -26,55 +25,14 @@ const SimpleForm = () => {
     values => console.log('> onSubmit -> ', values),
     []
   )
-  return (
-    <div className="container">
-      <MyForm defaultValues={values} onSubmit={onSubmit} />
-      <Button onClick={changeValues}>Reset to default values</Button>
-    </div>
-  )
-}
 
-const MyForm = ({ defaultValues, onSubmit }) => {
-  const form = useForm({ initialValues: defaultValues })
+  const form = useForm({ initialValues: values })
   console.log('FORM_RERENDER')
-  return useMemo(
-    () => (
-      <form
-        className="form-horizontal"
-        onSubmit={form.formActions.submitHandler(onSubmit)}
-      >
-        <FormFields form={form} />
-
-        <FormStateAndButton form={form} />
-      </form>
-    ),
-    [onSubmit]
-  )
-}
-
-const FormStateAndButton = ({ form }) => {
-  const { anyError, anyDirty, anyTouched, values } = useFormState(
-    form,
-    state => ({
-      anyError: state.anyError,
-      anyDirty: state.anyDirty,
-      anyTouched: state.anyTouched,
-      values: state.values,
-    })
-  )
-
-  console.log('FORM_STATE_UPDATE', { anyError, anyDirty, anyTouched, values })
   return (
-    <FormFooter
-      {...{ anyError, anyDirty, anyTouched, values }}
-      resetToInitial={() => form.formActions.resetFormValues()}
-    />
-  )
-}
-
-const FormFields = ({ form }) => {
-  return (
-    <>
+    <form
+      className="form-horizontal"
+      onSubmit={form.formActions.submitHandler(onSubmit)}
+    >
       <FormField
         form={form}
         id="myfield"
@@ -136,8 +94,23 @@ const FormFields = ({ form }) => {
       <FormField form={form} id="same" label="Same2" component={Input} />
 
       <FormField form={form} id="datetime" component={DateTimePicker} />
-    </>
+
+      <FormStateAndButton form={form} resetToNewValues={changeValues} />
+    </form>
   )
 }
 
-export default SimpleForm
+const FormStateAndButton = ({ form, resetToNewValues }) => {
+  const { anyError, anyDirty, anyTouched, values } = useFormState(form)
+
+  console.log('FORM_STATE_UPDATE', { anyError, anyDirty, anyTouched, values })
+  return (
+    <FormFooter
+      {...{ anyError, anyDirty, anyTouched, values }}
+      resetToInitial={() => form.formActions.resetFormValues()}
+      resetToNew={resetToNewValues}
+    />
+  )
+}
+
+export default FieldTypesExample

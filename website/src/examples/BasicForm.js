@@ -1,7 +1,7 @@
 import React from 'react'
 
 import { useForm, useFormState } from 'react-form-hooks'
-import { Button, Code, Input } from './components'
+import { FormFooter, Input } from './components'
 import { FormField } from './Field'
 
 export default function BasicForm() {
@@ -39,14 +39,9 @@ const FormStateAndButton = ({ form }) => {
   const { anyError, anyDirty, anyTouched, values } = useFormState(form)
 
   return (
-    <>
-      <Code>{JSON.stringify(values, null, 2)}</Code>
-
-      {anyError && <div>Form Error</div>}
-      {anyDirty && <div>Form Dirty</div>}
-      {anyTouched && <div>Form Touched</div>}
-      <Button type="submit">Submit</Button>
-      <Button onClick={form.formActions.resetFormValues}>Reset</Button>
-    </>
+    <FormFooter
+      {...{ anyError, anyDirty, anyTouched, values }}
+      resetToInitial={() => form.formActions.resetFormValues()}
+    />
   )
 }

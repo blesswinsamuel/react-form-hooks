@@ -1,5 +1,5 @@
-import React, { useCallback, useMemo, useState } from 'react'
-import { Button, Code, Input } from './components'
+import React, { useCallback, useState } from 'react'
+import { FormFooter, Input } from './components'
 import { useForm, useFormState } from 'react-form-hooks'
 import { ArrayFormField, FormField } from './Field'
 
@@ -24,64 +24,14 @@ const NestedForm = () => {
     values => console.log('> onSubmit -> ', values),
     []
   )
-  return (
-    <div className="container">
-      <MyForm
-        defaultValues={defaultValues}
-        values={values}
-        onSubmit={onSubmit}
-      />
-      <Button onClick={changeValues}>Reset to default values</Button>
-    </div>
-  )
-}
-
-const MyForm = ({ defaultValues, onSubmit }) => {
-  const form = useForm({ initialValues: defaultValues })
+  const form = useForm({ initialValues: values })
   console.log('FORM_RERENDER')
-  return useMemo(
-    () => (
-      <form
-        className="form-horizontal"
-        onSubmit={form.formActions.submitHandler(onSubmit)}
-      >
-        <FormFields form={form} />
 
-        <FormStateAndButton form={form} />
-      </form>
-    ),
-    []
-  )
-}
-
-const FormStateAndButton = ({ form }) => {
-  const { anyError, anyDirty, anyTouched, values } = useFormState(
-    form,
-    state => ({
-      anyError: state.anyError,
-      anyDirty: state.anyDirty,
-      anyTouched: state.anyTouched,
-      values: state.values,
-    })
-  )
-
-  // console.log('FORM_STATE_UPDATE', { anyError, anyDirty, anyTouched, values })
   return (
-    <>
-      <Code>{JSON.stringify(values, null, 2)}</Code>
-
-      {anyError && <div>Form Error</div>}
-      {anyDirty && <div>Form Dirty</div>}
-      {anyTouched && <div>Form Touched</div>}
-      <Button type="submit">Submit</Button>
-      <Button onClick={form.formActions.resetFormValues}>Reset</Button>
-    </>
-  )
-}
-
-const FormFields = ({ form }) => {
-  return (
-    <>
+    <form
+      className="form-horizontal"
+      onSubmit={form.formActions.submitHandler(onSubmit)}
+    >
       <FormField
         form={form}
         id="name.firstname"
@@ -157,7 +107,30 @@ const FormFields = ({ form }) => {
           ),
         }}
       />
-    </>
+
+      <FormStateAndButton form={form} resetToNewValues={changeValues} />
+    </form>
+  )
+}
+
+const FormStateAndButton = ({ form, resetToNewValues }) => {
+  const { anyError, anyDirty, anyTouched, values } = useFormState(
+    form,
+    state => ({
+      anyError: state.anyError,
+      anyDirty: state.anyDirty,
+      anyTouched: state.anyTouched,
+      values: state.values,
+    })
+  )
+
+  // console.log('FORM_STATE_UPDATE', { anyError, anyDirty, anyTouched, values })
+  return (
+    <FormFooter
+      {...{ anyError, anyDirty, anyTouched, values }}
+      resetToInitial={() => form.formActions.resetFormValues()}
+      resetToNew={resetToNewValues}
+    />
   )
 }
 
