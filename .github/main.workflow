@@ -2,7 +2,7 @@ workflow "Build on push" {
   on = "push"
   resolves = [
     "Publish",
-    "Test",
+    "Publish coverage report to coveralls",
   ]
 }
 
@@ -31,4 +31,14 @@ action "Publish" {
   needs = ["Filter tag"]
   args = "publish"
   secrets = ["NPM_AUTH_TOKEN"]
+}
+
+action "Publish coverage report to coveralls" {
+  uses = "actions/npm@59b64a598378f31e49cb76f27d6f3312b582f680"
+  needs = ["Test"]
+  runs = "yarn coveralls < ./coverage/lcov.info"
+  env = {
+    COVERALLS_SERVICE_NAME = "github-actions"
+  }
+  secrets = ["COVERALLS_REPO_TOKEN"]
 }
