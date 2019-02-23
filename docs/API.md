@@ -18,9 +18,23 @@ const form = useForm({ initialValues })
 
 Creates a new form and returns a form object.
 
-Accepts `initialValues` argument to initialize the form with initial values.
-If `initialValues` changes, the form is reset.
-Using this hook doesn't cause any re-renders.
+We can also pass initial values to the form using:
+
+```jsx
+  const form = useForm({ initialValues: { name: 'John' } })
+```
+
+**Note**: By default, whenever `initialValues` changes, the form is reset to the new `initialValues`.
+So, in the above snippet, if the component using `useForm` re-renders, a new object is created, causing the 
+previous `initialValues` and the new `initialValues` to be different. This will reset the form.
+To avoid this, create the `initialValues` in an `useRef`:
+
+```jsx
+  const initialValues = useRef({ name: 'John' })
+  const form = useForm({ initialValues: initialValues.current })
+```
+
+Using this hook does **not** cause the component hosting it to re-render on state changes.
 
 ### `useFormState`
 

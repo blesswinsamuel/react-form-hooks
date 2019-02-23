@@ -1,95 +1,91 @@
-import React from 'react'
+import React, { useRef } from 'react'
 
-import { useForm, useFormState, useFieldState } from 'react-form-hooks'
+import { useFieldState, useForm, useFormState } from 'react-form-hooks'
 
+/**
+ This is an example where everything is defined in a single component.
+ This may be fine for starting out. But it can become cumbersome to manage
+ especially when working with large number of inputs.
+ Also, when using hooks, the component hosting the hook will be re-rendered
+ whenever the values has be updated like the field and form state here.
+ The form would perform better if the hooks are moved to their own components
+ and then reused.
+
+ Check the other examples here for patterns to reuse code.
+ */
 function MyForm() {
-  const form = useForm({ initialValues: {} })
+  // useRef is necessary here because otherwise, the form will be reset
+  // when initialValues reference changes on rerender.
+  const initialValues = useRef({ name: 'John' }).current
+  const form = useForm({ initialValues })
+
+  const formState = useFormState(form)
+  const { anyError, anyDirty, anyTouched, values, errors } = formState
+
+  const nameState = useFieldState(form, 'name')
+  const ageState = useFieldState(form, 'age', undefined, {
+    validate: value => value < 18 && 'age should be above 18',
+  })
+  const emailState = useFieldState(form, 'email', undefined, {
+    validate: v => !/^\S+@\S+\.\S+$/.test(v) && 'should be a valid email',
+  })
+
   const onSubmit = values => console.log(values)
+
+  console.log('FORM RENDER', formState)
   return (
     <form onSubmit={form.formActions.submitHandler(onSubmit)}>
-      <FormField
-        form={form}
-        id="firstname"
-        label="First name"
-        component={Input}
-        validate={value => /\d/.test(value) && 'should not contain a number'}
-        onChange={value => value.toUpperCase()}
-      />
-      <FormField
-        form={form}
-        id="lastname"
-        label="Last name"
-        component={Input}
-        validate={value => /\d/.test(value) && 'should not contain a number'}
-        onChange={value => value.toLowerCase()}
-      />
+      <div>
+        <label htmlFor="name">Name</label>
+        <input
+          id="name"
+          onChange={e =>
+            form.fieldActions.changeFieldValue(
+              'name',
+              e.target.value.toUpperCase()
+            )
+          }
+          onBlur={() => form.fieldActions.touchField('name')}
+          value={nameState.value}
+        />
+      </div>
+      <div>
+        <label htmlFor="age">Age</label>
+        <input
+          id="age"
+          type="number"
+          onChange={e =>
+            form.fieldActions.changeFieldValue(
+              'age',
+              e.target.value.toUpperCase()
+            )
+          }
+          onBlur={() => form.fieldActions.touchField('age')}
+          value={ageState.value}
+        />
+      </div>
+      <div>
+        <label htmlFor="email">Email</label>
+        <input
+          id="email"
+          onChange={e =>
+            form.fieldActions.changeFieldValue('email', e.target.value)
+          }
+          onBlur={() => form.fieldActions.touchField('email')}
+          value={emailState.value}
+        />
+      </div>
 
-      <FormStateAndButton form={form} />
-    </form>
-  )
-}
-
-const FormStateAndButton = ({ form }) => {
-  const { anyError, anyDirty, anyTouched, values } = useFormState(form)
-
-  return (
-    <>
       <pre>{JSON.stringify(values, null, 2)}</pre>
+      <pre>{JSON.stringify(errors, null, 2)}</pre>
 
       {anyError && <div>Form Error</div>}
       {anyDirty && <div>Form Dirty</div>}
       {anyTouched && <div>Form Touched</div>}
       <button type="submit">Submit</button>
       <button onClick={() => form.formActions.resetFormValues()}>Reset</button>
-    </>
+    </form>
   )
-}
-
-const FormField = ({
-  form,
-  id,
-  component: InputComponent,
-  validate,
-  InputProps,
-  onChange = v => v,
-  mapState,
-  label,
-  InputLabelProps,
-}) => {
-  const fieldState = useFieldState(form, id, mapState, { validate })
-  const { changeFieldValue, touchField } = form.fieldActions
-  const { value, touched, dirty, error } = fieldState
-
-  return (
-    <div>
-      {label && (
-        <label htmlFor={id} {...InputLabelProps}>
-          {label}
-        </label>
-      )}
-      <InputComponent
-        id={id}
-        value={value}
-        onChange={value => changeFieldValue(id, onChange(value))}
-        onBlur={() => touchField(id)}
-        {...InputProps}
-      />
-      {touched && error && <div className="form-input-hint">{error}</div>}
-      {dirty && <div>Field Modified</div>}
-    </div>
-  )
-}
-
-const Input = ({ onChange, value, ...otherProps }) => (
-  <input
-    onChange={handleStringChange(onChange)}
-    value={value}
-    {...otherProps}
-  />
-)
-
-function handleStringChange(handler) {
-  return event => handler(event.target.value)
 }
 
 export default MyForm
