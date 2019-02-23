@@ -1,6 +1,6 @@
 # React Form Hooks
 
-> Minimal form library using React hooks and subscriptions.
+> Form library using React hooks and subscriptions.
 
 [![NPM](https://img.shields.io/npm/v/react-form-hooks.svg?style=flat-square)](https://www.npmjs.com/package/react-form-hooks)
 [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/prettier)
@@ -10,17 +10,15 @@
 ## Features
 
 - No Dependencies.
-- Minimal API - provides 3 hooks - `useForm`, `useFormState`, `useFieldState` and 2 render prop helper components which use the `use{Form|Field}State` hooks.
-- Blazing Fast - re-render only when it needs to.
-- Tiny Size - under 3KB gzipped.
+- Minimal API. Provides 3 hooks - `useForm`, `useFormState`, `useFieldState` and 2 wrapper components (which accepts a render prop) around `use{Form|Field}State` hooks.
+- Blazing Fast. Allows you to re-render form inputs only if necessary.
+- Tiny Size. ~2KB gzipped.
 
 ## Install
 
 ```bash
 npm install --save react-form-hooks@next
 ```
-
-`react-form-hooks` is alpha quality as of now. So, there may be bugs hidden in the hooks (no pun intended) and the APIs are likely to change till it reaches a stable version.
 
 ## Usage
 
@@ -64,7 +62,7 @@ const FormStateAndButton = ({ form }) => {
 
   return (
     <>
-      <code>{JSON.stringify(values, null, 2)}</code>
+      <pre>{JSON.stringify(values, null, 2)}</pre>
 
       {anyError && <div>Form Error</div>}
       {anyDirty && <div>Form Dirty</div>}
@@ -128,74 +126,74 @@ ReactDOM.render(<MyForm />, document.getElementById('root'))
 ### Using render props
 
 ```jsx
-import React, { useState } from 'react'
-import { Button, Code, Input } from './components'
-import { FormState, useForm } from 'react-form-hooks'
-import { FormField } from './Field'
+import React from 'react'
 
-const MyForm = () => {
-  const [values, setValues] = useState({
-    name: 'John',
-    email: 'john@example.com',
-  })
-  const form = useForm({ initialValues: values })
-  const changeValues = () =>
-    setValues({
-      name: 'Doe',
-      email: 'doe@example.com',
-    })
+import { useForm, FormState, FieldState } from 'react-form-hooks'
+
+function MyForm() {
+  const form = useForm({ initialValues: {} })
+  const onSubmit = values => console.log(values)
   return (
-    <div className="container">
-      <form
-        className="form-horizontal"
-        onSubmit={form.formActions.submitHandler(values =>
-          console.log('FORM SUBMIT', values)
-        )}
-      >
-        <FormField
-          form={form}
-          id="name"
-          label="Name"
-          component={Input}
-          validate={value => /\d/.test(value) && 'should not contain a number'}
-          onChange={value => value.toUpperCase()}
-        />
-        <FormField
-          form={form}
-          id="email"
-          label="Email"
-          component={Input}
-          validate={value =>
-            !/^\S+@\S+\.\S+$/.test(value) && 'should be a valid email'
-          }
-        />
+    <form onSubmit={form.formActions.submitHandler(onSubmit)}>
+      <FieldState
+        form={form}
+        id="firstname"
+        options={{validate: value => /\d/.test(value) && 'should not contain a number'}}
+        render={({ value, touched, error, dirty }  ) => {
+          return (
+            <div>
+              <label htmlFor='firstname'>
+                First name
+              </label>
+              <input
+                id={'firstname'}
+                value={value}
+                onChange={e => form.fieldActions.changeFieldValue('firstname', e.target.value)}
+                onBlur={() => form.fieldActions.touchField('firstname')}
+              />
+              {touched && error && <div className="form-input-hint">{error}</div>}
+              {dirty && <div>Field Modified</div>}
+            </div>
+          )
+        }}
+      />
+      <FieldState
+        form={form}
+        id="lastname"
+        options={{validate: value => /\d/.test(value) && 'should not contain a number'}}
+        render={({ value, touched, error, dirty }  ) => {
+          return (
+            <div>
+              <label htmlFor='lastname'>
+                Last name
+              </label>
+              <input
+                id={'lastname'}
+                value={value}
+                onChange={e => form.fieldActions.changeFieldValue('lastname', e.target.value)}
+                onBlur={() => form.fieldActions.touchField('lastname')}
+              />
+              {touched && error && <div className="form-input-hint">{error}</div>}
+              {dirty && <div>Field Modified</div>}
+            </div>
+          )
+        }}
+      />
 
-        <FormState
-          form={form}
-          render={state => {
-            const { anyError, anyDirty, anyTouched, values } = state
-            return (
-              <div style={{ position: 'relative' }}>
-                <Code>{JSON.stringify(values, null, 2)}</Code>
+      <FormState form={form} render={({ anyError, anyDirty, anyTouched, values }) => {
+        return (
+          <>
+            <pre>{JSON.stringify(values, null, 2)}</pre>
 
-                <div>
-                  {anyTouched && (<span>Form Touched</span>)}
-                  {anyDirty && (<span>Form Dirty</span>)}
-                  {anyError && (<span>Form Invalid</span>)}
-                </div>
-                <Button disabled={anyError || !anyDirty} type="submit">
-                  Submit
-                </Button>
-                <Button onClick={() => form.formActions.resetFormValues()}>
-                  Reset to initial values
-                </Button>
-                <Button onClick={changeValues}>Reset to new initial values</Button>
-              </div>
-            )
-          }}
-        />
-      </form>
-    </div>
+            {anyError && <div>Form Error</div>}
+            {anyDirty && <div>Form Dirty</div>}
+            {anyTouched && <div>Form Touched</div>}
+            <button type="submit">Submit</button>
+            <button onClick={() => form.formActions.resetFormValues()}>Reset</button>
+          </>
+        )
+      }} />
+    </form>
   )
 }
 
