@@ -14,10 +14,7 @@ action "Install" {
 action "Test" {
   uses = "actions/npm@59b64a598378f31e49cb76f27d6f3312b582f680"
   needs = ["Install"]
-  args = "test --coverage"
-  env = {
-    CI = "1"
-  }
+  args = "test -- --coverage"
 }
 
 action "Publish coverage report to coveralls" {
@@ -27,8 +24,7 @@ action "Publish coverage report to coveralls" {
     COVERALLS_SERVICE_NAME = "github-actions"
   }
   secrets = ["COVERALLS_REPO_TOKEN"]
-  args = "yarn coveralls < ./coverage/lcov.info"
-  runs = "sh -c"
+  runs = "./.github/coveralls.sh"
 }
 
 action "Filter tag" {
