@@ -1,4 +1,4 @@
-import { ReactElement } from 'react'
+import React, { ReactNode } from 'react'
 import {
   FieldState as FieldStateType,
   Form,
@@ -10,8 +10,8 @@ import useFieldState from '../useFieldState'
 
 export type FormStateProps<V, R> = {
   form: Form<V>
-  mapState: (state: FormStateType<V>) => R
-  render: (state: R) => ReactElement
+  mapState?: (state: FormStateType<V>) => R
+  render: (state: R) => ReactNode
 }
 
 export const FormState = <V, R>({
@@ -20,24 +20,24 @@ export const FormState = <V, R>({
   render,
 }: FormStateProps<V, R>) => {
   const formState = useFormState(form, mapState)
-  return render(formState)
+  return React.createElement(React.Fragment, null, render(formState))
 }
 
 export type FieldStateProps<V, R> = {
   form: Form<V>
-  fieldId: string
-  mapState: (state: FieldStateType) => R
-  opts: FormOptions<V>
-  render: (state: R) => ReactElement
+  id: string
+  mapState?: (state: FieldStateType) => R
+  opts?: FormOptions<V>
+  render: (state: R) => ReactNode
 }
 
 export const FieldState = <V, R>({
   form,
-  fieldId,
+  id,
   mapState,
   opts,
   render,
 }: FieldStateProps<V, R>) => {
-  const fieldState = useFieldState(form, fieldId, mapState, opts)
-  return render(fieldState)
+  const fieldState = useFieldState(form, id, mapState, opts)
+  return React.createElement(React.Fragment, null, render(fieldState))
 }
