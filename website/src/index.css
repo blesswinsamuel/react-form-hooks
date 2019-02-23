@@ -89,14 +89,13 @@
   color: #555555;
 }
 
-.markdown-body .code {
+.syntax-highlighter.code {
   border-radius: 10px;
 }
 
-.markdown-body .code code {
+.syntax-highlighter.code code {
   background: inherit;
   color: inherit;
   padding: .5rem;
   font-size: 90%;
 }
-

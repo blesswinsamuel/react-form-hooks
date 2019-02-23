@@ -1,16 +1,11 @@
 /* eslint import/no-webpack-loader-syntax: off */
 import React from 'react'
 import { Link, Router } from '@reach/router'
-import NestedForm from './examples/NestedForm'
-import SimpleForm from './examples/SimpleForm'
-import BasicForm from './examples/BasicForm'
 import { Layout } from './components'
 import NotFound from './components/NotFound'
 import Home from './Home'
-import RenderProps from './examples/RenderProps'
-import gettingStartedDoc from '!raw-loader!./docs/GettingStarted.md'
-import apiDoc from '!raw-loader!./docs/API.md'
 import Markdown from './components/Markdown'
+import Example from './components/Example'
 
 const menu = [
   {
@@ -57,16 +52,39 @@ const App = () => {
     <Layout menu={menu}>
       <Router>
         <Home path="/" />
-        <Markdown path="/getting-started" input={gettingStartedDoc} />
-        <Markdown path="/api" input={apiDoc} />
+        <Markdown
+          path="/getting-started"
+          input={require('!raw-loader!./docs/GettingStarted.md')}
+        />
+        <Markdown path="/api" input={require('!raw-loader!./docs/API.md')} />
         <ExamplesIndex
           examples={menu.find(menu => menu.link === '/examples').children}
           path="/examples"
         />
-        <BasicForm path="/examples/basic" />
-        <SimpleForm path="/examples/simple" />
-        <NestedForm path="/examples/nested" />
-        <RenderProps path="/examples/renderprops" />
+        <Example
+          path="/examples/basic"
+          title="Basic Example"
+          component={require('./examples/BasicForm').default}
+          code={require('!raw-loader!./examples/BasicForm')}
+        />
+        <Example
+          path="/examples/simple"
+          title="Simple Form"
+          component={require('./examples/SimpleForm').default}
+          code={require('!raw-loader!./examples/SimpleForm')}
+        />
+        <Example
+          path="/examples/nested"
+          title="Nested Form"
+          component={require('./examples/NestedForm').default}
+          code={require('!raw-loader!./examples/NestedForm')}
+        />
+        <Example
+          path="/examples/renderprops"
+          title="Form using render props"
+          component={require('./examples/RenderProps').default}
+          code={require('!raw-loader!./examples/RenderProps')}
+        />
         <NotFound default />
       </Router>
     </Layout>
