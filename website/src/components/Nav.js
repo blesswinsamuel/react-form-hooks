@@ -11,9 +11,7 @@ const renderLink = item => {
       </a>
     )
   } else {
-    return (
-      <div className="text-uppercase text-bold">{item.text}</div>
-    )
+    return <div className="text-uppercase text-bold">{item.text}</div>
   }
 }
 

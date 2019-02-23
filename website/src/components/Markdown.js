@@ -31,7 +31,7 @@ export default function Markdown({ input }) {
         code: Code,
         heading: HeadingRenderer,
       }}
-      className='markdown-body'
+      className="markdown-body"
     />
   )
 }

@@ -83,7 +83,9 @@ const RenderPropsForm = () => {
                 <Button onClick={() => form.formActions.resetFormValues()}>
                   Reset to initial values
                 </Button>
-                <Button onClick={changeValues}>Reset to new initial values</Button>
+                <Button onClick={changeValues}>
+                  Reset to new initial values
+                </Button>
               </div>
             )
           }}
