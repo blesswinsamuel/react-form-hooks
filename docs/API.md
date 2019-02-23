@@ -89,8 +89,33 @@ it should return an error string if there is an error or should return a null/fa
 
 ### `FormState`
 
+```jsx
+<FormState
+  form={form}
+  mapState={s => s}
+  render={state => <div>{JSON.stringify(state)}</div>}
+/>
+```
+
+`FormState` is a wrapper around `useFormState` hook.
+It  accepts same arguments accepted by `useFormState` hook along with an additional `renderProp`.
+The component inside render prop is re-rendered when value returned by mapState changes (same rules as `useFormState` hook).
 
 ### `FieldState`
+
+```jsx
+<FieldState
+  form={form}
+  id={fieldId}
+  mapState={s => s}
+  options={{ validate: val => !val && 'This a required field' }}
+  render={state => <div>{JSON.stringify(state)}</div>}
+/>
+```
+
+`FieldState` is a wrapper around `useFieldState` hook.
+It  accepts same arguments accepted by `useFieldState` hook along with an additional `renderProp`.
+The component inside render prop is re-rendered when value returned by mapState changes (same rules as `useFieldState` hook).
 
 ## `form` API
 

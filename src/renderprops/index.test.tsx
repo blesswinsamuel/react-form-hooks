@@ -1,4 +1,4 @@
-import { FieldState, FormState, useForm, useFormState } from '../index'
+import { FieldState, FormState, useForm } from '../index'
 import * as React from 'react'
 import { act } from 'react-dom/test-utils'
 import * as ReactDOM from 'react-dom'
