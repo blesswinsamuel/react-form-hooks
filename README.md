@@ -4,8 +4,9 @@
 
 [![NPM](https://img.shields.io/npm/v/react-form-hooks.svg?style=flat-square)](https://www.npmjs.com/package/react-form-hooks)
 [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/prettier)
-[![bundlephobia minified](https://flat.badgen.net/bundlephobia/min/react-form-hooks)](https://bundlephobia.com/result?p=react-form-hooks)
-[![bundlephobia minified + gzip](https://flat.badgen.net/bundlephobia/minzip/react-form-hooks)](https://bundlephobia.com/result?p=react-form-hooks)
+[![Coverage Status](https://img.shields.io/coveralls/github/blesswinsamuel/react-form-hooks.svg?style=flat-square)](https://coveralls.io/github/blesswinsamuel/react-form-hooks?branch=master)
+[![bundlephobia minified](https://img.shields.io/bundlephobia/min/react-form-hooks.svg?style=flat-square)](https://bundlephobia.com/result?p=react-form-hooks)
+[![bundlephobia minified + gzip](https://img.shields.io/bundlephobia/minzip/react-form-hooks.svg?style=flat-square)](https://bundlephobia.com/result?p=react-form-hooks)
 
 ## Features
 
