@@ -56,9 +56,9 @@ describe('createForm', () => {
       })
     })
 
-    it('works after initField', () => {
+    it('works after initializeField', () => {
       const form = createForm({ initialValues: { a: 1, b: 'abc' } })
-      form.fieldActions.initField('a', Symbol(), {})
+      form.fieldActions.initializeField('a')
       form.formActions.resetFormValues({ a: 2, b: 'abcd' })
       expect(form.formActions.getFormState()).toEqual({
         anyDirty: false,
@@ -77,14 +77,15 @@ describe('createForm', () => {
 
     it('works after changeFieldValue', () => {
       const form = createForm({ initialValues: { a: 1, b: 'abc' } })
-      form.fieldActions.initField('a', Symbol(), {})
+      form.fieldActions.initializeField('a')
+      form.fieldActions.setFieldOptions('a', Symbol(), {})
       form.fieldActions.changeFieldValue('a', 4)
       form.formActions.resetFormValues({ a: 2, b: 'abcd' })
       expect(form.formActions.getFormState()).toEqual({
         anyDirty: false,
         anyError: false,
         anyTouched: false,
-        errors: { a: undefined },
+        errors: {},
         values: { a: 2, b: 'abcd' },
       })
       expect(form.fieldActions.getFieldState('a')).toEqual({
@@ -112,13 +113,11 @@ describe('createForm', () => {
     })
   })
 
-  describe('fieldActions.initField', () => {
+  describe('fieldActions.initializeField', () => {
     it('works with no initialValues', () => {
       const form = createForm()
-      const aFieldRef = Symbol()
-      const bFieldRef = Symbol()
-      form.fieldActions.initField('a', aFieldRef)
-      form.fieldActions.initField('b', bFieldRef)
+      form.fieldActions.initializeField('a')
+      form.fieldActions.initializeField('b')
       expect(form.fieldActions.getFieldState('a')).toEqual({
         value: '',
         error: undefined,
@@ -131,16 +130,14 @@ describe('createForm', () => {
         dirty: false,
         touched: false,
       })
-      form.fieldActions.destroyField('a', aFieldRef)
-      form.fieldActions.destroyField('b', bFieldRef)
+      form.fieldActions.destroyField('a')
+      form.fieldActions.destroyField('b')
     })
 
     it('works with initialValues', () => {
       const form = createForm({ initialValues: { a: 1, b: 'abc' } })
-      const aFieldRef = Symbol()
-      const bFieldRef = Symbol()
-      form.fieldActions.initField('a', aFieldRef, {})
-      form.fieldActions.initField('b', bFieldRef, {})
+      form.fieldActions.initializeField('a')
+      form.fieldActions.initializeField('b')
       expect(form.fieldActions.getFieldState('a')).toEqual({
         value: 1,
         error: undefined,
@@ -153,16 +150,16 @@ describe('createForm', () => {
         dirty: false,
         touched: false,
       })
-      form.fieldActions.destroyField('a', aFieldRef)
-      form.fieldActions.destroyField('b', bFieldRef)
+      form.fieldActions.destroyField('a')
+      form.fieldActions.destroyField('b')
     })
   })
 
   describe('fieldActions.changeFieldValue', () => {
     it('works', () => {
       const form = createForm({ initialValues: { a: 1, b: 'abc' } })
-      form.fieldActions.initField('a', Symbol(), {})
-      form.fieldActions.initField('b', Symbol(), {})
+      form.fieldActions.initializeField('a')
+      form.fieldActions.initializeField('b')
       form.fieldActions.changeFieldValue('a', 2)
       expect(form.formActions.getFormState()).toEqual({
         anyDirty: true,
@@ -200,8 +197,8 @@ describe('createForm', () => {
   describe('fieldActions.touchField', () => {
     it('works', () => {
       const form = createForm({ initialValues: { a: 1, b: 'abc' } })
-      form.fieldActions.initField('a', Symbol(), {})
-      form.fieldActions.initField('b', Symbol(), {})
+      form.fieldActions.initializeField('a')
+      form.fieldActions.initializeField('b')
       form.fieldActions.touchField('a')
       expect(form.formActions.getFormState()).toEqual({
         anyDirty: false,
@@ -222,8 +219,8 @@ describe('createForm', () => {
   describe('formActions.submitHandler', () => {
     it('works', () => {
       const form = createForm({ initialValues: { a: 1, b: 'abc' } })
-      form.fieldActions.initField('a', Symbol(), {})
-      form.fieldActions.initField('b', Symbol(), {})
+      form.fieldActions.initializeField('a')
+      form.fieldActions.initializeField('b')
       const submitFn = jest.fn()
       form.formActions.submitHandler(submitFn)(new Event('test'))
       expect(submitFn).toHaveBeenCalledTimes(1)
@@ -246,13 +243,15 @@ describe('createForm', () => {
 
     it('works with validate', () => {
       const form = createForm({ initialValues: { a: 1, b: 'abc' } })
-      form.fieldActions.initField('a', Symbol(), {
+      form.fieldActions.setFieldOptions('a', Symbol(), {
         validate: (val: number) => val < 2 && 'should be greater than 2',
       })
-      form.fieldActions.initField('b', Symbol(), {})
+      form.fieldActions.setFieldOptions('b', Symbol(), {})
+      form.fieldActions.initializeField('a')
+      form.fieldActions.initializeField('b')
       const mockFn = jest.fn()
       form.formActions.submitHandler(mockFn)()
-      expect(mockFn.mock.calls.length).toBe(0)
+      expect(mockFn).toHaveBeenCalledTimes(0)
       // Fields touched because of error
       expect(form.formActions.getFormState()).toEqual({
         anyDirty: false,

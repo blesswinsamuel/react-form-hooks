@@ -30,17 +30,17 @@ export default function createStore<S = any, A extends Action = AnyAction>(
   }
 
   function dispatch<T extends A>(action: T): T {
-    console.debug(`%cDISPATCH`, 'background:red;color:#fff', action)
+    // console.debug(`%cDISPATCH`, 'background:red;color:#fff', action)
     state = reducer(state, action)
     listeners.forEach(listener => listener())
     return action
   }
 
   function subscribe(listener: Listener): () => void {
-    console.debug('%cSUBSCRIBE', 'color: green')
+    // console.debug('%cSUBSCRIBE', 'color: green')
     listeners.push(listener)
     return () => {
-      console.debug('%cUNSUBSCRIBE', 'color: red')
+      // console.debug('%cUNSUBSCRIBE', 'color: red')
       listeners = listeners.filter(l => l !== listener)
     }
   }
