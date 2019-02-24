@@ -4157,6 +4157,16 @@ gatsby-remark-autolink-headers@^2.0.14:
     mdast-util-to-string "^1.0.2"
     unist-util-visit "^1.3.0"
 
+gatsby-remark-embed-snippet@^3.2.2:
+  version "3.2.2"
+  resolved "https://registry.yarnpkg.com/gatsby-remark-embed-snippet/-/gatsby-remark-embed-snippet-3.2.2.tgz#278409d2cb5aa17f684dc4646560f8bd7f523781"
+  integrity sha512-wAyWvJz05iNqZekgGzz/c93mStINyU3PyJQijjg7vUuShGmJKCR8MOAYIBG5u4D8ohF4bOlT9Wmc5lqa5FEmhg==
+  dependencies:
+    "@babel/runtime" "^7.0.0"
+    normalize-path "^2.1.1"
+    parse-numeric-range "^0.0.2"
+    unist-util-map "^1.0.3"
+
 gatsby-remark-prismjs@^3.2.4:
   version "3.2.4"
   resolved "https://registry.yarnpkg.com/gatsby-remark-prismjs/-/gatsby-remark-prismjs-3.2.4.tgz#712843d06591810a9db068934ad5c908684e7baa"
@@ -9610,6 +9620,13 @@ unist-util-is@^2.0.0, unist-util-is@^2.1.2:
   version "2.1.2"
   resolved "https://registry.yarnpkg.com/unist-util-is/-/unist-util-is-2.1.2.tgz#1193fa8f2bfbbb82150633f3a8d2eb9a1c1d55db"
   integrity sha512-YkXBK/H9raAmG7KXck+UUpnKiNmUdB+aBGrknfQ4EreE1banuzrKABx3jP6Z5Z3fMSPMQQmeXBlKpCbMwBkxVw==
+
+unist-util-map@^1.0.3:
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/unist-util-map/-/unist-util-map-1.0.4.tgz#f27bb03e14e8072171379d132c96c1dfcea44574"
+  integrity sha512-Qv68pQz05hQbjPI+TubZQI5XII5DScRVWaKNc6+qfmHaFGxaGUbkV8i++mM2nk7XgwXE+vei99d/Q2d1tMA3EQ==
+  dependencies:
+    object-assign "^4.0.1"
 
 unist-util-modify-children@^1.0.0:
   version "1.1.3"
