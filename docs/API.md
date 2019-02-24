@@ -1,16 +1,11 @@
 # API
 
-- [Hooks API](#hooks-api)
-  - [`useForm`](#useform)
-  - [`useFormState`](#useformstate)
-  - [`useFieldState`](#usefieldstate)
-- [Render-props API](#render-props-api)
-  - [`FormState`](#formstate)
-  - [`FieldState`](#fieldstate)
-- [`form` API](#form-api)
+- [`useForm`](#useform)
+- [`useFormState`](#useformstate)
+- [`useFieldState`](#usefieldstate)
+- [`form` object](#form-object)
 
-## Hooks API
-### `useForm`
+## `useForm`
 
 ```jsx
 const form = useForm({ initialValues })
@@ -36,7 +31,7 @@ To avoid this, create the `initialValues` in an `useRef`:
 
 Using this hook does **not** cause the component hosting it to re-render on state changes.
 
-### `useFormState`
+## `useFormState`
 
 ```jsx
 const formState = useFormState(form, mapState?)
@@ -66,7 +61,7 @@ To determine if a re-render should be performed,
 previous return value of `mapState` function is compared with the new value.
 
 
-### `useFieldState`
+## `useFieldState`
 
 ```jsx
 const fieldState = useFieldState(form, id, mapState?, { validate }?)
@@ -99,39 +94,7 @@ The fourth argument to `useFieldState` hook is used to specify any extra options
 Currently, it accepts a `validate` function. `validate` function specified should take field value as argument and
 it should return an error string if there is an error or should return a null/false/empty string value if there is no error.
 
-## Render Props API
-
-### `FormState`
-
-```jsx
-<FormState
-  form={form}
-  mapState={s => s}
-  render={state => <div>{JSON.stringify(state)}</div>}
-/>
-```
-
-`FormState` is a wrapper around `useFormState` hook.
-It  accepts same arguments accepted by `useFormState` hook along with an additional `renderProp`.
-The component inside render prop is re-rendered when value returned by mapState changes (same rules as `useFormState` hook).
-
-### `FieldState`
-
-```jsx
-<FieldState
-  form={form}
-  id={fieldId}
-  mapState={s => s}
-  options={{ validate: val => !val && 'This a required field' }}
-  render={state => <div>{JSON.stringify(state)}</div>}
-/>
-```
-
-`FieldState` is a wrapper around `useFieldState` hook.
-It  accepts same arguments accepted by `useFieldState` hook along with an additional `renderProp`.
-The component inside render prop is re-rendered when value returned by mapState changes (same rules as `useFieldState` hook).
-
-## `form` API
+## `form` object
 
 `form` object returned by `useForm` hook has two objects described below.
 

@@ -8,13 +8,6 @@ yarn add react-form-hooks
 
 ## Usage
 
-There are two ways to use this library:
-
-- [Using hooks](#using-hooks)
-- [Using components which accepts a render prop](#using-render-prop)
-
-### Using hooks
-
 This library provides 3 hooks - `useForm`, `useFormState` and `useFieldState`.
 
 Start by importing the `useForm`, `useFormState` and `useFieldState` hooks from `react-form-hooks`:
@@ -56,7 +49,7 @@ and prevents submitting the form if there are any validation errors. The functio
 accepts the form values object performs the actual form submission like posting to an API endpoint.
 
 ```jsx
-  const onSubmit = values => console.log(values)
+  const onSubmit = values => alert(JSON.stringify(values, null, 2))
   return (
     <form onSubmit={form.formActions.submitHandler(onSubmit)}>
       {/* ... */}
@@ -89,7 +82,7 @@ when there is no change to the form or adding an error message when there is an 
       <button onClick={() => form.formActions.resetFormValues()}>Reset</button>
 ```
 
-For the completed form, check `GettingStartedHooks.js` file in `website/src/examples` directory.
+For the completed form, check `GettingStarted.js` file in `website/src/examples` directory.
 
 For more options that can be passed to the hooks, check the API documentation.
 
@@ -102,18 +95,5 @@ whenever the values has be updated like the field and form state here.
 Also, the form would perform better if the hooks are moved to their own components and then reused.
 
 For a better approach where most of the boilerplate is reused, it is better to move `useFieldState` to a
-common component and then reused. Check `BasicHooks.ts` in `website/src/examples` directory for
+common component and then reused. Check `BasicExample.ts` in `website/src/examples` directory for
 and example implementing this approach.
-
-
-### Using render prop
-
-This library provides 2 components which accepts a 
-[render prop](https://reactjs.org/docs/render-props.html) - `FormState` and `FieldState`.
-
-`FormState` and `FieldState` components are wrappers around `useFormState` and `useFieldState` hooks
-respectively. They accept the same arguments passed to the hooks, but as props. Along with the same props, 
-they accept a render prop which is a function accepting the current form/field state and re-renders 
-only the elements inside the render function as necessary.  
-
-Check `GettingStartedRenderProps.js` in `website/src/examples` directory for an example.

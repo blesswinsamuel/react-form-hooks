@@ -10,28 +10,16 @@ import Recipe from './components/Recipe'
 
 const examples = [
   {
-    text: 'Getting Started (hooks)',
-    link: '/examples/plain-hooks',
-    component: require('./examples/GettingStartedHooks').default,
-    code: require('!raw-loader!./examples/GettingStartedHooks'),
+    text: 'Getting Started',
+    link: '/examples/getting-started',
+    component: require('./examples/GettingStarted').default,
+    code: require('!raw-loader!./examples/GettingStarted'),
   },
   {
-    text: 'Getting Started (render props)',
-    link: '/examples/plain-render-props',
-    component: require('./examples/GettingStartedRenderProps').default,
-    code: require('!raw-loader!./examples/GettingStartedRenderProps'),
-  },
-  {
-    text: 'Basic Form (hooks)',
+    text: 'Basic Form',
     link: '/examples/basic',
-    component: require('./examples/BasicHooks').default,
-    code: require('!raw-loader!./examples/BasicHooks'),
-  },
-  {
-    text: 'Basic Form (render props)',
-    link: '/examples/renderprops',
-    component: require('./examples/BasicRenderProps').default,
-    code: require('!raw-loader!./examples/BasicRenderProps'),
+    component: require('./examples/BasicExample').default,
+    code: require('!raw-loader!./examples/BasicExample'),
   },
   {
     text: 'Field types example',

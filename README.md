@@ -12,7 +12,7 @@
 ## Features
 
 - No Dependencies.
-- Minimal API. Provides 3 hooks - `useForm`, `useFormState`, `useFieldState` and 2 wrapper components (which accepts a render prop) around `use{Form|Field}State` hooks.
+- Minimal API. Provides 3 hooks - `useForm`, `useFormState`, `useFieldState`.
 - Blazing Fast. Allows you to re-render form inputs only if necessary.
 - Tiny Size. ~2KB gzipped.
 

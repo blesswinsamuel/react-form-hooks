@@ -11,7 +11,7 @@ import { useFieldState, useForm, useFormState } from 'react-form-hooks'
  For large forms, the form would perform better if the hooks are moved to their
  own components and then reused.
 
- Check the BasicHooks example for a sample pattern to reuse code.
+ Check the BasicExample example for a sample pattern to reuse code.
  */
 function MyForm() {
   // useRef is necessary here because otherwise, the form will be reset

@@ -5,7 +5,7 @@ import { Input } from '../recipes/Components'
 import FormFooter from '../recipes/FormFooter'
 import FormField from '../recipes/FormField'
 
-export default function BasicHooks() {
+export default function BasicExample() {
   const form = useForm({ initialValues: {} })
   const onSubmit = values => console.log(values)
   return (
