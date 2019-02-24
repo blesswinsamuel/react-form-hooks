@@ -1,8 +1,13 @@
-import React from 'react'
-import { Link } from '@reach/router'
+import React from "react"
+import { Link } from "gatsby"
 
-export default function Home() {
-  return (
+import Layout from "../components/Layout"
+import SEO from "../components/SEO"
+
+const Home = () => (
+  <Layout>
+    <SEO title="React Form Hooks Documentation" />
+
     <div className="hero hero-sm text-center">
       <div className="hero-body">
         <h1>React Form Hooks</h1>
@@ -18,5 +23,8 @@ export default function Home() {
         </Link>
       </div>
     </div>
-  )
-}
+
+  </Layout>
+)
+
+export default Home

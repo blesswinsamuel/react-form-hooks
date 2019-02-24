@@ -1,3 +1,8 @@
+---
+path: /api
+title: API
+---
+
 # API
 
 - [`useForm`](#useform)

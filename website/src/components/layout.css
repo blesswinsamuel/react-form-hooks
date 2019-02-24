@@ -1,0 +1,128 @@
+.docs-container {
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+}
+
+.docs-sidebar {
+  flex: 0 0 auto;
+  background: #f7f8f9;
+  padding: 0 0.7rem;
+}
+
+.docs-content {
+  flex: 1;
+  padding: 1rem 4rem;
+  min-width: 0;
+}
+
+.docs-content-inner {
+  max-width: 100%;
+}
+
+.docs-brand {
+  color: #5755d9;
+  padding: 0.8rem 1rem;
+}
+
+.docs-logo:focus,
+.docs-logo:hover {
+  text-decoration: none;
+}
+
+.docs-logo h2 {
+  display: inline-block;
+  font-size: 0.8rem;
+  font-weight: 700;
+  margin-right: 0.3rem;
+}
+
+.docs-sidebar .docs-nav {
+  /*width: 12rem;*/
+  padding: 0 0.7rem;
+}
+
+.nav .nav-item div {
+  color: #66758c;
+  font-size: 0.7rem;
+  padding: 0.2rem 0.4rem;
+}
+
+.docs-nav > .nav > .nav-item > a {
+  text-transform: uppercase;
+  font-weight: bold;
+}
+
+code {
+  background: #f8f8f8;
+  color: #555555;
+}
+
+.gatsby-highlight .code {
+  border-radius: 10px;
+}
+
+.gatsby-highlight code {
+  background: inherit;
+  color: inherit;
+  padding: 0.5rem;
+  font-size: 90%;
+}
+
+/* Gatsby Prism Line Highlighting */
+.gatsby-highlight-code-line {
+  background-color: #45473d;
+  display: block;
+  margin-right: -1em;
+  margin-left: -1em;
+  padding-right: 1em;
+  padding-left: 0.75em;
+  border-left: 0.25em solid #666b5b;
+}
+
+/**
+ * Add back the container background-color, border-radius, padding, margin
+ * and overflow that we removed from <pre>.
+ */
+.gatsby-highlight {
+  background-color: #272822;
+  border-radius: 0.3em;
+  margin: 0.5em 0;
+  padding: 1em;
+  overflow: auto;
+}
+
+/**
+ * Remove the default PrismJS theme background-color, border-radius, margin,
+ * padding and overflow.
+ * 1. Make the element just wide enough to fit its content.
+ * 2. Always fill the visible space in .gatsby-highlight.
+ * 3. Adjust the position of the line numbers
+ */
+.gatsby-highlight pre[class*="language-"] {
+  background-color: transparent;
+  margin: 0;
+  padding: 0;
+  overflow: initial;
+  float: left; /* 1 */
+  min-width: 100%; /* 2 */
+}
+
+.gatsby-highlight {
+  position: relative;
+  font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+}
+
+.gatsby-highlight::before {
+  color: #bcc3ce;
+  content: attr(data-language);
+  font-size: .7rem;
+  position: absolute;
+  right: .4rem;
+  top: .1rem;
+}
+
+p {
+  margin-top: 25px;
+}
