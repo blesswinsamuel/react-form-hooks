@@ -7,33 +7,39 @@ export enum ActionTypes {
   INIT_FORM_VALUES = '@@form/INIT_FORM_VALUES',
   CHANGE_FIELD_VALUE = '@@form/CHANGE_FIELD_VALUE',
   INIT_FIELD = '@@form/INIT_FIELD',
+  DESTROY_FIELD = '@@form/DESTROY_FIELD',
   TOUCH_FIELD = '@@form/TOUCH_FIELD',
 }
 
-type InitFormValues<V> = {
+type InitFormValuesAction<V> = {
   type: typeof ActionTypes.INIT_FORM_VALUES
   values: V
 }
-type ChangeFieldValue = {
+type ChangeFieldValueAction = {
   type: typeof ActionTypes.CHANGE_FIELD_VALUE
   field: string
   value: any
   error: any
 }
-type InitField = {
+type InitFieldAction = {
   type: typeof ActionTypes.INIT_FIELD
   field: string
   error: any
 }
-type TouchField = { type: typeof ActionTypes.TOUCH_FIELD; field: string }
+type DestroyFieldAction = {
+  type: typeof ActionTypes.DESTROY_FIELD
+  field: string
+}
+type TouchFieldAction = { type: typeof ActionTypes.TOUCH_FIELD; field: string }
 
-type FieldAction = ChangeFieldValue | InitField | TouchField
-type FormAction<V> = InitFormValues<V> | FieldAction
+type FieldAction = ChangeFieldValueAction | InitFieldAction | TouchFieldAction
+type FormAction<V> = InitFormValuesAction<V> | FieldAction | DestroyFieldAction
 
 type ReduxFieldStates = { [fieldId: string]: ReduxFieldState }
+type ReduxFormErrors = { [fieldId: string]: any }
 type ReduxState<V> = {
   formValues: V
-  formErrors: { [fieldId: string]: any }
+  formErrors: ReduxFormErrors
   fieldState: ReduxFieldStates
 }
 
@@ -65,12 +71,15 @@ function fieldState(
         ...state,
         [action.field]: fieldReducer(state[action.field], action),
       }
+    case ActionTypes.DESTROY_FIELD:
+      const { [action.field]: _, ...remaining } = state
+      return remaining
     default:
       return state
   }
 }
 
-function formErrors<V>(state: V, action: FormAction<V>) {
+function formErrors<V>(state: ReduxFormErrors, action: FormAction<V>) {
   switch (action.type) {
     case ActionTypes.INIT_FIELD:
     case ActionTypes.CHANGE_FIELD_VALUE:
@@ -78,6 +87,9 @@ function formErrors<V>(state: V, action: FormAction<V>) {
         ...state,
         [action.field]: action.error || undefined,
       }
+    case ActionTypes.DESTROY_FIELD:
+      const { [action.field]: _, ...remaining } = state
+      return remaining
     default:
       return state
   }
@@ -151,6 +163,23 @@ export default function createForm<V>(
   }
 
   // Field handlers
+  const setFieldOptions = (
+    fieldId: string,
+    ref: symbol,
+    opts: FieldOptions = {}
+  ) => {
+    const { validate } = opts
+    if (!fieldRefs[fieldId]) {
+      fieldRefs[fieldId] = {}
+    }
+    fieldRefs[fieldId][ref] = {
+      validate,
+    }
+  }
+  const unsetFieldOptions = (fieldId: string, ref: symbol) => {
+    delete fieldRefs[fieldId][ref]
+  }
+
   const initializeField = (fieldId: string) => {
     const value = getFieldValue(fieldId)
     const error = validateField(fieldId, value)
@@ -161,18 +190,11 @@ export default function createForm<V>(
     })
   }
 
-  const initField = (fieldId: string, ref: symbol, opts: FieldOptions = {}) => {
-    const { validate } = opts
-    if (!fieldRefs[fieldId]) {
-      fieldRefs[fieldId] = {}
-    }
-    fieldRefs[fieldId][ref] = {
-      validate,
-    }
-    initializeField(fieldId)
-  }
-  const destroyField = (fieldId: string, ref: symbol) => {
-    delete fieldRefs[fieldId][ref]
+  const destroyField = (fieldId: string) => {
+    store.dispatch({
+      type: ActionTypes.DESTROY_FIELD,
+      field: fieldId,
+    })
   }
 
   const changeFieldValue = (fieldId: string, value: any) => {
@@ -227,7 +249,9 @@ export default function createForm<V>(
       getFormState,
     },
     fieldActions: {
-      initField,
+      setFieldOptions,
+      unsetFieldOptions,
+      initializeField,
       destroyField,
       changeFieldValue,
       touchField,

@@ -29,8 +29,10 @@ export type Form<V> = {
     getFormState: () => FormState<V>
   }
   fieldActions: {
-    initField: (fieldId: string, ref: symbol, opts?: FieldOptions) => void
-    destroyField: (fieldId: string, ref: symbol) => void
+    setFieldOptions: (fieldId: string, ref: symbol, opts?: FieldOptions) => void
+    unsetFieldOptions: (fieldId: string, ref: symbol) => void
+    initializeField: (fieldId: string) => void
+    destroyField: (fieldId: string) => void
     changeFieldValue: (fieldId: string, value: any) => void
     touchField: (fieldId: string) => void
     getFieldState: (fieldId: string) => FieldState

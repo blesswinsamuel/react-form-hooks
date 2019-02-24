@@ -1,12 +1,15 @@
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import shallowEqual from './utils/shallowEqual'
 import { FieldState, Form } from './types'
+
+const defaultMapState = (s: FieldState) => s as any
+const defaultOpts = {}
 
 export default function useFieldState<V, TResult = FieldState>(
   form: Form<V>,
   fieldId: string,
-  mapState: (state: FieldState) => TResult = (s: FieldState) => s as any,
-  opts = {}
+  mapState: (state: FieldState) => TResult = defaultMapState,
+  opts = defaultOpts
 ): TResult {
   if (!form) {
     throw new Error(
@@ -21,9 +24,18 @@ export default function useFieldState<V, TResult = FieldState>(
     )
   }
 
-  const { initField, destroyField, getFieldState } = form.fieldActions
+  const {
+    setFieldOptions,
+    unsetFieldOptions,
+    initializeField,
+    destroyField,
+    getFieldState,
+  } = form.fieldActions
 
-  const getMappedFieldState = () => mapState(getFieldState(fieldId))
+  const getMappedFieldState = useCallback(
+    () => mapState(getFieldState(fieldId)),
+    [mapState, getFieldState, fieldId]
+  )
 
   const ref = useRef<symbol | null>(null)
   const getRef = () => {
@@ -34,28 +46,34 @@ export default function useFieldState<V, TResult = FieldState>(
     return ref.current
   }
   const [fieldState, setFieldState] = useState(() => {
-    initField(fieldId, getRef(), opts)
+    setFieldOptions(fieldId, getRef(), opts)
+    initializeField(fieldId)
     return getMappedFieldState()
   })
   const prevFieldState = useRef(fieldState)
-  const updateState = () => {
+  const updateState = useCallback(() => {
     const newState = getMappedFieldState()
     if (!shallowEqual(newState, prevFieldState.current)) {
-      // console.log("FIELD CHANGED", fieldId, prevFieldState.current, newState)
+      // console.log('FIELD CHANGED', fieldId, prevFieldState.current, newState)
       setFieldState(newState)
       prevFieldState.current = newState
     }
-  }
+  }, [getMappedFieldState, prevFieldState, setFieldState])
 
   useEffect(() => {
-    initField(fieldId, getRef(), opts)
-    return () => destroyField(fieldId, getRef())
+    setFieldOptions(fieldId, getRef(), opts)
+    return () => unsetFieldOptions(fieldId, getRef())
+  }, [form, fieldId, ref, opts])
+
+  useEffect(() => {
+    initializeField(fieldId)
+    return () => destroyField(fieldId)
   }, [form, fieldId])
 
   useEffect(() => {
     updateState()
     return form.subscribe(updateState)
-  }, [form, fieldId])
+  }, [form, fieldId, updateState])
 
   return fieldState
 }
