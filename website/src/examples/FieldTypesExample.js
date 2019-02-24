@@ -24,9 +24,8 @@ export default function FieldTypesExample() {
     })
 
   const form = useForm({ initialValues: values })
-  console.log('FORM_RERENDER')
 
-  const onSubmit = values => console.log('> onSubmit -> ', values)
+  const onSubmit = values => alert(JSON.stringify(values, null, 2))
   return (
     <form
       className="form-horizontal"
@@ -37,24 +36,15 @@ export default function FieldTypesExample() {
         id="myfield"
         label="My field"
         component={Input}
-        validate={value => {
-          console.log(' validation -> ', value)
-          return /\d/.test(value) && 'should not contain a number'
-        }}
-        onChange={value => {
-          console.log(' onChange -> ', value)
-          return value.toUpperCase()
-        }}
+        validate={value => /\d/.test(value) && 'should not contain a number'}
+        onChange={value => value.toUpperCase()}
       />
       <FormField
         form={form}
         id="email"
         label="Email"
         component={Input}
-        validate={value => {
-          console.log(' validation -> ', value)
-          return /\d/.test(value) && 'should not contain a number'
-        }}
+        validate={value => /\d/.test(value) && 'should not contain a number'}
       />
       <FormField form={form} id="date1" label="Date1" component={DatePicker} />
       <FormField form={form} id="date2" label="Date2" component={DatePicker} />
@@ -65,7 +55,6 @@ export default function FieldTypesExample() {
         label="Conn1"
         component={Input}
         onChange={v => {
-          console.log(v)
           form.fieldActions.changeFieldValue('conn2', v)
           return v
         }}
@@ -75,20 +64,14 @@ export default function FieldTypesExample() {
         id="conn2"
         label="Conn2"
         component={Input}
-        validate={value => {
-          console.log(' validation -> ', value)
-          return /\d/.test(value) && 'should not contain a number'
-        }}
+        validate={value => /\d/.test(value) && 'should not contain a number'}
       />
       <FormField
         form={form}
         id="same"
         label="Same1"
         component={Input}
-        validate={value => {
-          console.log(' validation -> ', value)
-          return /\d/.test(value) && 'should not contain a number'
-        }}
+        validate={value => /\d/.test(value) && 'should not contain a number'}
       />
       <FormField form={form} id="same" label="Same2" component={Input} />
 

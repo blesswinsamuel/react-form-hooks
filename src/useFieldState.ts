@@ -55,7 +55,6 @@ export default function useFieldState<V, TResult = FieldState>(
   const updateState = useCallback(() => {
     const newState = getMappedFieldState()
     if (!shallowEqual(newState, prevFieldState.current)) {
-      // console.log('FIELD CHANGED', fieldId, prevFieldState.current, newState)
       setFieldState(newState)
       prevFieldState.current = newState
     }

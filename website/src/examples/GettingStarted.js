@@ -30,9 +30,8 @@ function MyForm() {
     validate: v => !/^\S+@\S+\.\S+$/.test(v) && 'should be a valid email',
   })
 
-  const onSubmit = values => console.log(values)
+  const onSubmit = values => alert(JSON.stringify(values, null, 2))
 
-  console.log('FORM RENDER', formState)
   return (
     <form onSubmit={form.formActions.submitHandler(onSubmit)}>
       <div>

@@ -28,7 +28,7 @@ export default function NestedForm() {
     email: 'form@email.me',
   }
   const changeValues = () => setValues(defaultValues)
-  const onSubmit = values => console.log('> onSubmit -> ', values)
+  const onSubmit = values => alert(JSON.stringify(values, null, 2))
   const form = useForm({ initialValues: values })
   console.log('FORM_RERENDER')
 
@@ -60,18 +60,13 @@ export default function NestedForm() {
         id="email"
         label="Email"
         component={Input}
-        validate={value => {
-          console.log(' validation -> ', value)
-          return /\d/.test(value) && 'should not contain a number'
-        }}
+        validate={value => /\d/.test(value) && 'should not contain a number'}
       />
       <ArrayFormField
         form={form}
         id="items"
         label="Items"
-        validate={value => {
-          return value.length < 2 && 'should have more than 1 items'
-        }}
+        validate={value => value.length < 2 && 'should have more than 1 items'}
         InputProps={{
           renderField: (id, index) => (
             <FormField
@@ -79,9 +74,7 @@ export default function NestedForm() {
               id={id}
               label={`Item ${index}`}
               component={Input}
-              validate={value => {
-                return value <= 10 && 'should be greater than 10'
-              }}
+              validate={value => value <= 10 && 'should be greater than 10'}
               InputProps={{
                 type: 'number',
               }}

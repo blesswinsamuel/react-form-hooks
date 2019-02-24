@@ -18,7 +18,7 @@ export default function FormField({
   const { changeFieldValue, touchField } = form.fieldActions
   const { value, touched, dirty, error } = fieldState
 
-  // console.log('FIELD_STATE_UPDATE', id, fieldState)
+  console.log('%cFIELD_STATE_UPDATE', 'background: #8f8', id, fieldState)
 
   return (
     <Field

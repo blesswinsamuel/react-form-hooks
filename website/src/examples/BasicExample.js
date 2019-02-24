@@ -7,7 +7,7 @@ import FormField from '../recipes/FormField'
 
 export default function BasicExample() {
   const form = useForm({ initialValues: {} })
-  const onSubmit = values => console.log(values)
+  const onSubmit = values => alert(JSON.stringify(values, null, 2))
   return (
     <form
       className="form-horizontal"

@@ -120,11 +120,14 @@ function formReducer<V>(
 export default function createForm<V>(
   { initialValues }: FormOptions<V> = { initialValues: {} as any }
 ): Form<V> {
-  const store = createStore<ReduxState<V>, FormAction<V>>(formReducer, {
-    formValues: initialValues,
-    formErrors: {},
-    fieldState: {},
-  })
+  const store = createStore<ReduxState<V>, FormAction<V>>(
+    formReducer,
+    {
+      formValues: initialValues,
+      formErrors: {},
+      fieldState: {},
+    },
+  )
 
   const fieldRefs: { [fieldId: string]: any } = {} // any = { [ref: symbol]: FieldOptions }
 
