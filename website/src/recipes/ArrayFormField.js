@@ -1,4 +1,4 @@
-import React, { useRef } from 'react'
+import React from 'react'
 
 import FormField from './FormField'
 import { Button } from './Components'
@@ -12,35 +12,16 @@ export const ArrayInput = ({
   renderField,
 }) => {
   const { getFieldState } = form.fieldActions
-  const fieldRefs = useRef()
   const arr = Array(value).fill(1)
-  const addItem = () => {
-    fieldRefs.current = [...getFieldRefs(), Math.max(...getFieldRefs(), 0) + 1]
-    return onChange([...(getFieldState(id).value || []), null])
-  }
-  const deleteItem = index => () => {
-    fieldRefs.current = getFieldRefs().filter((_, i) => index !== i)
-    return onChange(
-      (getFieldState(id).value || []).filter((_, i) => index !== i)
-    )
-  }
-  const getFieldRefs = () => {
-    if (!fieldRefs.current) {
-      fieldRefs.current = arr.map((_, i) => i + 1)
-    }
+  const addItem = () => onChange([...getFieldState(id).value, null])
+  const deleteItem = index => () =>
+    onChange(getFieldState(id).value.filter((_, i) => index !== i))
 
-    return fieldRefs.current
-  }
-  const getFieldRef = i => getFieldRefs()[i]
-  console.log(value, arr)
   return (
     <>
       {arr.map((_, i) => {
         return (
-          <div
-            key={getFieldRef(i)}
-            style={{ position: 'relative', paddingBottom: '12px' }}
-          >
+          <div key={i} style={{ position: 'relative', paddingBottom: '12px' }}>
             <div>{renderField(`${id}[${i}]`, i)}</div>
             <Button
               style={{ position: 'absolute', top: 0, right: 0 }}
