@@ -1,15 +1,14 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import shallowEqual from './utils/shallowEqual'
-import { FieldState, Form } from './types'
+import { FieldOptions, FieldState, Form } from './types'
 
 const defaultMapState = (s: FieldState) => s as any
-const defaultOpts = {}
 
 export default function useFieldState<V, TResult = FieldState>(
   form: Form<V>,
   fieldId: string,
   mapState: (state: FieldState) => TResult = defaultMapState,
-  opts = defaultOpts
+  opts: FieldOptions = {}
 ): TResult {
   if (!form) {
     throw new Error(
@@ -31,6 +30,8 @@ export default function useFieldState<V, TResult = FieldState>(
     destroyField,
     getFieldState,
   } = form.fieldActions
+
+  const { validate } = opts
 
   const getMappedFieldState = useCallback(
     () => mapState(getFieldState(fieldId)),
@@ -61,9 +62,9 @@ export default function useFieldState<V, TResult = FieldState>(
   }, [getMappedFieldState, prevFieldState, setFieldState])
 
   useEffect(() => {
-    setFieldOptions(fieldId, getRef(), opts)
+    setFieldOptions(fieldId, getRef(), { validate })
     return () => unsetFieldOptions(fieldId, getRef())
-  }, [form, fieldId, ref, opts])
+  }, [form, fieldId, ref, validate])
 
   useEffect(() => {
     initializeField(fieldId)
