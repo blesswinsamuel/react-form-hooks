@@ -1,8 +1,9 @@
 import React from 'react'
 import { Link } from 'gatsby'
 import Layout from '../components/Layout'
+import { recipes } from '../../menu'
 
-const RecipesIndex = ({ recipes }) => {
+const RecipesIndex = ({}) => {
   return (
     <Layout>
       <h1>Recipes</h1>
