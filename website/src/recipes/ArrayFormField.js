@@ -1,4 +1,4 @@
-import React, { useCallback, useRef } from 'react'
+import React, { useRef } from 'react'
 
 import FormField from './FormField'
 import { Button } from './Components'
@@ -14,26 +14,24 @@ export const ArrayInput = ({
   const { getFieldState } = form.fieldActions
   const fieldRefs = useRef()
   const arr = Array(value).fill(1)
-  const addItem = useCallback(() => {
-    fieldRefs.current = [
-      ...fieldRefs.current,
-      Math.max(...fieldRefs.current, 0) + 1,
-    ]
+  const addItem = () => {
+    fieldRefs.current = [...getFieldRefs(), Math.max(...getFieldRefs(), 0) + 1]
     return onChange([...(getFieldState(id).value || []), null])
-  }, [])
+  }
   const deleteItem = index => () => {
-    fieldRefs.current = fieldRefs.current.filter((_, i) => index !== i)
+    fieldRefs.current = getFieldRefs().filter((_, i) => index !== i)
     return onChange(
       (getFieldState(id).value || []).filter((_, i) => index !== i)
     )
   }
-  const getFieldRef = i => {
+  const getFieldRefs = () => {
     if (!fieldRefs.current) {
       fieldRefs.current = arr.map((_, i) => i + 1)
     }
 
-    return fieldRefs.current[i]
+    return fieldRefs.current
   }
+  const getFieldRef = i => getFieldRefs()[i]
   console.log(value, arr)
   return (
     <>

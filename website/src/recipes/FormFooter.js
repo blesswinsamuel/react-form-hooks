@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useCallback } from 'react'
 import { useFormState, FormState } from 'react-form-hooks'
 
 import { FormStateAndButton } from './Components'
@@ -6,16 +6,16 @@ import { FormStateAndButton } from './Components'
 export default function FormFooter({ form, resetToNewValues }) {
   const { anyError, anyDirty, anyTouched, values, errors } = useFormState(
     form,
-    state => ({
+    useCallback(state => ({
       anyError: state.anyError,
       anyDirty: state.anyDirty,
       anyTouched: state.anyTouched,
       errors: state.errors,
       values: state.values,
-    }),
+    }), ),
   )
 
-  // console.log('FORM_STATE_UPDATE', { anyError, anyDirty, anyTouched, values })
+  console.log('FORM_STATE_UPDATE', { anyError, anyDirty, anyTouched, errors, values })
   return (
     <FormStateAndButton
       {...{ anyError, anyDirty, anyTouched, errors, values }}

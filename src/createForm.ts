@@ -1,6 +1,6 @@
 import { handleFormSubmit } from './formHandlers'
 import { getProperty, setProperty } from './utils/property'
-import { FieldOptions, Form, FormOptions } from './types'
+import { FieldOptions, FieldState, Form, FormOptions, FormState } from './types'
 import createStore from './utils/redux'
 
 export enum ActionTypes {
@@ -31,9 +31,13 @@ type FieldAction = ChangeFieldValue | InitField | TouchField
 type FormAction<V> = InitFormValues<V> | FieldAction
 
 type ReduxFieldStates = { [fieldId: string]: ReduxFieldState }
-type ReduxState<V> = { formValues: V; fieldState: ReduxFieldStates }
+type ReduxState<V> = {
+  formValues: V
+  formErrors: { [fieldId: string]: any }
+  fieldState: ReduxFieldStates
+}
 
-type ReduxFieldState = { error: any; touched: boolean; dirty: boolean }
+type ReduxFieldState = { touched: boolean; dirty: boolean }
 
 function fieldReducer(
   state: ReduxFieldState,
@@ -41,22 +45,11 @@ function fieldReducer(
 ): ReduxFieldState {
   switch (action.type) {
     case ActionTypes.INIT_FIELD:
-      return {
-        error: action.error,
-        touched: false,
-        dirty: false,
-      }
+      return { touched: false, dirty: false }
     case ActionTypes.CHANGE_FIELD_VALUE:
-      return {
-        ...state,
-        error: action.error,
-        dirty: true,
-      }
+      return { ...state, dirty: true }
     case ActionTypes.TOUCH_FIELD:
-      return {
-        ...state,
-        touched: true,
-      }
+      return { ...state, touched: true }
   }
 }
 
@@ -71,6 +64,19 @@ function fieldState(
       return {
         ...state,
         [action.field]: fieldReducer(state[action.field], action),
+      }
+    default:
+      return state
+  }
+}
+
+function formErrors<V>(state: V, action: FormAction<V>) {
+  switch (action.type) {
+    case ActionTypes.INIT_FIELD:
+    case ActionTypes.CHANGE_FIELD_VALUE:
+      return {
+        ...state,
+        [action.field]: action.error || undefined,
       }
     default:
       return state
@@ -94,6 +100,7 @@ function formReducer<V>(
 ): ReduxState<V> {
   return {
     formValues: formValues(state.formValues, action),
+    formErrors: formErrors(state.formErrors, action),
     fieldState: fieldState(state.fieldState, action),
   }
 }
@@ -103,6 +110,7 @@ export default function createForm<V>(
 ): Form<V> {
   const store = createStore<ReduxState<V>, FormAction<V>>(formReducer, {
     formValues: initialValues,
+    formErrors: {},
     fieldState: {},
   })
 
@@ -125,23 +133,19 @@ export default function createForm<V>(
     return getProperty(store.getState().formValues, fieldId) || ''
   }
 
-  const getFieldState = (fieldId: string) => {
-    return {
-      ...store.getState().fieldState[fieldId],
-      value: getFieldValue(fieldId),
-    }
-  }
+  const getFieldState = (fieldId: string): FieldState => ({
+    ...store.getState().fieldState[fieldId],
+    error: store.getState().formErrors[fieldId],
+    value: getFieldValue(fieldId),
+  })
 
-  const getFormState = () => {
+  const getFormState = (): FormState<V> => {
     const state = store.getState()
     return {
       values: state.formValues,
-      errors: Object.keys(state.fieldState).reduce((acc, field) => ({
-        ...acc,
-        [field]: state.fieldState[field].error || undefined,
-      }), {}),
+      errors: state.formErrors,
+      anyError: Object.values(state.formErrors).some(field => !!field),
       anyTouched: Object.values(state.fieldState).some(field => field.touched),
-      anyError: Object.values(state.fieldState).some(field => !!field.error),
       anyDirty: Object.values(state.fieldState).some(field => field.dirty),
     }
   }

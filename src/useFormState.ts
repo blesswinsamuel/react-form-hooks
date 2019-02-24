@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import shallowEqual from './utils/shallowEqual'
 import { Form, FormState } from './types'
 
@@ -14,22 +14,25 @@ export default function useFormState<V, R = FormState<V>>(
   }
   const { getFormState } = form.formActions
 
-  const getMappedFormState = () => mapState(getFormState())
+  const getMappedFormState = useCallback(() => mapState(getFormState()), [
+    mapState,
+    getFormState,
+  ])
 
   const [formState, setFormState] = useState(getMappedFormState)
   const prevFormState = useRef(formState)
-  const updateState = () => {
+  const updateState = useCallback(() => {
     const newState = getMappedFormState()
     if (!shallowEqual(newState, prevFormState.current)) {
       setFormState(newState)
       prevFormState.current = newState
     }
-  }
+  }, [getMappedFormState, prevFormState, setFormState])
 
   useEffect(() => {
     updateState()
     return form.subscribe(updateState)
-  }, [form])
+  }, [form, updateState])
 
   return formState
 }

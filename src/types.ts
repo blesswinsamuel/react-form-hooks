@@ -13,6 +13,7 @@ export type FormState<V> = {
   anyTouched: boolean
   anyDirty: boolean
   anyError: boolean
+  errors: {[fieldId: string]: any}
   values: V
 }
 
