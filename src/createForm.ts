@@ -83,10 +83,10 @@ function formErrors<V>(state: ReduxFormErrors, action: FormAction<V>) {
   switch (action.type) {
     case ActionTypes.INIT_FIELD:
     case ActionTypes.CHANGE_FIELD_VALUE:
-      return {
-        ...state,
-        [action.field]: action.error || undefined,
-      }
+      const newError = action.error || undefined
+      return state[action.field] === newError
+        ? state
+        : { ...state, [action.field]: newError }
     case ActionTypes.DESTROY_FIELD:
       const { [action.field]: _, ...remaining } = state
       return remaining
@@ -120,14 +120,11 @@ function formReducer<V>(
 export default function createForm<V>(
   { initialValues }: FormOptions<V> = { initialValues: {} as any }
 ): Form<V> {
-  const store = createStore<ReduxState<V>, FormAction<V>>(
-    formReducer,
-    {
-      formValues: initialValues,
-      formErrors: {},
-      fieldState: {},
-    },
-  )
+  const store = createStore<ReduxState<V>, FormAction<V>>(formReducer, {
+    formValues: initialValues,
+    formErrors: {},
+    fieldState: {},
+  })
 
   const fieldRefs: { [fieldId: string]: any } = {} // any = { [ref: symbol]: FieldOptions }
 
