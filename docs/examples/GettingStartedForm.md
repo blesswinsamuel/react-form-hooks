@@ -2,6 +2,7 @@
 id: GettingStarted
 path: /examples/getting-started
 title: Getting Started Form
+order: 1
 ---
 
-`embed:GettingStarted.js`
+`embed:examples/GettingStarted.js`

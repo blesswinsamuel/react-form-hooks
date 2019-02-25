@@ -33,7 +33,7 @@ module.exports = {
             resolve: "gatsby-remark-embed-snippet",
             options: {
               classPrefix: "code language-",
-              directory: `${__dirname}/src/examples/`,
+              directory: `${__dirname}/src/`,
             },
           },
           {

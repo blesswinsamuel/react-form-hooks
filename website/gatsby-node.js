@@ -9,6 +9,7 @@ exports.createPages = async ({ actions, graphql }) => {
         allMarkdownRemark(limit: 1000) {
           edges {
             node {
+              fields { parentDir }
               fileAbsolutePath
               frontmatter {
                 path
@@ -25,15 +26,35 @@ exports.createPages = async ({ actions, graphql }) => {
     const template = {
       docs: path.resolve(`src/templates/DocTemplate.js`),
       examples: path.resolve(`src/templates/ExampleTemplate.js`),
+      recipes: path.resolve(`src/templates/RecipeTemplate.js`),
     }
 
     result.data.allMarkdownRemark.edges.forEach(({ node }) => {
       createPage({
         path: node.frontmatter.path,
-        component:
-          template[path.basename(path.dirname(node.fileAbsolutePath))],
+        component: template[node.fields.parentDir],
         context: {}, // additional data can be passed via context
       })
+    })
+  }
+}
+
+exports.onCreateNode = ({ node, actions, getNode }) => {
+  const { createNodeField } = actions
+
+  if (node.internal.type === 'MarkdownRemark') {
+    const parent = getNode(node.parent)
+
+    createNodeField({
+      name: 'sourceInstanceName',
+      node,
+      value: parent.sourceInstanceName,
+    })
+
+    createNodeField({
+      name: 'parentDir',
+      node,
+      value: path.basename(path.dirname(node.fileAbsolutePath)),
     })
   }
 }

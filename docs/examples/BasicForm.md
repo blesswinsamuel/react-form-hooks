@@ -2,6 +2,7 @@
 id: BasicExample
 path: /examples/basic
 title: Basic Form
+order: 2
 ---
 
-`embed:BasicExample.js`
+`embed:examples/BasicExample.js`

@@ -1,6 +1,7 @@
 ---
 path: /getting-started
 title: Getting Started
+order: 1
 ---
 
 # Getting Started
