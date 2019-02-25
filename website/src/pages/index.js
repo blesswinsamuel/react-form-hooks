@@ -11,7 +11,7 @@ const Home = () => (
     <div className="hero hero-sm text-center">
       <div className="hero-body">
         <h1>React Form Hooks</h1>
-        <p>Create forms in React with hooks</p>
+        <p>React hooks for form state management using subscriptions.</p>
         <Link to="/getting-started" className="btn btn-primary">
           Getting Started
         </Link>{' '}

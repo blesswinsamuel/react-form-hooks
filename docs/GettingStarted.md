@@ -14,7 +14,7 @@ yarn add react-form-hooks
 
 ## Usage
 
-This library provides 3 hooks - `useForm`, `useFormState` and `useFieldState`.
+This library provides 3 hooks for managing form state - `useForm`, `useFormState` and `useFieldState`.
 
 Start by importing the `useForm`, `useFormState` and `useFieldState` hooks from `react-form-hooks`:
 
