@@ -30,13 +30,6 @@ export function getProperty(obj: { [key: string]: any }, key: string): any {
 }
 
 export function setProperty(obj: any, key: string, value: any): any {
-  if (obj === null) {
-    return obj
-  }
-  if (!isObject(obj)) {
-    return obj
-  }
-
   const path = key
     .replace(/\[(\w+)]/g, '.$1') // convert indexes to properties
     .replace(/^\./, '') // strip a leading dot

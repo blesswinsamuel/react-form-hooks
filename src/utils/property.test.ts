@@ -43,12 +43,6 @@ describe('getProperty', () => {
 })
 
 describe('setProperty', () => {
-  const invalidInputs: any[][] = [[null, '', ''], [2, '', '']]
-  test.each(invalidInputs)('works for bad inputs', (obj, field, value) => {
-    const newObj = setProperty(obj, field, value)
-    expect(newObj).toEqual(obj)
-  })
-
   const setPropertyPrimitiveTests = [
     [obj1, 'name.firstname', 'j', 'name', { firstname: 'j', lastname: 'doe' }],
     [obj1, 'array[0]', 12, 'array', [12, 2]],
@@ -104,4 +98,29 @@ describe('setProperty', () => {
       expect(getProperty(obj, 'checkAlways')).toEqual('present')
     }
   )
+
+  it('woks when called on bad values', () => {
+    let newObj
+    newObj = setProperty(null, 'abc', 12)
+    expect(newObj).toEqual({ abc: 12 })
+    newObj = setProperty(undefined, 'abc', 12)
+    expect(newObj).toEqual({ abc: 12 })
+    newObj = setProperty({}, 'abc', 12)
+    expect(newObj).toEqual({ abc: 12 })
+    newObj = setProperty(1, 'abc', 12)
+    expect(newObj).toEqual({ abc: 12 })
+    newObj = setProperty([], 'abc', 12)
+    expect(newObj).toEqual({ abc: 12 })
+    newObj = setProperty('', 'abc', 12)
+    expect(newObj).toEqual({ abc: 12 })
+    newObj = setProperty('mystr', 'abc', 12)
+    expect(newObj).toEqual({
+      '0': 'm',
+      '1': 'y',
+      '2': 's',
+      '3': 't',
+      '4': 'r',
+      abc: 12,
+    })
+  })
 })
