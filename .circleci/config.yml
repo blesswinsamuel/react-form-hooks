@@ -33,7 +33,7 @@ jobs:
             - node_modules
 
       - run: yarn test --coverage
-      - run: yarn coveralls < ./coverage/lcov.info
+      - run: yarn codecov
       - persist_to_workspace:
           root: ~/repo
           paths: .

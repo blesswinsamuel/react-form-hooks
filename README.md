@@ -7,7 +7,7 @@
 [![npm monthly downloads](https://img.shields.io/npm/dm/react-form-hooks.svg?style=flat-square)](https://npmcharts.com/compare/react-form-hooks?minimal=true)
 [![npm total downloads](https://img.shields.io/npm/dt/react-form-hooks.svg?style=flat-square)](https://npmcharts.com/compare/react-form-hooks?minimal=true)
 [![CircleCI status](https://img.shields.io/circleci/project/github/blesswinsamuel/react-form-hooks/master.svg?style=flat-square)](https://circleci.com/gh/blesswinsamuel/react-form-hooks)
-[![Coverage Status](https://img.shields.io/coveralls/github/blesswinsamuel/react-form-hooks.svg?style=flat-square)](https://coveralls.io/github/blesswinsamuel/react-form-hooks?branch=master)
+[![Codecov](https://img.shields.io/codecov/c/github/blesswinsamuel/react-form-hooks.svg?style=flat-square)](https://codecov.io/gh/blesswinsamuel/react-form-hooks)
 [![bundlephobia minified](https://img.shields.io/bundlephobia/min/react-form-hooks.svg?style=flat-square)](https://bundlephobia.com/result?p=react-form-hooks)
 [![bundlephobia minified + gzip](https://img.shields.io/bundlephobia/minzip/react-form-hooks.svg?style=flat-square)](https://bundlephobia.com/result?p=react-form-hooks)
 [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/prettier)
