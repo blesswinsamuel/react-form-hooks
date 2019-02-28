@@ -246,7 +246,7 @@ describe('createForm', () => {
       form.fieldActions.setFieldOptions('a', Symbol(), {
         validate: (val: number) => val < 2 && 'should be greater than 2',
       })
-      form.fieldActions.setFieldOptions('b', Symbol(), {})
+      form.fieldActions.setFieldOptions('b', Symbol())
       form.fieldActions.initializeField('a')
       form.fieldActions.initializeField('b')
       const mockFn = jest.fn()

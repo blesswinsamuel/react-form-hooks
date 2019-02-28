@@ -1,7 +1,5 @@
 const isObject = function(value: any) {
-  const type = typeof value
-  return value != null && (type === 'object' || type === 'function')
-  // return (!!value) && (value.constructor === Object)
+  return value !== null && typeof value === 'object'
 }
 
 const isIndex = (k: string) => /^(\d+)$/.test(k)
