@@ -3,17 +3,23 @@
   width: 100%;
   display: flex;
   flex-direction: row;
+  height: 100vh;
+}
+
+.docs-sidebar, .docs-content {
+  height: 100%;
+  -webkit-overflow-scrolling: touch;
+  overflow-y: auto;
 }
 
 .docs-sidebar {
   flex: 0 0 auto;
   background: #f7f8f9;
-  padding: 0 0.7rem;
 }
 
 .docs-content {
   flex: 1;
-  padding: 1rem 4rem;
+  padding: 1rem 3rem !important;
   min-width: 0;
 }
 
@@ -39,15 +45,20 @@
 }
 
 .docs-sidebar .docs-nav {
-  /*width: 12rem;*/
-  padding: 0 0.7rem;
+  -webkit-overflow-scrolling: touch;
+  overflow-y: auto;
+  padding: 0 1rem .5rem;
 }
 
-.nav .nav-item div {
-  color: #66758c;
-  font-size: 0.7rem;
-  padding: 0.2rem 0.4rem;
+.docs-sidebar .nav .nav-item a {
+  padding: 0;
 }
+
+/*.nav .nav-item div {*/
+  /*color: #66758c;*/
+  /*font-size: 0.7rem;*/
+  /*padding: 0.2rem 0.4rem;*/
+/*}*/
 
 .docs-nav > .nav > .nav-item > a {
   text-transform: uppercase;
@@ -59,8 +70,16 @@ code {
   color: #555555;
 }
 
-.gatsby-highlight .code {
+/**
+ * Add back the container background-color, border-radius, padding, margin
+ * and overflow that we removed from <pre>.
+ */
+.gatsby-highlight {
+  background-color: #272822;
   border-radius: 10px;
+  margin: 0.5em 0;
+  padding: 0;
+  overflow: auto;
 }
 
 .gatsby-highlight code {
@@ -78,18 +97,6 @@ code {
   padding-right: 1em;
   padding-left: 0.75em;
   border-left: 0.25em solid #666b5b;
-}
-
-/**
- * Add back the container background-color, border-radius, padding, margin
- * and overflow that we removed from <pre>.
- */
-.gatsby-highlight {
-  background-color: #272822;
-  border-radius: 0.3em;
-  margin: 0.5em 0;
-  padding: 0;
-  overflow: auto;
 }
 
 /**

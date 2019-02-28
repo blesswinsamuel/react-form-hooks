@@ -1,5 +1,5 @@
-import React from 'react'
-import { Link, graphql, useStaticQuery } from 'gatsby'
+import React, { useState } from 'react'
+import { graphql, Link, useStaticQuery } from 'gatsby'
 import 'spectre.css/dist/spectre.css'
 import 'spectre.css/dist/spectre-icons.css'
 import 'spectre.css/dist/spectre-exp.css'
@@ -47,7 +47,6 @@ const menuQuery = graphql`
 
 export default function Layout({ children }) {
   const data = useStaticQuery(menuQuery)
-  console.log(data)
 
   const getMenu = menu => {
     if (!menu) return null
@@ -76,9 +75,25 @@ export default function Layout({ children }) {
       href: 'https://github.com/blesswinsamuel/react-form-hooks',
     },
   ]
+
+  const [sidebarActive, setSidebarActive] = useState(false)
+
   return (
-    <div className="docs-container">
-      <div className={'docs-sidebar'}>
+    <div className="docs-container off-canvas off-canvas-sidebar-show">
+      {/*off-screen toggle button*/}
+      <div
+        className="c-hand off-canvas-toggle btn btn-primary btn-action"
+        onClick={() => setSidebarActive(true)}
+      >
+        <i className="icon icon-menu" />
+      </div>
+
+      <div
+        className={
+          'docs-sidebar off-canvas-sidebar' + (sidebarActive ? ' active' : '')
+        }
+        onClick={() => setSidebarActive(false)}
+      >
         <div className="docs-brand">
           <Link className="docs-logo" to="/">
             <h2>React Form Hooks</h2>
@@ -90,7 +105,12 @@ export default function Layout({ children }) {
         </div>
       </div>
 
-      <div className="docs-content">
+      <div
+        className="c-hand off-canvas-overlay"
+        onClick={() => setSidebarActive(false)}
+      />
+
+      <div className="docs-content off-canvas-content">
         <div className="docs-content-inner">{children}</div>
       </div>
     </div>
