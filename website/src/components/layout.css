@@ -1,3 +1,4 @@
+/* Layout */
 .docs-container {
   min-height: 100vh;
   width: 100%;
@@ -19,14 +20,21 @@
 
 .docs-content {
   flex: 1;
-  padding: 1rem 3rem !important;
+  margin-top: 25px;
+  padding: 1rem 5% !important;
   min-width: 0;
+}
+@media screen and (min-width: 960px) {
+  .docs-content {
+    margin-top: 0;
+  }
 }
 
 .docs-content-inner {
   max-width: 100%;
 }
 
+/* Sidebar */
 .docs-brand {
   color: #5755d9;
   padding: 0.8rem 1rem;
@@ -54,59 +62,47 @@
   padding: 0;
 }
 
-/*.nav .nav-item div {*/
-  /*color: #66758c;*/
-  /*font-size: 0.7rem;*/
-  /*padding: 0.2rem 0.4rem;*/
-/*}*/
-
 .docs-nav > .nav > .nav-item > a {
   text-transform: uppercase;
   font-weight: bold;
 }
 
+/* Inline code highlighting */
 code {
   background: #f8f8f8;
   color: #555555;
 }
 
-/**
- * Add back the container background-color, border-radius, padding, margin
- * and overflow that we removed from <pre>.
- */
+/* Code block highlighting */
 .gatsby-highlight {
   position: relative;
   font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
-  background-color: #272822;
-  border-radius: 10px;
   margin: 0.5em 0;
   padding: 0;
   overflow: hidden;
 }
 
 .gatsby-highlight::before {
-  color: #bcc3ce;
   content: attr(data-language);
   font-size: .7rem;
   position: absolute;
   right: .4rem;
   top: .1rem;
+  z-index: 1;
 }
 
 .gatsby-highlight pre[class*="language-"] {
-  background-color: transparent;
+  border-radius: 10px;
   margin: 0;
   padding: 0;
-  overflow: scroll;
+  overflow: auto;
 }
 
 .gatsby-highlight code {
-  background: inherit;
-  color: inherit;
   font-size: 90%;
   overflow: initial;
   width: max-content;
-  min-width: 100%; /* 2 */
+  min-width: 100%;
 }
 
 /* Gatsby Prism Line Highlighting */
@@ -122,6 +118,7 @@ code {
   background-color: transparent;
 }
 
+/* Typography */
 p {
   margin-top: 25px;
 }
