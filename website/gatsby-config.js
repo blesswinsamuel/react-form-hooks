@@ -36,7 +36,7 @@ module.exports = {
         plugins: [
           `gatsby-remark-autolink-headers`,
           {
-            resolve: "gatsby-remark-embed-snippet",
+            resolve: "gatsby-remark-embed-snippet-modified",
             options: {
               classPrefix: "code language-",
               directory: `${__dirname}/src/`,
