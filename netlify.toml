@@ -4,6 +4,12 @@
   publish = "website/public"
 
 [[redirects]]
+  from = "https://react-form-hooks.netlify.com/*"
+  to = "https://react-form-hooks.blesswinsamuel.com/:splat"
+  status = 301
+  force = true
+
+[[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
