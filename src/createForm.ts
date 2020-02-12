@@ -233,7 +233,7 @@ export default function createForm<V>(
   }
 
   const submitHandler: (fn: (val: any) => any) => (event?: Event) => any = fn =>
-    handleFormSubmit(() => {
+    handleFormSubmit(async () => {
       const state = getFormState()
       if (state.anyError) {
         touchAll()
