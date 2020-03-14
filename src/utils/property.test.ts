@@ -43,7 +43,7 @@ describe('getProperty', () => {
 })
 
 describe('setProperty', () => {
-  const setPropertyPrimitiveTests = [
+  const setPropertyPrimitiveTests: [object, string, any, string, any][] = [
     [obj1, 'name.firstname', 'j', 'name', { firstname: 'j', lastname: 'doe' }],
     [obj1, 'array[0]', 12, 'array', [12, 2]],
     [obj1, 'arrayEmpty', [1, 2], 'arrayEmpty', [1, 2]],
@@ -60,7 +60,7 @@ describe('setProperty', () => {
     }
   )
 
-  const referenceTests = [
+  const referenceTests: [object, string, any, string][] = [
     [obj1, 'name.firstname', 'don', 'name'],
     [obj1, 'array[0]', 12, 'array'],
     [obj1, 'arrayEmpty', [1, 2], 'arrayEmpty'],
