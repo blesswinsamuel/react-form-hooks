@@ -8,6 +8,7 @@ describe('createForm', () => {
         anyDirty: false,
         anyError: false,
         anyTouched: false,
+        allTouched: false,
         errors: {},
         values: {},
       })
@@ -19,6 +20,7 @@ describe('createForm', () => {
         anyDirty: false,
         anyError: false,
         anyTouched: false,
+        allTouched: false,
         errors: {},
         values: { a: 1, b: 'abc' },
       })
@@ -33,6 +35,7 @@ describe('createForm', () => {
         anyDirty: false,
         anyError: false,
         anyTouched: false,
+        allTouched: false,
         errors: {},
         values: { a: 1, b: 'abc' },
       })
@@ -48,6 +51,7 @@ describe('createForm', () => {
         anyDirty: false,
         anyError: false,
         anyTouched: false,
+        allTouched: false,
         errors: {},
         values: { a: 2, b: 'abcd' },
       })
@@ -64,6 +68,7 @@ describe('createForm', () => {
         anyDirty: false,
         anyError: false,
         anyTouched: false,
+        allTouched: false,
         errors: { a: undefined },
         values: { a: 2, b: 'abcd' },
       })
@@ -85,6 +90,7 @@ describe('createForm', () => {
         anyDirty: false,
         anyError: false,
         anyTouched: false,
+        allTouched: false,
         errors: {},
         values: { a: 2, b: 'abcd' },
       })
@@ -165,6 +171,7 @@ describe('createForm', () => {
         anyDirty: true,
         anyError: false,
         anyTouched: false,
+        allTouched: false,
         errors: { a: undefined, b: undefined },
         values: { a: 2, b: 'abc' },
       })
@@ -183,6 +190,7 @@ describe('createForm', () => {
         anyDirty: true,
         anyError: false,
         anyTouched: false,
+        allTouched: false,
         errors: { a: undefined, b: undefined },
         values: { a: 2, b: 'abc' },
       })
@@ -204,6 +212,7 @@ describe('createForm', () => {
         anyDirty: false,
         anyError: false,
         anyTouched: true,
+        allTouched: false,
         errors: { a: undefined, b: undefined },
         values: { a: 1, b: 'abc' },
       })
@@ -230,6 +239,7 @@ describe('createForm', () => {
         anyDirty: false,
         anyError: false,
         anyTouched: false,
+        allTouched: false,
         errors: { a: undefined, b: undefined },
         values: { a: 1, b: 'abc' },
       })
@@ -257,6 +267,7 @@ describe('createForm', () => {
         anyDirty: false,
         anyError: true,
         anyTouched: true,
+        allTouched: true,
         errors: { a: 'should be greater than 2', b: undefined },
         values: { a: 1, b: 'abc' },
       })

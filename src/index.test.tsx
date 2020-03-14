@@ -41,6 +41,7 @@ describe('react-form-hooks', () => {
           errors: {},
           anyError: false,
           anyTouched: false,
+          allTouched: false,
           anyDirty: false,
         })
       )
@@ -61,6 +62,7 @@ describe('react-form-hooks', () => {
           errors: {},
           anyError: false,
           anyTouched: false,
+          allTouched: false,
           anyDirty: false,
         })
       )
@@ -81,6 +83,7 @@ describe('react-form-hooks', () => {
           errors: {},
           anyError: false,
           anyTouched: false,
+          allTouched: false,
           anyDirty: false,
         })
       )
@@ -111,6 +114,7 @@ describe('react-form-hooks', () => {
           errors: {},
           anyError: false,
           anyTouched: false,
+          allTouched: false,
           anyDirty: false,
         })
       )

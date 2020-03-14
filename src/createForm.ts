@@ -154,11 +154,17 @@ export default function createForm<V>(
 
   const getFormState = (): FormState<V> => {
     const state = store.getState()
+    const anyTouched = Object.values(state.fieldState).some(
+      field => field.touched
+    )
     return {
       values: state.formValues,
       errors: state.formErrors,
       anyError: Object.values(state.formErrors).some(field => !!field),
-      anyTouched: Object.values(state.fieldState).some(field => field.touched),
+      anyTouched: anyTouched,
+      allTouched:
+        anyTouched &&
+        Object.values(state.fieldState).every(field => field.touched),
       anyDirty: Object.values(state.fieldState).some(field => field.dirty),
     }
   }
