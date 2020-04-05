@@ -143,7 +143,7 @@ export default function createForm<V>(
   // State selectors
   const getFieldValue = (fieldId: string) => {
     const val = getProperty(store.getState().formValues, fieldId)
-    return typeof val === 'undefined' ? '' : val
+    return typeof val === 'undefined' ? null : val
   }
 
   const getFieldState = (fieldId: string): FieldState => ({

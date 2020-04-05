@@ -107,7 +107,7 @@ describe('createForm', () => {
     it('works with no initialValues', () => {
       const form = createForm()
       expect(form.fieldActions.getFieldState('a')).toEqual({
-        value: '',
+        value: null,
       })
     })
 
@@ -125,13 +125,13 @@ describe('createForm', () => {
       form.fieldActions.initializeField('a')
       form.fieldActions.initializeField('b')
       expect(form.fieldActions.getFieldState('a')).toEqual({
-        value: '',
+        value: null,
         error: undefined,
         dirty: false,
         touched: false,
       })
       expect(form.fieldActions.getFieldState('b')).toEqual({
-        value: '',
+        value: null,
         error: undefined,
         dirty: false,
         touched: false,
