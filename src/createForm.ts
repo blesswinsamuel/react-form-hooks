@@ -248,7 +248,13 @@ export default function createForm<V>(
       return fn(state.values)
     })
 
+  const id = Math.random()
+    .toString(36)
+    .substring(7)
+  const getId = () => id
+
   return {
+    getId,
     subscribe: store.subscribe,
     formActions: {
       resetFormValues,

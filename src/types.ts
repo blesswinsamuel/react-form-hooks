@@ -14,7 +14,7 @@ export type FormState<V> = {
   allTouched: boolean
   anyDirty: boolean
   anyError: boolean
-  errors: {[fieldId: string]: any}
+  errors: { [fieldId: string]: any }
   values: V
 }
 
@@ -23,6 +23,7 @@ export type FieldOptions = {
 }
 
 export type Form<V> = {
+  getId(): string
   subscribe(listener: () => void): () => void
   formActions: {
     resetFormValues: (newInitialValues?: any) => void
